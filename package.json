@@ -1,0 +1,24 @@
+{
+  "name": "possum",
+  "version": "0.0.1",
+  "description": "I am able. Hierarchical State Machine.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "keywords": [
+    "hierarchical",
+    "state",
+    "machine",
+    "marsupial"
+  ],
+  "author": "Mike Nichols <nichols.mike.s@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^1.9.2",
+    "testem": "^0.6.22"
+  }
+}

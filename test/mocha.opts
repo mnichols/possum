@@ -1,0 +1,5 @@
+--reporter spec
+--require ./test/spec-support.js
+--timeout 5000
+--ui bdd
+--colors

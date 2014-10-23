@@ -1,0 +1,17 @@
+{
+    "framework": "mocha"
+    ,"serve_files": [
+         "./build/specs.js"
+    ]
+    ,"src_files": [
+        "./lib/**/*.js"
+        ,"./test/**/*.js"
+    ]
+    ,"launchers":{
+        "Node":{
+            "command":"./node_modules/.bin/mocha ./test/**-spec.js"
+        }
+    }
+    ,"before_tests": "./node_modules/.bin/gulp test"
+    , "launch_in_dev": ["Chrome","Firefox","Safari","Node"]
+}

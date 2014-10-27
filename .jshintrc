@@ -1,0 +1,42 @@
+{
+    "predef": [
+        "afterEach"
+        ,"beforeEach"
+        ,"define"
+        ,"describe"
+        ,"dump"
+        ,"expect"
+        ,"funcy"
+        ,"inject"
+        ,"it"
+        ,"should"
+
+        ,"require"
+        ,"module"
+        ,"process"
+    ]
+    ,"bitwise":true
+    ,"camelcase":false
+    ,"curly":true
+    ,"devel":true
+    ,"eqeqeq":true
+    ,"forin":true
+    ,"latedef":false
+    ,"newcap":true
+    ,"noarg":true
+    ,"noempty":true
+    ,"nonew":true
+    ,"undef":true
+    ,"unused":false
+    ,"strict":false
+    ,"trailing":true
+    ,"debug":true
+    ,"maxparams":7
+    ,"maxlen":90
+    ,"asi":true
+    ,"laxcomma":true
+
+    ,"browser":true
+    ,"node": true
+    ,"expr":true
+}

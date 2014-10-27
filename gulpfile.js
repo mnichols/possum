@@ -1,5 +1,4 @@
 var gulp = require('gulp')
-    , $ = require('gulp-load-plugins')()
     , browserify = require('browserify')
     , vinyl = require('vinyl-source-stream')
     , fs = require('fs')
@@ -13,9 +12,10 @@ var gulp = require('gulp')
 
 gulp.task('default',['build'])
 gulp.task('build',[],function(){
-    var b = browserify({
+    var opts = {
         entries: ['./lib']
-    })
+    }
+    var b = browserify(opts)
     b.require('./lib',{expose: 'ioc'})
     return b.bundle()
         .pipe(vinyl('bundle.js'))
@@ -27,10 +27,12 @@ gulp.task('test',[],function(){
     var specFiles = './test/*-spec.js'
     var tests = glob.sync(specFiles)
     tests.unshift('./test/spec-support.js')
-    var b = browserify({
+    var opts = {
         entries: tests
-    })
-    return b.bundle({ debug: true })
+        ,debug: true
+    }
+    var b = browserify(opts)
+    return b.bundle()
         .pipe(vinyl('specs.js'))
         .pipe(gulp.dest('./build'))
 

@@ -16,9 +16,12 @@ silent:
 clean:
 	rm -rf build
 
+node: clean
+	./node_modules/.bin/testem -l Node
+
 docs:
 	pip install Pygments
 	./node_modules/.bin/groc ./lib/**/*.js README.md
 	pushd ./doc; python -m SimpleHTTPServer; popd
 
-.PHONY: test build verbose silent docs
+.PHONY: test build verbose silent docs node

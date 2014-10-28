@@ -18,6 +18,7 @@
   "author": "Mike Nichols <nichols.mike.s@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "bluebird": "^2.3.6",
     "browserify": "^6.2.0",
     "chai": "^1.9.2",
     "chai-as-promised": "^4.1.1",

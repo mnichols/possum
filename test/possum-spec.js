@@ -110,7 +110,7 @@ describe('Possum',function(){
                 emitted['invalidTransition'].length.should.equal(1)
             })
         })
-        describe('given valid transition to new state',function(){
+        describe.only('given valid transition to new state',function(){
             var emitter
             beforeEach(function(){
 

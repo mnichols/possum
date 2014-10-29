@@ -44,7 +44,7 @@ describe('Possum',function(){
             })
         })
     })
-    describe.only('when started',function(){
+    describe('when started',function(){
         beforeEach(function(){
             sut = possum({
                 initialState: 'uninitialized'

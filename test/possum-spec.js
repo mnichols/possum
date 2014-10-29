@@ -44,7 +44,7 @@ describe('Possum',function(){
             })
         })
     })
-    describe('when started',function(){
+    describe.only('when started',function(){
         beforeEach(function(){
             sut = possum({
                 initialState: 'uninitialized'
@@ -274,7 +274,53 @@ describe('Possum',function(){
                 expect(sut.handled[1]).to.be.undefined
             })
         })
-        describe.only('given input has handler that transitions',function(){
+        describe('given input has handler that defers until next transition',function(){
+            beforeEach(function(){
+
+                sut = possum({
+                    initialState: 'uninitialized'
+                    ,namespace: 'foo'
+                    ,states: {
+                        'uninitialized': {
+                            _onExit: function(){
+                                this.exited = this.state
+                            }
+                            ,'deferrable': function(args){
+                                console.log('deferrable invoked',args)
+                                this.deferUntilTransition()
+                                return this.transition('poo')
+                            }
+                        }
+                        ,'poo': {
+                            'deferrable': function(args) {
+                                this.poo = args
+                            }
+                        }
+                        ,'bar': {
+
+                        }
+                        ,'a':{
+                            _onEnter: function(){
+                                this.entered = this.state
+                            }
+                        }
+                    }
+                }, {
+                    emitter: emitter = mockEmitter()
+                })
+            })
+            beforeEach(function(){
+                return sut.start()
+            })
+            beforeEach(function(){
+                return sut.handle('deferrable','meh')
+
+            })
+            it('should replay input on new transition',function(){
+                sut.poo.should.equal('meh')
+            })
+        })
+        describe('given input has handler that transitions',function(){
             beforeEach(function(){
 
                 sut = possum({

@@ -301,7 +301,7 @@ describe('Possum',function(){
                 expect(sut.handled[1]).to.be.undefined
             })
         })
-        describe('given input has handler that defers until next transition',function(){
+        describe.only('given input has handler that defers until next transition',function(){
             var events
             beforeEach(function(){
                 events = []
@@ -342,20 +342,20 @@ describe('Possum',function(){
                 return sut.start()
             })
             beforeEach(function(){
-                //sut.on('handled',events.push.bind(events))
-                sut.onAny(events.push.bind(events))
+                sut.on('handled',events.push.bind(events))
+                //sut.onAny(events.push.bind(events))
                 return sut.handle('deferrable','meh')
             })
             it('should invoke handled events for that handle',function(){
                 console.log('events',events)
-                events.length.should.equal(2)
+                throw new Error('check each event')
+                events.length.should.equal(5)
                 var first = events.shift()
-                first.inputType.should.equal('_transition')
+                first.inputType.should.equal('_onExit')
                 var last = events.shift()
                 last.inputType.should.equal('deferrable')
             })
-            it.only('should replay input on new transition',function(){
-                console.log('events',events)
+            it('should replay input on new transition',function(){
                 sut.poo.should.equal('meh')
             })
         })

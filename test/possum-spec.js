@@ -323,16 +323,14 @@ describe.only('Possum',function(){
                             }
                         }
                     }
-                }, {
-                    emitter: emitter = mockEmitter()
                 })
+                .create()
             })
             beforeEach(function(){
                 return sut.start()
             })
             beforeEach(function(){
                 return sut.handle('deferrable','meh')
-
             })
             it('should replay input on new transition',function(){
                 sut.poo.should.equal('meh')

@@ -301,7 +301,7 @@ describe.only('Possum',function(){
                 expect(sut.handled[1]).to.be.undefined
             })
         })
-        describe.skip('given input has handler that defers until next transition',function(){
+        describe('given input has handler that defers until next transition',function(){
             var events
             beforeEach(function(){
                 events = []
@@ -346,6 +346,7 @@ describe.only('Possum',function(){
                 return sut.handle('deferrable','meh')
             })
             it('should invoke handled events for that handle',function(){
+                console.log('events',events)
                 events.length.should.equal(2)
                 var first = events.shift()
                 first.inputType.should.equal('_transition')

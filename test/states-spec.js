@@ -1,6 +1,6 @@
 'use strict';
 
-describe.only('States',function(){
+describe('States',function(){
     var Promise = require('bluebird')
         ,states = require('../lib/states')
         ,mockEmitter = require('./mock-emitter')
@@ -51,7 +51,7 @@ describe.only('States',function(){
                     ,toState: 'NOEXIST'
                 }
 
-                return sut.transition(event)
+                return sut.handleTransition(event)
             })
             it('should emit invalid event',function(){
                 var emitted = emitter.emitted('invalidTransition')
@@ -104,7 +104,7 @@ describe.only('States',function(){
                     ,toState: 'b'
                 }
 
-                return sut.transition(event)
+                return sut.handleTransition(event)
             })
             it('should not invoke fromState _onExit',function(){
                 expect(sut.exited['a']).not.to.exist
@@ -161,7 +161,7 @@ describe.only('States',function(){
                     ,toState: 'b'
                 }
 
-                return sut.transition(event)
+                return sut.handleTransition(event)
             })
             it('should invoke fromState _onExit',function(){
                 sut.exited['a'].should.equal(1)
@@ -231,7 +231,7 @@ describe.only('States',function(){
                     ,toState: 'NOEXIST'
                 }
 
-                return sut.transition(event)
+                return sut.handleTransition(event)
             })
             it('should emit invalid event',function(){
                 var emitted = emitter.emitted('invalidTransition')
@@ -284,7 +284,7 @@ describe.only('States',function(){
                     ,toState: 'b'
                 }
 
-                return sut.transition(event)
+                return sut.handleTransition(event)
             })
             it('should not invoke fromState _onExit',function(){
                 expect(sut.exited['a']).not.to.exist
@@ -341,7 +341,7 @@ describe.only('States',function(){
                     ,toState: 'b'
                 }
 
-                return sut.transition(event)
+                return sut.handleTransition(event)
             })
             it('should invoke fromState _onExit',function(){
                 sut.exited['a'].should.equal(1)

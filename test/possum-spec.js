@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Possum',function(){
+describe.only('Possum',function(){
     var possum = require('..')
         ,mockEmitter = require('./mock-emitter')
     var sut
@@ -8,6 +8,7 @@ describe('Possum',function(){
     describe('when created',function(){
         describe('given simple configuration',function(){
             beforeEach(function(){
+                emitter = mockEmitter()
 
                 sut = possum({
                     initialState: 'uninitialized'
@@ -15,9 +16,9 @@ describe('Possum',function(){
                     ,states: {
                         'uninitialized': {}
                     }
-                }, {
-                    emitter: emitter = mockEmitter()
                 })
+                .methods(emitter)
+                .create()
             })
             it('should not be in the initial state',function(){
                 expect(sut.state).to.be.undefined
@@ -45,37 +46,47 @@ describe('Possum',function(){
         })
     })
     describe('when started',function(){
+        var events
         beforeEach(function(){
+            events = []
             sut = possum({
                 initialState: 'uninitialized'
                 ,namespace: 'foo'
                 ,states: {
                     'uninitialized': {}
                 }
-            }, {
-                emitter: emitter = mockEmitter()
             })
+            .create()
         })
         beforeEach(function(){
+            sut.on('transitioned', function(e){
+                events.push(e)
+            })
             return sut.start()
         })
         it('should raise event for transition to initial state',function(){
-            var transitioned = emitter.emitted('transitioned')
-            transitioned.length.should.equal(1)
-            var e = transitioned[0][0]
-            e.toState.should.equal('uninitialized')
-            expect(e.fromState).to.be.undefined
+            events.length.should.equal(1)
+            events[0].toState.should.equal('uninitialized')
+            expect(events[0].fromState).to.be.undefined
         })
         it('should be started',function(){
             sut.started.should.be.true
+        })
+        it('should be on initialState',function(){
+            sut.state.should.equal('uninitialized')
+        })
+        it('should have an undefined priorState',function(){
+            sut.should.contain.keys('priorState')
+            expect(sut.priorState).to.be.undefined
         })
 
     })
 
     describe('when transitioning',function(){
+        var events
         describe('given transition to current state',function(){
-            var emitter
             beforeEach(function(){
+                events = []
                 sut = possum({
                     initialState: 'uninitialized'
                     ,namespace: 'foo'
@@ -83,19 +94,13 @@ describe('Possum',function(){
                         'uninitialized': {}
                         ,'a':{}
                     }
-                }, {
-                    emitter: emitter = mockEmitter()
                 })
             })
             beforeEach(function(){
                 return sut.start()
-                    .then(function(){
-                        emitter.reset()
-                    })
             })
             it('should not raise events',function(){
-                var emitted = emitter.emitted()
-                Object.keys(emitted).length.should.equal(0)
+                events.length.should.equal(0)
             })
 
             it('should still be on current state',function(){

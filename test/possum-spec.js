@@ -57,7 +57,7 @@ describe('Possum',function(){
             })
         })
     })
-    describe('when started',function(){
+    describe.only('when started',function(){
         var events
         beforeEach(function(){
             events = []
@@ -292,7 +292,7 @@ describe('Possum',function(){
                 expect(sut.handled[1]).to.be.undefined
             })
         })
-        describe.only('given input has handler that defers until next transition',function(){
+        describe.skip('given input has handler that defers until next transition',function(){
             beforeEach(function(){
 
                 sut = possum({
@@ -336,7 +336,7 @@ describe('Possum',function(){
                 sut.poo.should.equal('meh')
             })
         })
-        describe('given input has handler that transitions',function(){
+        describe.skip('given input has handler that transitions',function(){
             beforeEach(function(){
 
                 sut = possum({

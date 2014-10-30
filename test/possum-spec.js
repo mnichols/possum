@@ -1,6 +1,6 @@
 'use strict';
 
-describe.only('Possum',function(){
+describe('Possum',function(){
     var possum = require('..')
         ,mockEmitter = require('./mock-emitter')
     var sut
@@ -342,7 +342,8 @@ describe.only('Possum',function(){
                 return sut.start()
             })
             beforeEach(function(){
-                sut.on('handled',events.push.bind(events))
+                //sut.on('handled',events.push.bind(events))
+                sut.onAny(events.push.bind(events))
                 return sut.handle('deferrable','meh')
             })
             it('should invoke handled events for that handle',function(){
@@ -353,7 +354,8 @@ describe.only('Possum',function(){
                 var last = events.shift()
                 last.inputType.should.equal('deferrable')
             })
-            it('should replay input on new transition',function(){
+            it.only('should replay input on new transition',function(){
+                console.log('events',events)
                 sut.poo.should.equal('meh')
             })
         })

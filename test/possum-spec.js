@@ -1,6 +1,6 @@
 'use strict';
 
-describe.only('Possum',function(){
+describe('Possum',function(){
     var possum = require('..')
         ,mockEmitter = require('./mock-emitter')
     var sut
@@ -85,6 +85,7 @@ describe.only('Possum',function(){
     describe('when transitioning',function(){
         var events
         describe('given transition to current state',function(){
+
             beforeEach(function(){
                 events = []
                 sut = possum({
@@ -95,11 +96,17 @@ describe.only('Possum',function(){
                         ,'a':{}
                     }
                 })
+                .create()
             })
             beforeEach(function(){
                 return sut.start()
             })
-            it('should not raise events',function(){
+
+            beforeEach(function(){
+                sut.on('transitioned',events.push.bind(events))
+                return sut.transition('uninitialized')
+            })
+            it('should not raise new events',function(){
                 events.length.should.equal(0)
             })
 
@@ -110,6 +117,7 @@ describe.only('Possum',function(){
         describe('given transition to invalid state',function(){
             var emitter
             beforeEach(function(){
+                events = []
                 sut = possum({
                     initialState: 'uninitialized'
                     ,namespace: 'foo'
@@ -117,35 +125,30 @@ describe.only('Possum',function(){
                         'uninitialized': {}
                         ,'a':{}
                     }
-                }, {
-                    emitter: emitter = mockEmitter()
                 })
+                .create()
             })
             beforeEach(function(){
                 return sut.start()
             })
             beforeEach(function(){
-                emitter.reset()
+                sut.on('invalidTransition',events.push.bind(events))
+                sut.on('transition',events.push.bind(events))
                 return sut.transition('BAD')
-            })
-            it('should not raise transitioned event',function(){
-                emitter.emitted('transitioned')
-                    .length.should.equal(0)
             })
             it('should still be on prior state',function(){
                 sut.state.should.equal('uninitialized')
             })
-            it('should raise invalidTransition event',function(){
-                var emitted = emitter.emitted('invalidTransition')
-                emitted.length.should.equal(1)
-                var e = emitted[0][0]
-                e.toState.should.equal('BAD')
-                e.fromState.should.equal('uninitialized')
+            it('should only raise invalidTransition event',function(){
+                events.length.should.equal(1)
+                events[0].toState.should.equal('BAD')
+                events[0].fromState.should.equal('uninitialized')
             })
         })
-        describe('given valid transition to new state',function(){
-            var emitter
+        describe.only('given valid transition to new state',function(){
+            var events
             beforeEach(function(){
+                events = []
 
                 sut = possum({
                     initialState: 'uninitialized'
@@ -162,39 +165,34 @@ describe.only('Possum',function(){
                             }
                         }
                     }
-                }, {
-                    emitter: emitter = mockEmitter()
                 })
+                .create()
             })
             beforeEach(function(){
                 return sut.start()
             })
             beforeEach(function(){
-                emitter.reset()
+                sut.on('transition',events.push.bind(events))
                 return sut.transition('a')
             })
-            describe('it should raise transitioned event',function(){
-                it('should be on the target state',function(){
-                    sut.state.should.equal('a')
-                })
-                it('should raise event for transition to target state',function(){
-                    var transitioned = emitter.emitted('transitioned')
-                    transitioned.length.should.equal(1)
-                    var e = transitioned[0][0]
-                    e.should.eql({
-                        toState: 'a'
-                        ,fromState: 'uninitialized'
-                    })
-                })
-                it('should mark priorState',function(){
-                    sut.priorState.should.equal('uninitialized')
-                })
-                it('should invoke exit handler for priorState',function(){
-                    sut.exited.should.equal('uninitialized')
-                })
-                it('should invoke entry point to new state',function(){
-                    sut.entered.should.equal('a')
-                })
+            it('should raise event for transition to target state',function(){
+                events.length.should.equal(1)
+                events[0].toState.should.equal('a')
+                events[0].fromState.should.equal('uninitialized')
+            })
+            it('should be on the target state',function(){
+                sut.state.should.equal('a')
+            })
+            it('should mark priorState',function(){
+                sut.priorState.should.equal('uninitialized')
+            })
+            it('should have exited old state',function(){
+                //here is the fail...
+                //we want to alter THIS not the queue
+                sut.exited.should.equal('uninitialized')
+            })
+            it('should have entered new state',function(){
+                sut.entered.should.equal('a')
             })
         })
 

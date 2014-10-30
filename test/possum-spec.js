@@ -1,6 +1,6 @@
 'use strict';
 
-describe.only('Possum',function(){
+describe('Possum',function(){
     var possum = require('..')
         ,mockEmitter = require('./mock-emitter')
     var sut
@@ -292,7 +292,7 @@ describe.only('Possum',function(){
                 expect(sut.handled[1]).to.be.undefined
             })
         })
-        describe('given input has handler that defers until next transition',function(){
+        describe.only('given input has handler that defers until next transition',function(){
             beforeEach(function(){
 
                 sut = possum({

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Possum',function(){
+describe.only('Possum',function(){
     var possum = require('..')
         ,mockEmitter = require('./mock-emitter')
     var sut
@@ -16,6 +16,10 @@ describe('Possum',function(){
                     ,states: {
                         'uninitialized': {}
                     }
+                    ,additionalMethod: function(){
+                        this.added = true
+                    }
+                    ,additionalProperty: 'foo'
                 })
                 .methods(emitter)
                 .create()
@@ -28,6 +32,14 @@ describe('Possum',function(){
             })
             it('should not be started',function(){
                 sut.started.should.be.false
+            })
+            it('should mixin additional methods',function(){
+                sut.additionalMethod()
+                sut.added.should.be.true
+            })
+            it('should mixin additional properties',function(){
+                sut.additionalProperty.should.equal('foo')
+
             })
         })
         describe('given no initialState',function(){
@@ -145,7 +157,7 @@ describe('Possum',function(){
                 events[0].fromState.should.equal('uninitialized')
             })
         })
-        describe.only('given valid transition to new state',function(){
+        describe('given valid transition to new state',function(){
             var events
             beforeEach(function(){
                 events = []
@@ -198,9 +210,11 @@ describe('Possum',function(){
 
     })
     describe('when handling an input',function(){
-        var emitter
+        var events
         describe('given input doesnt have a handler on current state',function(){
+
             beforeEach(function(){
+                events = []
 
                 sut = possum({
                     initialState: 'uninitialized'
@@ -217,25 +231,26 @@ describe('Possum',function(){
                             }
                         }
                     }
-                }, {
-                    emitter: emitter = mockEmitter()
                 })
+                .create()
             })
             beforeEach(function(){
                 return sut.start()
             })
             beforeEach(function(){
+                sut.on('noHandler',events.push.bind(events))
                 return sut.handle('BAD','foo')
             })
 
             it('should emit noHandler',function(){
-                var emitted = emitter.emitted('noHandler')
-                emitted.length.should.equal(1)
+                events.length.should.equal(1)
+                events[0].inputType.should.equal('BAD')
             })
         })
         describe('given input has handler on current state',function(){
+            var events
             beforeEach(function(){
-
+                events = []
                 sut = possum({
                     initialState: 'uninitialized'
                     ,namespace: 'foo'
@@ -254,21 +269,21 @@ describe('Possum',function(){
                             }
                         }
                     }
-                }, {
-                    emitter: emitter = mockEmitter()
                 })
+                .create()
             })
             beforeEach(function(){
                 return sut.start()
             })
             beforeEach(function(){
-                emitter.reset()
+                sut.on('handled',events.push.bind(events))
                 return sut.handle('foo','bar','baz')
             })
 
             it('should emit handled',function(){
-                var emitted = emitter.emitted('handled')
-                emitted.length.should.equal(1)
+                events.length.should.equal(1)
+                events[0].inputType.should.equal('foo')
+                events[0].payload.should.eql('bar')
             })
             it('should apply input args',function(){
                 sut.handled[0].should.equal('bar')

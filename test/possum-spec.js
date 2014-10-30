@@ -57,7 +57,7 @@ describe('Possum',function(){
             })
         })
     })
-    describe.only('when started',function(){
+    describe('when started',function(){
         var events
         beforeEach(function(){
             events = []
@@ -292,8 +292,10 @@ describe('Possum',function(){
                 expect(sut.handled[1]).to.be.undefined
             })
         })
-        describe.skip('given input has handler that defers until next transition',function(){
+        describe('given input has handler that defers until next transition',function(){
+            var events
             beforeEach(function(){
+                events = []
 
                 sut = possum({
                     initialState: 'uninitialized'
@@ -311,6 +313,7 @@ describe('Possum',function(){
                         }
                         ,'poo': {
                             'deferrable': function(args) {
+                                console.log('POO invoked deferrable',args)
                                 this.poo = args
                             }
                         }
@@ -330,15 +333,25 @@ describe('Possum',function(){
                 return sut.start()
             })
             beforeEach(function(){
+                sut.on('handled',events.push.bind(events))
                 return sut.handle('deferrable','meh')
+            })
+            it.only('should invoke exactly one handled event for that handle',function(){
+                console.log('events',events)
+                events.length.should.equal(2)
+                var first = events.shift()
+                first.inputType.should.equal('transition')
+                var last = events.shift()
+                last.inputType.should.equal('deferrable')
             })
             it('should replay input on new transition',function(){
                 sut.poo.should.equal('meh')
             })
         })
-        describe.skip('given input has handler that transitions',function(){
+        describe('given input has handler that transitions',function(){
+            var events
             beforeEach(function(){
-
+                events = []
                 sut = possum({
                     initialState: 'uninitialized'
                     ,namespace: 'foo'
@@ -361,26 +374,22 @@ describe('Possum',function(){
                             }
                         }
                     }
-                }, {
-                    emitter: emitter = mockEmitter()
                 })
+                .create()
             })
             beforeEach(function(){
                 return sut.start()
             })
             beforeEach(function(){
-                emitter.reset()
+                sut.on('handled',events.push.bind(events))
                 return sut.handle('foo','bar')
             })
 
             it('should emit handled',function(){
-                var emitted = emitter.emitted('handled')
-                console.log('emitted',emitted)
-                //DO WE WANT TO EMIT HANDLED FOR SYSTEM EVENTS?
-                emitted.length.should.equal(1)
-                emitted[0][0].should.eql({
-                    inputType: 'foo'
-                })
+                events.length.should.equal(2)
+                //first one is transition
+                events[1].inputType.should.equal('foo')
+                events[1].payload.should.equal('bar')
             })
             it('should invoke handler',function(){
                 sut.handled.should.equal('foo -> bar')

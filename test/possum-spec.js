@@ -395,7 +395,6 @@ describe.only('Possum',function(){
                 return sut.handle('deferrable2','bleh')
             })
             it('should raise events in proper order',function(){
-                console.log('events',events)
                 events[0].topic.should.equal('deferred')
                 events[0].inputType.should.equal('deferrable')
                 events[1].topic.should.equal('handled')

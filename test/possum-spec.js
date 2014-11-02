@@ -361,6 +361,60 @@ describe.only('Possum',function(){
                 sut.poo.should.equal('meh')
             })
         })
+        describe('given input has handler that defers until next handler',function(){
+            var events
+            beforeEach(function(){
+                events = []
+
+                sut = possum({
+                    initialState: 'uninitialized'
+                    ,namespace: 'foo'
+                    ,deferred: []
+                    ,states: {
+                        'uninitialized': {
+                            'deferrable': function(args){
+                                this.deferred.push(args)
+                                this.deferUntilNextHandler()
+                            }
+                            ,'deferrable2': function(args) {
+                                this.normalArgs = args
+                            }
+                        }
+                    }
+                })
+                .create()
+            })
+            beforeEach(function(){
+                return sut.start()
+            })
+            beforeEach(function(){
+                sut.onAny(events.push.bind(events))
+                return sut.handle('deferrable','meh')
+            })
+            beforeEach(function(){
+                return sut.handle('deferrable2','bleh')
+            })
+            it('should raise events in proper order',function(){
+                console.log('events',events)
+                events[0].topic.should.equal('deferred')
+                events[0].inputType.should.equal('deferrable')
+                events[1].topic.should.equal('handled')
+                events[1].inputType.should.equal('deferrable2')
+                events[2].topic.should.equal('handled')
+                events[2].inputType.should.equal('deferrable')
+            })
+            it('should raise only expected events',function(){
+                events.length.should.equal(3)
+            })
+            it('should not affect other handlers',function(){
+                sut.normalArgs.should.equal('bleh')
+            })
+            it('should replay input after next handler',function(){
+                sut.deferred.length.should.equal(2)
+                sut.deferred[0].should.equal('meh')
+                sut.deferred[1].should.equal('meh')
+            })
+        })
         describe('given input has handler that transitions',function(){
             var events
             beforeEach(function(){

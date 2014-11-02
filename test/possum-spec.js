@@ -3,6 +3,7 @@
 describe('Possum',function(){
     var possum = require('..')
         ,mockEmitter = require('./mock-emitter')
+        ,Promise = require('bluebird')
     var sut
         ,emitter
     describe('when created',function(){
@@ -254,6 +255,68 @@ describe('Possum',function(){
             it('should emit noHandler',function(){
                 events.length.should.equal(1)
                 events[0].payload.inputType.should.equal('BAD')
+            })
+        })
+        describe('given input has async handler',function(){
+            var events
+            beforeEach(function(){
+                events = []
+                sut = possum({
+                    initialState: 'uninitialized'
+                    ,namespace: 'foo'
+                    ,states: {
+                        'uninitialized': {
+                            _onExit: function(){
+                                this.exited = this.state
+                            }
+                            ,'foo': function(arg1,arg2){
+                                return Promise.resolve()
+                                    .bind(this)
+                                    .then(function(){
+                                        this.handled = [arg1,arg2]
+                                        return arg1
+                                    })
+                                    .then(this.handle.bind(this,'bar'))
+                            }
+                            ,'bar': function(){
+                                this.barred = true
+                            }
+                        }
+                        ,'a':{
+                            _onEnter: function(){
+                                this.entered = this.state
+                            }
+                        }
+                    }
+                })
+                .create()
+            })
+            beforeEach(function(){
+                return sut.start()
+            })
+            beforeEach(function(){
+                sut.on('handled',events.push.bind(events))
+                return sut.handle('foo','bar','baz')
+            })
+
+            it('should emit handled in proper order',function(){
+                console.log('events',events)
+                events.length.should.equal(2)
+                events[0].topic.should.equal('handled')
+                events[0].inputType.should.equal('foo')
+                events[0].payload.should.eql('bar')
+                events[1].topic.should.equal('handled')
+                events[1].inputType.should.equal('bar')
+            })
+            it('should apply input args',function(){
+                sut.handled[0].should.equal('bar')
+            })
+            it('should ignore other arguments',function(){
+                expect(sut.handled[1]).to.be.undefined
+            })
+            it('should handle asynchronously',function(){
+                sut.barred.should.be.true
+
             })
         })
         describe('given input has handler on current state',function(){

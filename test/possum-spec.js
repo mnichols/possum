@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Possum',function(){
+describe.only('Possum',function(){
     var possum = require('..')
         ,mockEmitter = require('./mock-emitter')
     var sut
@@ -157,8 +157,8 @@ describe('Possum',function(){
             })
             it('should only raise invalidTransition event',function(){
                 events.length.should.equal(1)
-                events[0].toState.should.equal('BAD')
-                events[0].fromState.should.equal('uninitialized')
+                events[0].payload.toState.should.equal('BAD')
+                events[0].payload.fromState.should.equal('uninitialized')
             })
         })
         describe('given valid transition to new state',function(){
@@ -253,7 +253,7 @@ describe('Possum',function(){
 
             it('should emit noHandler',function(){
                 events.length.should.equal(1)
-                events[0].inputType.should.equal('BAD')
+                events[0].payload.inputType.should.equal('BAD')
             })
         })
         describe('given input has handler on current state',function(){
@@ -301,7 +301,7 @@ describe('Possum',function(){
                 expect(sut.handled[1]).to.be.undefined
             })
         })
-        describe.only('given input has handler that defers until next transition',function(){
+        describe('given input has handler that defers until next transition',function(){
             var events
             beforeEach(function(){
                 events = []
@@ -315,14 +315,12 @@ describe('Possum',function(){
                                 this.exited = this.state
                             }
                             ,'deferrable': function(args){
-                                console.log('deferrable invoked',args)
                                 this.deferUntilTransition()
                                 return this.transition('poo')
                             }
                         }
                         ,'poo': {
                             'deferrable': function(args) {
-                                console.log('POO invoked deferrable',args)
                                 this.poo = args
                             }
                         }
@@ -342,18 +340,22 @@ describe('Possum',function(){
                 return sut.start()
             })
             beforeEach(function(){
-                sut.on('handled',events.push.bind(events))
-                //sut.onAny(events.push.bind(events))
+                sut.onAny(events.push.bind(events))
                 return sut.handle('deferrable','meh')
             })
-            it('should invoke handled events for that handle',function(){
-                console.log('events',events)
-                throw new Error('check each event')
+            it('should raise events in proper order',function(){
+                events[0].topic.should.equal('deferred')
+                events[1].topic.should.equal('handled')
+                events[1].inputType.should.equal('_onExit')
+                events[2].topic.should.equal('handled')
+                events[2].inputType.should.equal('_transition')
+                events[3].topic.should.equal('handled')
+                events[3].inputType.should.equal('_onEnter')
+                events[4].topic.should.equal('handled')
+                events[4].inputType.should.equal('deferrable')
+            })
+            it('should raise only expected events',function(){
                 events.length.should.equal(5)
-                var first = events.shift()
-                first.inputType.should.equal('_onExit')
-                var last = events.shift()
-                last.inputType.should.equal('deferrable')
             })
             it('should replay input on new transition',function(){
                 sut.poo.should.equal('meh')

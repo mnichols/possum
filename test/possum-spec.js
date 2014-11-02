@@ -1,6 +1,6 @@
 'use strict';
 
-describe.only('Possum',function(){
+describe('Possum',function(){
     var possum = require('..')
         ,mockEmitter = require('./mock-emitter')
     var sut
@@ -345,6 +345,7 @@ describe.only('Possum',function(){
             })
             it('should raise events in proper order',function(){
                 events[0].topic.should.equal('deferred')
+                events[0].inputType.should.equal('deferrable')
                 events[1].topic.should.equal('handled')
                 events[1].inputType.should.equal('_onExit')
                 events[2].topic.should.equal('handled')
@@ -373,11 +374,17 @@ describe.only('Possum',function(){
                     ,states: {
                         'uninitialized': {
                             'deferrable': function(args){
-                                this.deferred.push(args)
+                                this.deferred.push('deferrable -> ' + args)
                                 this.deferUntilNextHandler()
                             }
                             ,'deferrable2': function(args) {
                                 this.normalArgs = args
+                                return this.transition('foo')
+                            }
+                        }
+                        ,'foo': {
+                            'deferrable': function(args) {
+                                this.deferred.push('foo -> ' + args)
                             }
                         }
                     }
@@ -398,20 +405,26 @@ describe.only('Possum',function(){
                 events[0].topic.should.equal('deferred')
                 events[0].inputType.should.equal('deferrable')
                 events[1].topic.should.equal('handled')
-                events[1].inputType.should.equal('deferrable2')
+                events[1].inputType.should.equal('_onExit')
                 events[2].topic.should.equal('handled')
-                events[2].inputType.should.equal('deferrable')
+                events[2].inputType.should.equal('_transition')
+                events[3].topic.should.equal('handled')
+                events[3].inputType.should.equal('_onEnter')
+                events[4].topic.should.equal('handled')
+                events[4].inputType.should.equal('deferrable2')
+                events[5].topic.should.equal('handled')
+                events[5].inputType.should.equal('deferrable')
             })
             it('should raise only expected events',function(){
-                events.length.should.equal(3)
+                events.length.should.equal(6)
             })
             it('should not affect other handlers',function(){
                 sut.normalArgs.should.equal('bleh')
             })
             it('should replay input after next handler',function(){
                 sut.deferred.length.should.equal(2)
-                sut.deferred[0].should.equal('meh')
-                sut.deferred[1].should.equal('meh')
+                sut.deferred[0].should.equal('deferrable -> meh')
+                sut.deferred[1].should.equal('foo -> meh')
             })
         })
         describe('given input has handler that transitions',function(){

@@ -19,3 +19,41 @@ From potis (“able, capable”) + sum (“I am”).
 * Behavior tree generation (ala [machine.js](https://github.com/maryrosecook/machinejs)).
 * Separate config from actor 
 
+
+### Asynchrony
+
+Due to asynchronous `_onEnter` callback potential, a machina must
+invoke `.start()` to be properly initialized.
+This allows separation between construction and initialization.
+
+
+When a caller calls:
+
+    myMachine.transition('destinationState',arg1,arg2)
+        .bind(myMachine)
+        .then(function(){
+            var done = this.state === 'destinationState'
+            console.log(done) -> 'true'
+        })
+
+This will get converted to:
+
+    myMachine.handle('transition',e)
+
+This in turn create this event:
+
+    var transitionEvent = {
+        event: 'transitioned'
+        ,args: args
+        ,fromState: priorState
+        ,toState: toState
+    }
+
+
+This event is placed on the queue:
+
+    this.queue.enqueue(transitionEvent)
+
+And then finally the queue is processed _asynchronously_:
+
+    return this.queue.process()

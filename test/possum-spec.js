@@ -3,6 +3,7 @@
 describe('Possum',function(){
     var possum = require('..')
         ,mockEmitter = require('./mock-emitter')
+        ,Promise = require('bluebird')
     var sut
         ,emitter
     describe('when created',function(){
@@ -33,7 +34,7 @@ describe('Possum',function(){
             it('should not be started',function(){
                 sut.started.should.be.false
             })
-            it('should mixin additional methods',function(){
+            it('should mixin additional methods with proper context',function(){
                 sut.additionalMethod()
                 sut.added.should.be.true
             })
@@ -71,14 +72,19 @@ describe('Possum',function(){
             .create()
         })
         beforeEach(function(){
-            sut.on('transitioned', function(e){
+            sut.on('handled', function(e){
                 events.push(e)
             })
             return sut.start()
         })
         it('should raise event for transition to initial state',function(){
-            events.length.should.equal(1)
-            events[0].toState.should.equal('uninitialized')
+            events.length.should.equal(3)
+            events[0].inputType.should.equal('_transition')
+            events[0].payload.toState.should.equal('uninitialized')
+            events[1].inputType.should.equal('_onEnter')
+            events[1].payload.toState.should.equal('uninitialized')
+            events[2].inputType.should.equal('_start')
+            events[2].payload.toState.should.equal('uninitialized')
             expect(events[0].fromState).to.be.undefined
         })
         it('should be started',function(){
@@ -115,7 +121,7 @@ describe('Possum',function(){
             })
 
             beforeEach(function(){
-                sut.on('transitioned',events.push.bind(events))
+                sut.on('handled',events.push.bind(events))
                 return sut.transition('uninitialized')
             })
             it('should not raise new events',function(){
@@ -145,7 +151,6 @@ describe('Possum',function(){
             })
             beforeEach(function(){
                 sut.on('invalidTransition',events.push.bind(events))
-                sut.on('transition',events.push.bind(events))
                 return sut.transition('BAD')
             })
             it('should still be on prior state',function(){
@@ -153,8 +158,8 @@ describe('Possum',function(){
             })
             it('should only raise invalidTransition event',function(){
                 events.length.should.equal(1)
-                events[0].toState.should.equal('BAD')
-                events[0].fromState.should.equal('uninitialized')
+                events[0].payload.toState.should.equal('BAD')
+                events[0].payload.fromState.should.equal('uninitialized')
             })
         })
         describe('given valid transition to new state',function(){
@@ -184,13 +189,14 @@ describe('Possum',function(){
                 return sut.start()
             })
             beforeEach(function(){
-                sut.on('transition',events.push.bind(events))
+                sut.on('handled',events.push.bind(events))
                 return sut.transition('a')
             })
             it('should raise event for transition to target state',function(){
-                events.length.should.equal(1)
-                events[0].toState.should.equal('a')
-                events[0].fromState.should.equal('uninitialized')
+                events.length.should.equal(3)
+                events[1].inputType.should.equal('_transition')
+                events[1].payload.toState.should.equal('a')
+                events[1].payload.fromState.should.equal('uninitialized')
             })
             it('should be on the target state',function(){
                 sut.state.should.equal('a')
@@ -199,11 +205,15 @@ describe('Possum',function(){
                 sut.priorState.should.equal('uninitialized')
             })
             it('should have exited old state',function(){
+                events[0].inputType.should.equal('_onExit')
+                events[0].payload.fromState.should.equal('uninitialized')
                 //here is the fail...
                 //we want to alter THIS not the queue
                 sut.exited.should.equal('uninitialized')
             })
             it('should have entered new state',function(){
+                events[2].inputType.should.equal('_onEnter')
+                events[2].payload.toState.should.equal('a')
                 sut.entered.should.equal('a')
             })
         })
@@ -244,7 +254,68 @@ describe('Possum',function(){
 
             it('should emit noHandler',function(){
                 events.length.should.equal(1)
-                events[0].inputType.should.equal('BAD')
+                events[0].payload.inputType.should.equal('BAD')
+            })
+        })
+        describe('given input has async handler',function(){
+            var events
+            beforeEach(function(){
+                events = []
+                sut = possum({
+                    initialState: 'uninitialized'
+                    ,namespace: 'foo'
+                    ,states: {
+                        'uninitialized': {
+                            _onExit: function(){
+                                this.exited = this.state
+                            }
+                            ,'foo': function(arg1,arg2){
+                                return Promise.resolve()
+                                    .bind(this)
+                                    .then(function(){
+                                        this.handled = [arg1,arg2]
+                                        return arg1
+                                    })
+                                    .then(this.handle.bind(this,'bar'))
+                            }
+                            ,'bar': function(){
+                                this.barred = true
+                            }
+                        }
+                        ,'a':{
+                            _onEnter: function(){
+                                this.entered = this.state
+                            }
+                        }
+                    }
+                })
+                .create()
+            })
+            beforeEach(function(){
+                return sut.start()
+            })
+            beforeEach(function(){
+                sut.on('handled',events.push.bind(events))
+                return sut.handle('foo','bar','baz')
+            })
+
+            it('should emit handled in proper order',function(){
+                events.length.should.equal(2)
+                events[0].topic.should.equal('handled')
+                events[0].inputType.should.equal('bar')
+                events[1].topic.should.equal('handled')
+                events[1].inputType.should.equal('foo')
+                events[1].payload.should.eql('bar')
+            })
+            it('should apply input args',function(){
+                sut.handled[0].should.equal('bar')
+            })
+            it('should ignore other arguments',function(){
+                expect(sut.handled[1]).to.be.undefined
+            })
+            it('should handle asynchronously',function(){
+                sut.barred.should.be.true
+
             })
         })
         describe('given input has handler on current state',function(){
@@ -292,8 +363,10 @@ describe('Possum',function(){
                 expect(sut.handled[1]).to.be.undefined
             })
         })
-        describe.only('given input has handler that defers until next transition',function(){
+        describe('given input has handler that defers until next transition',function(){
+            var events
             beforeEach(function(){
+                events = []
 
                 sut = possum({
                     initialState: 'uninitialized'
@@ -304,7 +377,6 @@ describe('Possum',function(){
                                 this.exited = this.state
                             }
                             ,'deferrable': function(args){
-                                console.log('deferrable invoked',args)
                                 this.deferUntilTransition()
                                 return this.transition('poo')
                             }
@@ -330,15 +402,97 @@ describe('Possum',function(){
                 return sut.start()
             })
             beforeEach(function(){
+                sut.onAny(events.push.bind(events))
                 return sut.handle('deferrable','meh')
+            })
+            it('should raise events in proper order',function(){
+                events[0].topic.should.equal('deferred')
+                events[0].inputType.should.equal('deferrable')
+                events[1].topic.should.equal('handled')
+                events[1].inputType.should.equal('_onExit')
+                events[2].topic.should.equal('handled')
+                events[2].inputType.should.equal('_transition')
+                events[3].topic.should.equal('handled')
+                events[3].inputType.should.equal('_onEnter')
+                events[4].topic.should.equal('handled')
+                events[4].inputType.should.equal('deferrable')
+            })
+            it('should raise only expected events',function(){
+                events.length.should.equal(5)
             })
             it('should replay input on new transition',function(){
                 sut.poo.should.equal('meh')
             })
         })
-        describe('given input has handler that transitions',function(){
+        describe('given input has handler that defers until next handler',function(){
+            var events
             beforeEach(function(){
+                events = []
 
+                sut = possum({
+                    initialState: 'uninitialized'
+                    ,namespace: 'foo'
+                    ,deferred: []
+                    ,states: {
+                        'uninitialized': {
+                            'deferrable': function(args){
+                                this.deferred.push('deferrable -> ' + args)
+                                this.deferUntilNextHandler()
+                            }
+                            ,'deferrable2': function(args) {
+                                this.normalArgs = args
+                                return this.transition('foo')
+                            }
+                        }
+                        ,'foo': {
+                            'deferrable': function(args) {
+                                this.deferred.push('foo -> ' + args)
+                            }
+                        }
+                    }
+                })
+                .create()
+            })
+            beforeEach(function(){
+                return sut.start()
+            })
+            beforeEach(function(){
+                sut.onAny(events.push.bind(events))
+                return sut.handle('deferrable','meh')
+            })
+            beforeEach(function(){
+                return sut.handle('deferrable2','bleh')
+            })
+            it('should raise events in proper order',function(){
+                events[0].topic.should.equal('deferred')
+                events[0].inputType.should.equal('deferrable')
+                events[1].topic.should.equal('handled')
+                events[1].inputType.should.equal('_onExit')
+                events[2].topic.should.equal('handled')
+                events[2].inputType.should.equal('_transition')
+                events[3].topic.should.equal('handled')
+                events[3].inputType.should.equal('_onEnter')
+                events[4].topic.should.equal('handled')
+                events[4].inputType.should.equal('deferrable2')
+                events[5].topic.should.equal('handled')
+                events[5].inputType.should.equal('deferrable')
+            })
+            it('should raise only expected events',function(){
+                events.length.should.equal(6)
+            })
+            it('should not affect other handlers',function(){
+                sut.normalArgs.should.equal('bleh')
+            })
+            it('should replay input after next handler',function(){
+                sut.deferred.length.should.equal(2)
+                sut.deferred[0].should.equal('deferrable -> meh')
+                sut.deferred[1].should.equal('foo -> meh')
+            })
+        })
+        describe('given input has handler that transitions',function(){
+            var events
+            beforeEach(function(){
+                events = []
                 sut = possum({
                     initialState: 'uninitialized'
                     ,namespace: 'foo'
@@ -361,26 +515,26 @@ describe('Possum',function(){
                             }
                         }
                     }
-                }, {
-                    emitter: emitter = mockEmitter()
                 })
+                .create()
             })
             beforeEach(function(){
                 return sut.start()
             })
             beforeEach(function(){
-                emitter.reset()
+                sut.on('handled',events.push.bind(events))
                 return sut.handle('foo','bar')
             })
 
-            it('should emit handled',function(){
-                var emitted = emitter.emitted('handled')
-                console.log('emitted',emitted)
-                //DO WE WANT TO EMIT HANDLED FOR SYSTEM EVENTS?
-                emitted.length.should.equal(1)
-                emitted[0][0].should.eql({
-                    inputType: 'foo'
-                })
+            it('should emit handled events in order',function(){
+                events.length.should.equal(4)
+                //first ones is transition
+                events[0].inputType.should.equal('_onExit')
+                events[1].inputType.should.equal('_transition')
+                events[2].inputType.should.equal('_onEnter')
+
+                events[3].inputType.should.equal('foo')
+                events[3].payload.should.equal('bar')
             })
             it('should invoke handler',function(){
                 sut.handled.should.equal('foo -> bar')

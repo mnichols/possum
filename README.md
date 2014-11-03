@@ -57,3 +57,13 @@ This event is placed on the queue:
 And then finally the queue is processed _asynchronously_:
 
     return this.queue.process()
+
+### Model
+
+Possum is composed of:
+
+#### Queue
+
+Processes queued commands, in serial, invoking _n_ handlers per command.
+If the current command is deferred, it will be replayed when the 
+condition of the deferral has been met.

@@ -257,6 +257,48 @@ describe('Possum',function(){
                 events[0].payload.inputType.should.equal('BAD')
             })
         })
+        describe('given global catchall handler',function(){
+            var events
+            beforeEach(function(){
+                events = []
+                sut = possum({
+                    initialState: 'uninitialized'
+                    ,namespace: 'foo'
+                    ,handled: []
+                    ,catchAll: function(args) {
+                        this.handled.push('* -> ' + args)
+                    }
+                    ,foo: function(args) {
+                        this.handled.push('foo -> ' + args)
+                    }
+                    ,states: {
+                        'uninitialized': {
+                            _onExit: function(){
+                               this.exited = this.state
+                            }
+                            ,'foo': this.foo
+                        }
+                    }
+                    ,when: {
+                        '*': [
+                            this.catchAll
+                        ]
+                    }
+                })
+                .create()
+            })
+            beforeEach(function(){
+                return sut.start()
+            })
+            beforeEach(function(){
+                sut.on('handled',events.push.bind(events))
+                return sut.handle('foo','bar','baz')
+            })
+            it('should handle catchall handler first',function(){
+                sut.handled[0].should.equal('* -> bar')
+                sut.handled[1].should.equal('foo -> bar')
+            })
+        })
         describe('given input has async handler',function(){
             var events
             beforeEach(function(){

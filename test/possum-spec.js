@@ -34,7 +34,7 @@ describe('Possum',function(){
             it('should not be started',function(){
                 sut.started.should.be.false
             })
-            it('should mixin additional methods',function(){
+            it('should mixin additional methods with proper context',function(){
                 sut.additionalMethod()
                 sut.added.should.be.true
             })
@@ -300,13 +300,12 @@ describe('Possum',function(){
             })
 
             it('should emit handled in proper order',function(){
-                console.log('events',events)
                 events.length.should.equal(2)
                 events[0].topic.should.equal('handled')
-                events[0].inputType.should.equal('foo')
-                events[0].payload.should.eql('bar')
+                events[0].inputType.should.equal('bar')
                 events[1].topic.should.equal('handled')
-                events[1].inputType.should.equal('bar')
+                events[1].inputType.should.equal('foo')
+                events[1].payload.should.eql('bar')
             })
             it('should apply input args',function(){
                 sut.handled[0].should.equal('bar')

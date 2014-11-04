@@ -1,4 +1,4 @@
-LOG = export DEBUG=ankh:*
+LOG = export DEBUG=possum:*
 
 build: clean
 	./node_modules/.bin/gulp build
@@ -8,16 +8,16 @@ test: clean
 	./node_modules/.bin/testem
 
 verbose:
-	$(eval LOG = export DEBUG=ankh:*)
+	$(eval LOG= export DEBUG=possum:*)
 
 silent:
-	LOG = unset DEBUG
+	$(eval LOG= unset DEBUG)
 
 clean:
 	rm -rf build
 
 node: clean
-	./node_modules/.bin/testem -l Node
+	$(LOG) && ./node_modules/.bin/testem -l Node
 
 docs:
 	pip install Pygments

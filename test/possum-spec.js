@@ -72,20 +72,8 @@ describe('Possum',function(){
             .create()
         })
         beforeEach(function(){
-            sut.on('handled', function(e){
-                events.push(e)
-            })
+            sut.on('handled', events.push.bind(events))
             return sut.start()
-        })
-        it('should raise event for transition to initial state',function(){
-            events.length.should.equal(3)
-            events[0].inputType.should.equal('_transition')
-            events[0].payload.toState.should.equal('uninitialized')
-            events[1].inputType.should.equal('_onEnter')
-            events[1].payload.toState.should.equal('uninitialized')
-            events[2].inputType.should.equal('_start')
-            events[2].payload.toState.should.equal('uninitialized')
-            expect(events[0].fromState).to.be.undefined
         })
         it('should be started',function(){
             sut.started.should.be.true
@@ -254,7 +242,59 @@ describe('Possum',function(){
 
             it('should emit noHandler',function(){
                 events.length.should.equal(1)
-                events[0].payload.inputType.should.equal('BAD')
+                events[0].inputType.should.equal('BAD')
+            })
+        })
+        describe('given global catchall handler',function(){
+            var events
+            beforeEach(function(){
+                events = []
+                sut = possum({
+                    initialState: 'uninitialized'
+                    ,namespace: 'foo'
+                    ,handled: []
+                    ,foo: function(action,args) {
+                        this.handled.push(action + ' -> ' + args)
+                    }
+                    ,ready: false
+                    ,states: {
+                        'uninitialized': {
+                            _onEnter: function(){
+                                this.ready = true
+                            }
+                            ,_onExit: function(){
+                               this.exited = this.state
+                            }
+                            ,'foo': function(args) {
+                                return this.foo('foo',args)
+                            }
+                        }
+                    }
+                    ,handlers: [ {
+                        '*': function(args) {
+                            if(this.ready) {
+                                this.foo('*',args)
+                            }
+                        }
+                    }]
+                })
+                .create()
+            })
+            beforeEach(function(){
+                return sut.start()
+            })
+            beforeEach(function(){
+                sut.on('handled',events.push.bind(events))
+                return sut.handle('foo','bar','baz')
+            })
+            it('should raise events for each handler',function(){
+                events.length.should.equal(2)
+                events[0].action.should.equal('*')
+                events[1].action.should.equal('uninitialized.foo')
+            })
+            it('should handle catchall handler first',function(){
+                sut.handled[1].should.equal('foo -> bar')
+                sut.handled[0].should.equal('* -> bar')
             })
         })
         describe('given input has async handler',function(){
@@ -295,15 +335,15 @@ describe('Possum',function(){
                 return sut.start()
             })
             beforeEach(function(){
-                sut.on('handled',events.push.bind(events))
+                sut.on('completed',events.push.bind(events))
                 return sut.handle('foo','bar','baz')
             })
 
             it('should emit handled in proper order',function(){
                 events.length.should.equal(2)
-                events[0].topic.should.equal('handled')
+                events[0].topic.should.equal('completed')
                 events[0].inputType.should.equal('bar')
-                events[1].topic.should.equal('handled')
+                events[1].topic.should.equal('completed')
                 events[1].inputType.should.equal('foo')
                 events[1].payload.should.eql('bar')
             })
@@ -408,17 +448,39 @@ describe('Possum',function(){
             it('should raise events in proper order',function(){
                 events[0].topic.should.equal('deferred')
                 events[0].inputType.should.equal('deferrable')
+
                 events[1].topic.should.equal('handled')
-                events[1].inputType.should.equal('_onExit')
+                events[1].inputType.should.equal('deferrable')
+
                 events[2].topic.should.equal('handled')
-                events[2].inputType.should.equal('_transition')
-                events[3].topic.should.equal('handled')
-                events[3].inputType.should.equal('_onEnter')
+                events[2].inputType.should.equal('_onExit')
+
+                events[3].topic.should.equal('completed')
+                events[3].inputType.should.equal('_onExit')
+
                 events[4].topic.should.equal('handled')
-                events[4].inputType.should.equal('deferrable')
+                events[4].inputType.should.equal('_transition')
+
+                events[5].topic.should.equal('completed')
+                events[5].inputType.should.equal('_transition')
+
+                events[6].topic.should.equal('handled')
+                events[6].inputType.should.equal('_onEnter')
+
+                events[7].topic.should.equal('completed')
+                events[7].inputType.should.equal('_onEnter')
+
+                events[8].topic.should.equal('completed')
+                events[8].inputType.should.equal('deferrable')
+
+                events[9].topic.should.equal('handled')
+                events[9].inputType.should.equal('deferrable')
+
+                events[10].topic.should.equal('completed')
+                events[10].inputType.should.equal('deferrable')
             })
             it('should raise only expected events',function(){
-                events.length.should.equal(5)
+                events.length.should.equal(11)
             })
             it('should replay input on new transition',function(){
                 sut.poo.should.equal('meh')
@@ -432,11 +494,13 @@ describe('Possum',function(){
                 sut = possum({
                     initialState: 'uninitialized'
                     ,namespace: 'foo'
-                    ,deferred: []
+                    ,defs: []
                     ,states: {
                         'uninitialized': {
                             'deferrable': function(args){
-                                this.deferred.push('deferrable -> ' + args)
+                                this.defs.push('deferrable -> ' + args)
+                                //this needs to be deferred until a 'real' handle
+                                //has been made
                                 this.deferUntilNextHandler()
                             }
                             ,'deferrable2': function(args) {
@@ -446,7 +510,7 @@ describe('Possum',function(){
                         }
                         ,'foo': {
                             'deferrable': function(args) {
-                                this.deferred.push('foo -> ' + args)
+                                this.defs.push('foo -> ' + args)
                             }
                         }
                     }
@@ -463,30 +527,13 @@ describe('Possum',function(){
             beforeEach(function(){
                 return sut.handle('deferrable2','bleh')
             })
-            it('should raise events in proper order',function(){
-                events[0].topic.should.equal('deferred')
-                events[0].inputType.should.equal('deferrable')
-                events[1].topic.should.equal('handled')
-                events[1].inputType.should.equal('_onExit')
-                events[2].topic.should.equal('handled')
-                events[2].inputType.should.equal('_transition')
-                events[3].topic.should.equal('handled')
-                events[3].inputType.should.equal('_onEnter')
-                events[4].topic.should.equal('handled')
-                events[4].inputType.should.equal('deferrable2')
-                events[5].topic.should.equal('handled')
-                events[5].inputType.should.equal('deferrable')
-            })
-            it('should raise only expected events',function(){
-                events.length.should.equal(6)
-            })
             it('should not affect other handlers',function(){
                 sut.normalArgs.should.equal('bleh')
             })
             it('should replay input after next handler',function(){
-                sut.deferred.length.should.equal(2)
-                sut.deferred[0].should.equal('deferrable -> meh')
-                sut.deferred[1].should.equal('foo -> meh')
+                sut.defs.length.should.equal(2)
+                sut.defs[0].should.equal('deferrable -> meh')
+                sut.defs[1].should.equal('foo -> meh')
             })
         })
         describe('given input has handler that transitions',function(){
@@ -522,11 +569,11 @@ describe('Possum',function(){
                 return sut.start()
             })
             beforeEach(function(){
-                sut.on('handled',events.push.bind(events))
+                sut.on('completed',events.push.bind(events))
                 return sut.handle('foo','bar')
             })
 
-            it('should emit handled events in order',function(){
+            it('should emit completed events in order',function(){
                 events.length.should.equal(4)
                 //first ones is transition
                 events[0].inputType.should.equal('_onExit')
@@ -544,6 +591,78 @@ describe('Possum',function(){
             })
         })
 
+    })
+    describe('kitchen sink',function(){
+        var spec
+            ,target
+            ,events
+            ,handling
+        beforeEach(function(){
+            events = []
+            handling = []
+            spec = {
+                initialState: 'uninitialized'
+                ,namespace: 'foo'
+                ,things: []
+                ,thing: function(state,handler,args) {
+                    this.things.push([
+                        state
+                        ,handler
+                        ,args
+                    ])
+                }
+                ,states: {
+                    'uninitialized': {
+                        'initialize': function(args) {
+                            this.thing(this.state,'uninitialized',args)
+                            return this.transition('a')
+                        }
+                    }
+                    ,'a': {
+                        _onEnter: function(){
+                            this.thing(this.state,'_onEnter')
+                        }
+                        ,'A': function(args) {
+                            this.thing(this.state,'A',args)
+                            this.deferUntilTransition()
+                            return this.transition('b')
+                        }
+                        ,_onExit: function(){
+                            this.thing(this.state,'_onExit')
+                        }
+                    }
+                    ,'b': {
+                        'A': function(args) {
+                            this.thing(this.state,'A',args)
+                        }
+                        ,'B': function(args){
+                            this.thing(this.state,'B',args)
+                            this.done = true
+                        }
+                    }
+                }
+
+            }
+            sut = possum(spec).create()
+            target = possum(spec).create()
+        })
+        beforeEach(function(){
+            var count = 0
+            sut.on('handled',events.push.bind(events))
+            return sut.start()
+                .bind(sut)
+                .then(function(){
+                    return this.handle('initialize',++count)
+                        .then(this.handle.bind(this,'A',++count))
+                        .then(this.handle.bind(this,'B',++count))
+                })
+        })
+        beforeEach(function(){
+            return target.mount(events)
+        })
+        it('should remount events',function(){
+            target.done.should.be.true
+        })
     })
 
 })

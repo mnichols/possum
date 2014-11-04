@@ -58,7 +58,7 @@ describe('Possum',function(){
             })
         })
     })
-    describe('when started',function(){
+    describe.only('when started',function(){
         var events
         beforeEach(function(){
             events = []

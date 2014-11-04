@@ -17,7 +17,7 @@ clean:
 	rm -rf build
 
 node: clean
-	./node_modules/.bin/testem -l Node
+	export DEBUG=possum:* && ./node_modules/.bin/testem -l Node
 
 docs:
 	pip install Pygments

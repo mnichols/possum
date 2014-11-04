@@ -1,7 +1,7 @@
 'use strict';
 
 
-describe.only('AsyncQueue',function(){
+describe('AsyncQueue',function(){
     var Promise = require('bluebird')
         ,queue = require('../lib/async-queue')
         ,command = require('../lib/command')
@@ -53,7 +53,8 @@ describe.only('AsyncQueue',function(){
                         this.handled.push(args)
                     }
                 }
-                function collect(inputType) {
+                function collect(spec) {
+                    var inputType = spec.inputType
                     var result = [ {
                             name: inputType
                             ,fn: handlers[inputType]
@@ -118,7 +119,8 @@ describe.only('AsyncQueue',function(){
                         this.handled.push(args)
                     }
                 }
-                function collect(inputType) {
+                function collect(spec) {
+                    var inputType = spec.inputType
                     var result = [ {
                             name: inputType
                             ,fn: handlers[inputType]

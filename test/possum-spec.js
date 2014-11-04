@@ -75,16 +75,6 @@ describe('Possum',function(){
             sut.on('handled', events.push.bind(events))
             return sut.start()
         })
-        it('should raise event for transition to initial state',function(){
-            events.length.should.equal(3)
-            events[0].inputType.should.equal('_transition')
-            events[0].payload.toState.should.equal('uninitialized')
-            events[1].inputType.should.equal('_onEnter')
-            events[1].payload.toState.should.equal('uninitialized')
-            events[2].inputType.should.equal('_start')
-            events[2].payload.toState.should.equal('uninitialized')
-            expect(events[0].fromState).to.be.undefined
-        })
         it('should be started',function(){
             sut.started.should.be.true
         })
@@ -345,15 +335,15 @@ describe('Possum',function(){
                 return sut.start()
             })
             beforeEach(function(){
-                sut.on('handled',events.push.bind(events))
+                sut.on('completed',events.push.bind(events))
                 return sut.handle('foo','bar','baz')
             })
 
             it('should emit handled in proper order',function(){
                 events.length.should.equal(2)
-                events[0].topic.should.equal('handled')
+                events[0].topic.should.equal('completed')
                 events[0].inputType.should.equal('bar')
-                events[1].topic.should.equal('handled')
+                events[1].topic.should.equal('completed')
                 events[1].inputType.should.equal('foo')
                 events[1].payload.should.eql('bar')
             })
@@ -456,20 +446,41 @@ describe('Possum',function(){
                 return sut.handle('deferrable','meh')
             })
             it('should raise events in proper order',function(){
-                console.log('events',JSON.stringify(events,null,2))
                 events[0].topic.should.equal('deferred')
                 events[0].inputType.should.equal('deferrable')
+
                 events[1].topic.should.equal('handled')
-                events[1].inputType.should.equal('_onExit')
+                events[1].inputType.should.equal('deferrable')
+
                 events[2].topic.should.equal('handled')
-                events[2].inputType.should.equal('_transition')
-                events[3].topic.should.equal('handled')
-                events[3].inputType.should.equal('_onEnter')
+                events[2].inputType.should.equal('_onExit')
+
+                events[3].topic.should.equal('completed')
+                events[3].inputType.should.equal('_onExit')
+
                 events[4].topic.should.equal('handled')
-                events[4].inputType.should.equal('deferrable')
+                events[4].inputType.should.equal('_transition')
+
+                events[5].topic.should.equal('completed')
+                events[5].inputType.should.equal('_transition')
+
+                events[6].topic.should.equal('handled')
+                events[6].inputType.should.equal('_onEnter')
+
+                events[7].topic.should.equal('completed')
+                events[7].inputType.should.equal('_onEnter')
+
+                events[8].topic.should.equal('completed')
+                events[8].inputType.should.equal('deferrable')
+
+                events[9].topic.should.equal('handled')
+                events[9].inputType.should.equal('deferrable')
+
+                events[10].topic.should.equal('completed')
+                events[10].inputType.should.equal('deferrable')
             })
             it('should raise only expected events',function(){
-                events.length.should.equal(5)
+                events.length.should.equal(11)
             })
             it('should replay input on new transition',function(){
                 sut.poo.should.equal('meh')
@@ -516,23 +527,6 @@ describe('Possum',function(){
             beforeEach(function(){
                 return sut.handle('deferrable2','bleh')
             })
-            it('should raise events in proper order',function(){
-                events[0].topic.should.equal('deferred')
-                events[0].inputType.should.equal('deferrable')
-                events[1].topic.should.equal('handled')
-                events[1].inputType.should.equal('_onExit')
-                events[2].topic.should.equal('handled')
-                events[2].inputType.should.equal('_transition')
-                events[3].topic.should.equal('handled')
-                events[3].inputType.should.equal('_onEnter')
-                events[4].topic.should.equal('handled')
-                events[4].inputType.should.equal('deferrable2')
-                events[5].topic.should.equal('handled')
-                events[5].inputType.should.equal('deferrable')
-            })
-            it('should raise only expected events',function(){
-                events.length.should.equal(6)
-            })
             it('should not affect other handlers',function(){
                 sut.normalArgs.should.equal('bleh')
             })
@@ -575,11 +569,11 @@ describe('Possum',function(){
                 return sut.start()
             })
             beforeEach(function(){
-                sut.on('handled',events.push.bind(events))
+                sut.on('completed',events.push.bind(events))
                 return sut.handle('foo','bar')
             })
 
-            it('should emit handled events in order',function(){
+            it('should emit completed events in order',function(){
                 events.length.should.equal(4)
                 //first ones is transition
                 events[0].inputType.should.equal('_onExit')
@@ -666,7 +660,7 @@ describe('Possum',function(){
         beforeEach(function(){
             return target.mount(events)
         })
-        it.only('should remount events',function(){
+        it('should remount events',function(){
             target.done.should.be.true
         })
     })

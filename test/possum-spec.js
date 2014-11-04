@@ -77,11 +77,11 @@ describe('Possum',function(){
         })
         it('should raise event for transition to initial state',function(){
             events.length.should.equal(3)
-            events[0].inputType.should.equal('_start')
+            events[0].inputType.should.equal('_transition')
             events[0].payload.toState.should.equal('uninitialized')
-            events[1].inputType.should.equal('_transition')
+            events[1].inputType.should.equal('_onEnter')
             events[1].payload.toState.should.equal('uninitialized')
-            events[2].inputType.should.equal('_onEnter')
+            events[2].inputType.should.equal('_start')
             events[2].payload.toState.should.equal('uninitialized')
             expect(events[0].fromState).to.be.undefined
         })
@@ -655,7 +655,6 @@ describe('Possum',function(){
         beforeEach(function(){
             var count = 0
             sut.on('handled',events.push.bind(events))
-            sut.on('handling',handling.push.bind(handling))
             return sut.start()
                 .bind(sut)
                 .then(function(){
@@ -665,8 +664,7 @@ describe('Possum',function(){
                 })
         })
         beforeEach(function(){
-            //console.log(JSON.stringify(handling,null,2))
-            return target.mount(handling)
+            return target.mount(events)
         })
         it.only('should remount events',function(){
             target.done.should.be.true

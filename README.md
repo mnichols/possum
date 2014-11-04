@@ -67,3 +67,6 @@ Possum is composed of:
 Processes queued commands, in serial, invoking _n_ handlers per command.
 If the current command is deferred, it will be replayed when the 
 condition of the deferral has been met.
+
+This means that the queue will need to suspend processing while deferred
+commands are replayed. 

@@ -456,6 +456,7 @@ describe('Possum',function(){
                 return sut.handle('deferrable','meh')
             })
             it('should raise events in proper order',function(){
+                console.log('events',JSON.stringify(events,null,2))
                 events[0].topic.should.equal('deferred')
                 events[0].inputType.should.equal('deferrable')
                 events[1].topic.should.equal('handled')
@@ -487,6 +488,8 @@ describe('Possum',function(){
                         'uninitialized': {
                             'deferrable': function(args){
                                 this.defs.push('deferrable -> ' + args)
+                                //this needs to be deferred until a 'real' handle
+                                //has been made
                                 this.deferUntilNextHandler()
                             }
                             ,'deferrable2': function(args) {
@@ -513,8 +516,7 @@ describe('Possum',function(){
             beforeEach(function(){
                 return sut.handle('deferrable2','bleh')
             })
-            it.only('should raise events in proper order',function(){
-                console.log('events',JSON.stringify(events,null,2))
+            it('should raise events in proper order',function(){
                 events[0].topic.should.equal('deferred')
                 events[0].inputType.should.equal('deferrable')
                 events[1].topic.should.equal('handled')
@@ -595,6 +597,80 @@ describe('Possum',function(){
             })
         })
 
+    })
+    describe('kitchen sink',function(){
+        var spec
+            ,target
+            ,events
+            ,handling
+        beforeEach(function(){
+            events = []
+            handling = []
+            spec = {
+                initialState: 'uninitialized'
+                ,namespace: 'foo'
+                ,things: []
+                ,thing: function(state,handler,args) {
+                    this.things.push([
+                        state
+                        ,handler
+                        ,args
+                    ])
+                }
+                ,states: {
+                    'uninitialized': {
+                        'initialize': function(args) {
+                            this.thing(this.state,'uninitialized',args)
+                            return this.transition('a')
+                        }
+                    }
+                    ,'a': {
+                        _onEnter: function(){
+                            this.thing(this.state,'_onEnter')
+                        }
+                        ,'A': function(args) {
+                            this.thing(this.state,'A',args)
+                            this.deferUntilTransition()
+                            return this.transition('b')
+                        }
+                        ,_onExit: function(){
+                            this.thing(this.state,'_onExit')
+                        }
+                    }
+                    ,'b': {
+                        'A': function(args) {
+                            this.thing(this.state,'A',args)
+                        }
+                        ,'B': function(args){
+                            this.thing(this.state,'B',args)
+                            this.done = true
+                        }
+                    }
+                }
+
+            }
+            sut = possum(spec).create()
+            target = possum(spec).create()
+        })
+        beforeEach(function(){
+            var count = 0
+            sut.on('handled',events.push.bind(events))
+            sut.on('handling',handling.push.bind(handling))
+            return sut.start()
+                .bind(sut)
+                .then(function(){
+                    return this.handle('initialize',++count)
+                        .then(this.handle.bind(this,'A',++count))
+                        .then(this.handle.bind(this,'B',++count))
+                })
+        })
+        beforeEach(function(){
+            //console.log(JSON.stringify(handling,null,2))
+            return target.mount(handling)
+        })
+        it.only('should remount events',function(){
+            target.done.should.be.true
+        })
     })
 
 })

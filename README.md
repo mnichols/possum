@@ -62,24 +62,20 @@ And then finally the queue is processed _asynchronously_:
 
 Possum is composed of:
 
+#### States
+
+Compiles `.states` configuration to route inputs (eg events) to the appropriate
+handler.
+
 #### Queue
 
-Processes queued commands, in serial, invoking _n_ handlers per command.
-If the current command is deferred, it will be replayed when the 
-condition of the deferral has been met.
+Processes queued commands, in serial, invoking _n_ handlers per command, collected
+by the `states` router.
 
-This means that the queue will need to suspend processing while deferred
-commands are replayed. 
+#### Deferrals
 
+Exposes deferral api. A deferral is a specification which, when satisfied, requeues its
+command to be replayed immediately after the current handler has completed.
+Deferrals may be stored during an input handler.
 
-#### Event Sourcing
-
-Since we raise `handled` events for each invocation of a input handler, we can store
-these events and replay them.
-
-The challenge arises when you have nested machines. Creation of an entity is usually done
-by handlers.
-
-Typically, event streams have an id, corresponding to the aggregate root Id. When events are raised
-from any 
 

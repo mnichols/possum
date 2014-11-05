@@ -70,3 +70,16 @@ condition of the deferral has been met.
 
 This means that the queue will need to suspend processing while deferred
 commands are replayed. 
+
+
+#### Event Sourcing
+
+Since we raise `handled` events for each invocation of a input handler, we can store
+these events and replay them.
+
+The challenge arises when you have nested machines. Creation of an entity is usually done
+by handlers.
+
+Typically, event streams have an id, corresponding to the aggregate root Id. When events are raised
+from any 
+

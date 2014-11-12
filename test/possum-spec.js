@@ -180,7 +180,8 @@ describe('Possum',function(){
                 sut.on('handled',events.push.bind(events))
                 return sut.transition('a')
             })
-            it('should raise event for transition to target state',function(){
+            it.only('should raise event for transition to target state',function(){
+                console.log('events',JSON.stringify(events, null, 2))
                 events.length.should.equal(3)
                 events[1].inputType.should.equal('_transition')
                 events[1].payload.toState.should.equal('a')

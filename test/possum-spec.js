@@ -473,6 +473,7 @@ describe('Possum',function(){
                 events[8].topic.should.equal('completed')
                 events[8].inputType.should.equal('deferrable')
 
+                //the replay events
                 events[9].topic.should.equal('handled')
                 events[9].inputType.should.equal('deferrable')
 
@@ -498,12 +499,14 @@ describe('Possum',function(){
                     ,states: {
                         'uninitialized': {
                             'deferrable': function(args){
+                                console.log('uninitialized.deferrable invoked');
                                 this.defs.push('deferrable -> ' + args)
                                 //this needs to be deferred until a 'real' handle
                                 //has been made
                                 this.deferUntilNextHandler()
                             }
                             ,'deferrable2': function(args) {
+                                console.log('uninitialized.deferrable2 invoked');
                                 this.normalArgs = args
                                 return this.transition('foo')
                             }
@@ -530,7 +533,8 @@ describe('Possum',function(){
             it('should not affect other handlers',function(){
                 sut.normalArgs.should.equal('bleh')
             })
-            it('should replay input after next handler',function(){
+            it.only('should replay input after next handler',function(){
+                console.log('defers',sut.defs)
                 sut.defs.length.should.equal(2)
                 sut.defs[0].should.equal('deferrable -> meh')
                 sut.defs[1].should.equal('foo -> meh')

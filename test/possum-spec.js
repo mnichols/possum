@@ -473,6 +473,7 @@ describe('Possum',function(){
                 events[8].topic.should.equal('completed')
                 events[8].inputType.should.equal('deferrable')
 
+                //the replay events
                 events[9].topic.should.equal('handled')
                 events[9].inputType.should.equal('deferrable')
 

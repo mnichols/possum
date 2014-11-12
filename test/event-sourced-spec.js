@@ -1,6 +1,6 @@
 'use strict';
 
-describe('EventSourcing',function(){
+describe.skip('EventSourcing',function(){
     var possum = require('..')
         ,mockEmitter = require('./mock-emitter')
         ,Promise = require('bluebird')

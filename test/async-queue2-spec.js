@@ -1,13 +1,14 @@
 'use strict';
 
 
-describe.only('AsyncQueue2',function(){
+describe('AsyncQueue2',function(){
     var Promise = require('bluebird')
         ,queue = require('../lib/async-queue')
         ,command = require('../lib/command')
         ,sut
     describe('when processing commands',function(){
         var testRouter
+
         beforeEach(function(){
             var handlers = {
                 a: function(args) {
@@ -33,31 +34,43 @@ describe.only('AsyncQueue2',function(){
                 return result
             }
         })
-        describe('given deferred',function(){
+        describe.only('given deferred',function(){
             var model
                 ,events
+                ,deferred
             beforeEach(function(){
                 events = []
+                deferred = queue()
+                    .state({
+                        router: testRouter
+                        ,name: 'possum.deferred.queue'
+                    })
+                    .methods({
+                        raise: events.push.bind(events)
+                    })
+                    .create()
+
+                deferred.enqueue(command({
+                    inputType: 'x'
+                    ,payload: 'xxx'
+                }))
+            })
+            beforeEach(function(){
                 model = {
                     handled: []
                 }
                 sut = queue()
-                .state({
-                    router: testRouter
-                })
-                .methods({
-                    deferred: function(handled){
-                        if(handled.inputType === 'b') {
-                            return [
-                                command({ inputType: 'x', payload: 'xxx'})
-                            ]
-                        }
-                        return []
-                    }
-                    ,raise: events.push.bind(events)
-                })
-                .create()
+                    .state({
+                        router: testRouter
+                    })
+                    .methods({
+                        raise: events.push.bind(events)
+                    })
+                    .create()
+
+                sut.queues.push(deferred)
             })
+
             beforeEach(function(){
                 sut.enqueue([
                     command({ inputType: 'a', payload: 'aaa'})
@@ -71,24 +84,24 @@ describe.only('AsyncQueue2',function(){
 
             it('should process deferred commands in proper order',function(){
                 model.handled[0].should.equal('aaa')
-                model.handled[1].should.equal('bbb')
-                model.handled[2].should.equal('xxx')
+                model.handled[1].should.equal('xxx')
+                model.handled[2].should.equal('bbb')
                 model.handled[3].should.equal('ccc')
             })
             it('should raise events in proper order',function(){
                 events.length.should.equal(8)
-                events[0].topic.should.equal('handled')
-                events[1].topic.should.equal('completed')
-                events[2].topic.should.equal('handled')
-                events[3].topic.should.equal('completed')
-                events[4].topic.should.equal('handled')
-                events[5].topic.should.equal('completed')
-                events[6].topic.should.equal('handled')
-                events[7].topic.should.equal('completed')
-                events[0].inputType.should.equal('a')
-                events[2].inputType.should.equal('b')
-                events[4].inputType.should.equal('x')
-                events[6].inputType.should.equal('c')
+                events[0].topic.should.equal('queue.handled')
+                events[1].topic.should.equal('queue.completed')
+                events[2].topic.should.equal('queue.handled')
+                events[3].topic.should.equal('queue.completed')
+                events[4].topic.should.equal('queue.handled')
+                events[5].topic.should.equal('queue.completed')
+                events[6].topic.should.equal('queue.handled')
+                events[7].topic.should.equal('queue.completed')
+                events[0].message.inputType.should.equal('a')
+                events[2].message.inputType.should.equal('x')
+                events[4].message.inputType.should.equal('b')
+                events[6].message.inputType.should.equal('c')
             })
 
         })

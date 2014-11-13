@@ -215,78 +215,78 @@ This allows separation between construction and initialization.
 * `namespace` {String} [optional]
 The namespace for this instance
 
-* `initialState` {String} [required]
+* `initialState` {String} **required**
 The state to transition to when `.start()` is called
 
-* `states` {Object} [required]
+* `states` {Object} **required**
 The states configuration in the shape of:
 
-```js
-var states = {
-    'myState': {
-        _onEnter: function(){
-            //steps to perform right when entering a state
-            //can return an Promise for async support
-        }
-        ,'doIt': function(args) {
-            //handle the command 'doIt'
-            //receiving exactly ONE argument
-            return this.doIt()
-        }
-        ... 
-        ,_onExit: function() {
-            //steps to perform right before transitioning
-            //out of this state
+    ```js
+    var states = {
+        'myState': {
+            _onEnter: function(){
+                //steps to perform right when entering a state
+                //can return an Promise for async support
+            }
+            ,'doIt': function(args) {
+                //handle the command 'doIt'
+                //receiving exactly ONE argument
+                return this.doIt()
+            }
+            ... 
+            ,_onExit: function() {
+                //steps to perform right before transitioning
+                //out of this state
+            }
         }
     }
-}
 
-```
+    ```
 
-Note that each state's input handler, will receive _one_ argument. That means you must
-invoke the handlers this way:
+    Note that each state's input handler, will receive _one_ argument. That means you must
+    invoke the handlers this way:
 
-```js
-model.handle('doIt','myArgument')
-```
+    ```js
+    model.handle('doIt','myArgument')
+    ```
 
-**Additional arguments will be ignored**.
+    **Additional arguments will be ignored**.
 
 
 * `handlers` {Array} [optional]
 
-Provide handler objects can be in the form of :
+    Provide handler objects can be in the form of :
 
-```js
+    ```js
 
-var handler = {
-    name: 'myHandler'
-    ,fn: function(args) {
-        // just like any other handler
+    var handler = {
+        name: 'myHandler'
+        ,fn: function(args) {
+            // just like any other handler
+        }
+        ,match: function(spec) {
+            //spec.inputType is the input type being invoked
+            //spec.state is the current state of the possum instance
+            return true/false
+        }
     }
-    ,match: function(spec) {
-        //spec.inputType is the input type being invoked
-        //spec.state is the current state of the possum instance
-        return true/false
+
+    ```
+
+    Or, you may provide **wildcard handlers** in the form of : 
+
+    var handler = {
+        '*': function(args) {
+            //just like any other handler
+        }
     }
-}
-
-```
-
-Or, you may provide **wildcard handlers** in the form of : 
-
-var handler = {
-    '*': function(args) {
-        //just like any other handler
-    }
-}
 
 
-The order of execution for matching handlers is:
+    The order of execution for matching handlers is:
 
-1. Wildcard handlers
-2. Handlers configured through `handlers` collection that match (not through state config)
-3. State input handler
+    1. Wildcard handlers
+    2. Handlers configured through `handlers` collection that match (not through state config)
+    3. State input handler
 
 
 ### Possum Instance API
@@ -332,6 +332,45 @@ transition has occurred.
 Queues the current message (input) to be replayed after the possum has `handle`d another
 input, regardless of whether a transition has occurred. **Note:** be careful that
 you avoid infinite loops using this functionality.
+
+### Possum Events
+
+* `handled` 
+
+Emitted _just after_ an input handler has been invoked but probably before
+the handler has completed (asynchronously).
+
+    Event properties:
+
+    * topic: 'handled'
+    * inputType: {String} the name of the handler you just called
+    * payload: {Any} The arguments passed into the `handle` call
+    * action: {String} the path of the handler you just called ; eg 'myState.myHandler'
+
+
+* `completed` 
+
+Emitted _after_ an input handler Promise has resolved.
+
+    Event properties:
+
+    * topic: 'completed'
+    * inputType: {String} the name of the handler you just called
+    * payload: {Any} The arguments passed into the `handle` call
+    * action: {String} the path of the handler you just called ; eg 'myState.myHandler'
+
+* `transitioned` 
+
+Emitted _after_ a possum has transitioned into a state, just after its entry callback has been invoked (`_onEnter`).
+
+    Event properties:
+
+    * topic: 'completed'
+    * inputType: {String} the name of the handler you just called
+    * payload: {Object} having these properties
+        - `toState` The state you just transitioned to
+        - `fromState` The state you just transitioned from
+    * action: {String} the path of the handler you just called ; eg 'myState.myHandler'
 
 ##### Credits
 

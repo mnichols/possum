@@ -221,72 +221,72 @@ The state to transition to when `.start()` is called
 ##### `states` {Object} **required**
 The states configuration in the shape of:
 
-    ```js
-    var states = {
-        'myState': {
-            _onEnter: function(){
-                //steps to perform right when entering a state
-                //can return an Promise for async support
-            }
-            ,'doIt': function(args) {
-                //handle the command 'doIt'
-                //receiving exactly ONE argument
-                return this.doIt()
-            }
-            ... 
-            ,_onExit: function() {
-                //steps to perform right before transitioning
-                //out of this state
-            }
+```js
+var states = {
+    'myState': {
+        _onEnter: function(){
+            //steps to perform right when entering a state
+            //can return an Promise for async support
+        }
+        ,'doIt': function(args) {
+            //handle the command 'doIt'
+            //receiving exactly ONE argument
+            return this.doIt()
+        }
+        ... 
+        ,_onExit: function() {
+            //steps to perform right before transitioning
+            //out of this state
         }
     }
+}
 
-    ```
+```
 
-    Note that each state's input handler, will receive _one_ argument. That means you must
-    invoke the handlers this way:
+Note that each state's input handler, will receive _one_ argument. That means you must
+invoke the handlers this way:
 
-    ```js
-    model.handle('doIt','myArgument')
-    ```
+```js
+model.handle('doIt','myArgument')
+```
 
-    **Additional arguments will be ignored**.
+**Additional arguments will be ignored**.
 
 
 ##### `handlers` {Array} [optional]
 
-    Provide handler objects can be in the form of :
+Provide handler objects can be in the form of :
 
-    ```js
+```js
 
-    var handler = {
-        name: 'myHandler'
-        ,fn: function(args) {
-            // just like any other handler
-        }
-        ,match: function(spec) {
-            //spec.inputType is the input type being invoked
-            //spec.state is the current state of the possum instance
-            return true/false
-        }
+var handler = {
+    name: 'myHandler'
+    ,fn: function(args) {
+        // just like any other handler
     }
-
-    ```
-
-    Or, you may provide **wildcard handlers** in the form of : 
-
-    var handler = {
-        '*': function(args) {
-            //just like any other handler
-        }
+    ,match: function(spec) {
+        //spec.inputType is the input type being invoked
+        //spec.state is the current state of the possum instance
+        return true/false
     }
+}
+
+```
+
+Or, you may provide **wildcard handlers** in the form of : 
+
+var handler = {
+    '*': function(args) {
+        //just like any other handler
+    }
+}
 
 
-    The order of execution for matching handlers is:
+The order of execution for matching handlers is:
 
-    1. Wildcard handlers
-    2. Handlers configured through `handlers` collection that match (not through state config)
-    3. State input handler
+1. Wildcard handlers
+2. Handlers configured through `handlers` collection that match (not through state config)
+3. State input handler
 
 
 ### Possum Instance API
@@ -327,20 +327,24 @@ Queues the current message (input) to be replayed after the possum has transitio
 to `toState`. If `toState` is not provided, then it will replay after _any_
 transition has occurred.
 
+Returns `this` possum instance.
+
 ##### `deferUntilNextHandler` {Function}
 
 Queues the current message (input) to be replayed after the possum has `handle`d another
 input, regardless of whether a transition has occurred. **Note:** be careful that
 you avoid infinite loops using this functionality.
 
+Returns `this` possum instance.
+
 ##### `current` {Function}
 
-Used internally, this returns an `processContext` which exposes:
+Returns an `processContext` which exposes:
 
 * `currentMessage` {Function} The message currently being handled
 * `completed` {Boolean} A flag indicating if the processing has completed
 
-You _may_ use this inside a handler to get access to the current message being invoked. 
+This is really for internal use, but you _may_ use this inside a handler to get access to the current message being invoked. 
 
 
 ### Possum Events
@@ -381,6 +385,20 @@ Event properties:
     - `toState` The state you just transitioned to
     - `fromState` The state you just transitioned from
 * action: {String} the path of the handler you just called ; eg 'myState.myHandler'
+
+
+### Diagnostics
+
+`possum` likes to talk alot using the `debug` npm module. 
+To enable logging, drop into your console and type `localStorage.debug = 'possum*'`.
+To turn it back off, type `localStorage.debug = undefined`.
+In node, you can  pass `DEBUG=possum*` as an environment variable.
+
+### Tests
+
+`make test` will by default run tests on Safari, Chrome, Firefox, and NodeJS.
+
+You can also do `make node` to quickly run tests or `make silent node` to shut possum up during test runs.
 
 ### Credits
 

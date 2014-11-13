@@ -109,7 +109,7 @@ describe('Possum',function(){
             })
 
             beforeEach(function(){
-                sut.on('handled',events.push.bind(events))
+                sut.onAny(events.push.bind(events))
                 return sut.transition('uninitialized')
             })
             it('should not raise new events',function(){
@@ -151,9 +151,11 @@ describe('Possum',function(){
             })
         })
         describe('given valid transition to new state',function(){
-            var events
+            var handled
+                ,transitioned
             beforeEach(function(){
-                events = []
+                handled = []
+                transitioned = []
 
                 sut = possum({
                     initialState: 'uninitialized'
@@ -177,14 +179,15 @@ describe('Possum',function(){
                 return sut.start()
             })
             beforeEach(function(){
-                sut.on('handled',events.push.bind(events))
+                sut.on('handled',handled.push.bind(handled))
+                sut.on('transitioned',transitioned.push.bind(transitioned))
                 return sut.transition('a')
             })
             it('should raise event for transition to target state',function(){
-                events.length.should.equal(3)
-                events[1].inputType.should.equal('_transition')
-                events[1].payload.toState.should.equal('a')
-                events[1].payload.fromState.should.equal('uninitialized')
+                handled.length.should.equal(3)
+                handled[1].inputType.should.equal('_transition')
+                handled[1].payload.toState.should.equal('a')
+                handled[1].payload.fromState.should.equal('uninitialized')
             })
             it('should be on the target state',function(){
                 sut.state.should.equal('a')
@@ -193,16 +196,19 @@ describe('Possum',function(){
                 sut.priorState.should.equal('uninitialized')
             })
             it('should have exited old state',function(){
-                events[0].inputType.should.equal('_onExit')
-                events[0].payload.fromState.should.equal('uninitialized')
-                //here is the fail...
-                //we want to alter THIS not the queue
+                handled[0].inputType.should.equal('_onExit')
+                handled[0].payload.fromState.should.equal('uninitialized')
                 sut.exited.should.equal('uninitialized')
             })
             it('should have entered new state',function(){
-                events[2].inputType.should.equal('_onEnter')
-                events[2].payload.toState.should.equal('a')
+                handled[2].inputType.should.equal('_onEnter')
+                handled[2].payload.toState.should.equal('a')
                 sut.entered.should.equal('a')
+            })
+            it('should emit a transitioned event',function(){
+                transitioned.length.should.equal(1)
+                transitioned[0].payload.toState.should.equal('a')
+                transitioned[0].payload.fromState.should.equal('uninitialized')
             })
         })
 
@@ -442,7 +448,9 @@ describe('Possum',function(){
                 return sut.start()
             })
             beforeEach(function(){
-                sut.onAny(events.push.bind(events))
+                sut.on('deferred',events.push.bind(events))
+                sut.on('handled',events.push.bind(events))
+                sut.on('completed',events.push.bind(events))
                 return sut.handle('deferrable','meh')
             })
             it('should raise events in proper order',function(){

@@ -389,6 +389,13 @@ Event properties:
     - `fromState` The state you just transitioned from
 * action: {String} the path of the handler you just called ; eg 'myState.myHandler'
 
+##### `noHandler`
+
+Emitted when an input has been attempted on a state that does not declare it.
+
+#### `invalidTransition`
+
+Emitted when an transition is attempted to a state that does not exist.
 
 ### Diagnostics
 

@@ -225,6 +225,7 @@ The states configuration in the shape of:
 var states = {
     'myState': {
         _onEnter: function(){
+            //optional
             //steps to perform right when entering a state
             //can return an Promise for async support
         }
@@ -235,6 +236,7 @@ var states = {
         }
         ... 
         ,_onExit: function() {
+            //optional
             //steps to perform right before transitioning
             //out of this state
         }
@@ -375,7 +377,8 @@ Event properties:
 
 ##### `transitioned` 
 
-Emitted _after_ a possum has transitioned into a state, just after its entry callback has been invoked (`_onEnter`).
+Emitted _after_ a possum has transitioned into a state, 
+but _before_ its entry callback has been invoked (`_onEnter`).
 
 Event properties:
 

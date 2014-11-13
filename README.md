@@ -212,13 +212,13 @@ This allows separation between construction and initialization.
 
 ### Possum Spec API
 
-* `namespace` {String} [optional]
+##### `namespace` {String} [optional]
 The namespace for this instance
 
-* `initialState` {String} **required**
+##### `initialState` {String} **required**
 The state to transition to when `.start()` is called
 
-* `states` {Object} **required**
+##### `states` {Object} **required**
 The states configuration in the shape of:
 
     ```js
@@ -253,7 +253,7 @@ The states configuration in the shape of:
     **Additional arguments will be ignored**.
 
 
-* `handlers` {Array} [optional]
+##### `handlers` {Array} [optional]
 
     Provide handler objects can be in the form of :
 
@@ -291,88 +291,98 @@ The states configuration in the shape of:
 
 ### Possum Instance API
 
-* `state` {String} 
+##### `state` {String} 
 
 The current state of the possum instance. 
 This is `undefined` until the instance has been `.start()`-ed.
 
-* `priorState` {String}
+##### `priorState` {String}
 
 The priorState state of the possum instance, if any. 
 This is `undefined` until a transition has occurred.
 
 
-* `handle(inputType, args)` {Function} 
+##### `handle(inputType, args)` {Function} 
 
 Queues the command _inputType_ and processes it with the singular _args_ payload.
 Note that only **one** argument will be used. Other arguments will be ignored.
 
 Returns a Promise resolving the context.
 
-* `transition(toState)` {Function}
+##### `transition(toState)` {Function}
 
 Convenience method that queues the transition commands `_onExit`, `_transition`, and `_onEnter` and processes them.
 
 Returns a Promise resolving the context.
 
-* `start` {Function}
+##### `start` {Function}
 
 Causes a transition to the `initialState`.
 
 Returns a Promise, resolving when transition has completed. 
 
-* `deferUntilTransition(toState)` {Function}
+##### `deferUntilTransition(toState)` {Function}
 
 Queues the current message (input) to be replayed after the possum has transitioned
 to `toState`. If `toState` is not provided, then it will replay after _any_
 transition has occurred.
 
-* `deferUntilNextHandler` {Function}
+##### `deferUntilNextHandler` {Function}
 
 Queues the current message (input) to be replayed after the possum has `handle`d another
 input, regardless of whether a transition has occurred. **Note:** be careful that
 you avoid infinite loops using this functionality.
 
+##### `current` {Function}
+
+Used internally, this returns an `processContext` which exposes:
+
+* `currentMessage` {Function} The message currently being handled
+* `completed` {Boolean} A flag indicating if the processing has completed
+
+You _may_ use this inside a handler to get access to the current message being invoked. 
+
+
 ### Possum Events
 
-* `handled` 
+##### `handled` 
 
 Emitted _just after_ an input handler has been invoked but probably before
 the handler has completed (asynchronously).
 
-    Event properties:
+Event properties:
 
-    * topic: 'handled'
-    * inputType: {String} the name of the handler you just called
-    * payload: {Any} The arguments passed into the `handle` call
-    * action: {String} the path of the handler you just called ; eg 'myState.myHandler'
+* topic: 'handled'
+* inputType: {String} the name of the handler you just called
+* payload: {Any} The arguments passed into the `handle` call
+* action: {String} the path of the handler you just called ; eg 'myState.myHandler'
 
 
-* `completed` 
+##### `completed` 
 
 Emitted _after_ an input handler Promise has resolved.
 
-    Event properties:
+Event properties:
 
-    * topic: 'completed'
-    * inputType: {String} the name of the handler you just called
-    * payload: {Any} The arguments passed into the `handle` call
-    * action: {String} the path of the handler you just called ; eg 'myState.myHandler'
+* topic: 'completed'
+* inputType: {String} the name of the handler you just called
+* payload: {Any} The arguments passed into the `handle` call
+* action: {String} the path of the handler you just called ; eg 'myState.myHandler'
 
-* `transitioned` 
+##### `transitioned` 
 
 Emitted _after_ a possum has transitioned into a state, just after its entry callback has been invoked (`_onEnter`).
 
-    Event properties:
+Event properties:
 
-    * topic: 'completed'
-    * inputType: {String} the name of the handler you just called
-    * payload: {Object} having these properties
-        - `toState` The state you just transitioned to
-        - `fromState` The state you just transitioned from
-    * action: {String} the path of the handler you just called ; eg 'myState.myHandler'
+* topic: 'completed'
+* inputType: {String} the name of the handler you just called
+* payload: {Object} having these properties
+    - `toState` The state you just transitioned to
+    - `fromState` The state you just transitioned from
+* action: {String} the path of the handler you just called ; eg 'myState.myHandler'
 
-##### Credits
+### Credits
 
 * [machina.js](https://github.com/ifandelse/machina.js)
 * [ascii generation](http://www.network-science.de/ascii/)

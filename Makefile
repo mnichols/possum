@@ -1,4 +1,4 @@
-LOG = export DEBUG=possum:*
+LOG = export DEBUG=possum:debug*
 
 build: clean
 	./node_modules/.bin/gulp build

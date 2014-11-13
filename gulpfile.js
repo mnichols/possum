@@ -16,7 +16,7 @@ gulp.task('build',[],function(){
         entries: ['./lib']
     }
     var b = browserify(opts)
-    b.require('./lib',{expose: 'ioc'})
+    b.require('./lib',{expose: 'possum'})
     return b.bundle()
         .pipe(vinyl('bundle.js'))
         .pipe(gulp.dest('./build'))

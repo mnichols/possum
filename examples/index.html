@@ -1,0 +1,58 @@
+<html>
+<head>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bluebird/1.2.2/bluebird.js"></script>
+    <script src="./bundle.js"></script>
+    <style>
+        .app {
+            display: flex;
+            flex-direction: column;
+        }
+        .app > * {
+            flex: 1;
+        }
+        button {
+            opacity: 1;
+            background-color: #00f;
+            color: white;
+            flex: 1;
+            width: 150px;
+        }
+        [disabled] {
+            opacity: 0.3;
+        }
+        .controls {
+            display: flex;
+            flex-direction: row;
+            margin: 10px 0;
+        }
+        .remaining {
+            flex: 0 0 50px;
+            margin: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="app">
+        <h1>Love Gun</h1>
+        <h2>Now At State: <span class="state"></span></h2>
+        <div class="player"></div>
+        <div class="remaining"></div>
+        <div class="controls">
+            <button type="button" class="initialize">Initialize</button>
+            <button type="button" class="load">Load</button>
+        </div>
+        <div class="controls">
+            <button type="button" class="aim">Aim</button>
+            <button type="button" class="pull-trigger">Pull Trigger</button>
+            <button type="liftNeedle" class="lift-needle">Lift Needle</button>
+        </div>
+        <div class="controls">
+            <button type="button" class="reload">Reload</button>
+        </div>
+    </div>
+    <script src="./app.js"></script>
+</body>
+
+</html>

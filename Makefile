@@ -15,6 +15,7 @@ silent:
 
 clean:
 	rm -rf build
+	rm -rf ./examples/bundle.js
 
 node: clean
 	$(LOG) && ./node_modules/.bin/testem -l Node
@@ -23,5 +24,11 @@ docs:
 	pip install Pygments
 	./node_modules/.bin/groc ./lib/**/*.js README.md
 	pushd ./doc; python -m SimpleHTTPServer; popd
+
+example: build
+	cp ./build/bundle.js ./examples
+	pushd ./examples; python -m SimpleHTTPServer; popd
+
+
 
 .PHONY: test build verbose silent docs node

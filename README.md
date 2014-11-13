@@ -1,6 +1,8 @@
->  _  _  _ _    _  
-> |_)(_)_)_)|_|||| 
-> |                
+```js
+ _  _  _ _    _  
+|_)(_)_)_)|_|||| 
+| state machine
+```
 
 > I am able.
 
@@ -229,3 +231,6 @@ command to be replayed immediately after the current handler has completed.
 Deferrals may be stored during an input handler.
 
 
+##### Credits
+
+[ascii generation](http://www.network-science.de/ascii/)

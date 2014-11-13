@@ -197,6 +197,7 @@ model
     var secretData = 'shhhh'
     this.prop == 'erty' // -> true
 })
+.create() //this creates the possum instance; you may also just call it as a function
 
 ```
 
@@ -204,33 +205,135 @@ model
 
 We needed asynchronous support for transitioning to states and for input handlers found on states.
 
-Due to asynchronous `_onEnter` callback potential, a machina must
+Due to asynchronous `_onEnter` callback potential, a `possum` must
 invoke `.start()` to be properly initialized.
 
 This allows separation between construction and initialization.
 
+### Possum Spec API
 
-### Model
+* `namespace` {String} [optional]
+The namespace for this instance
 
-Possum is composed of:
+* `initialState` {String} [required]
+The state to transition to when `.start()` is called
 
-#### States
+* `states` {Object} [required]
+The states configuration in the shape of:
 
-Compiles `.states` configuration to route inputs (eg events) to the appropriate
-handler.
+```js
+var states = {
+    'myState': {
+        _onEnter: function(){
+            //steps to perform right when entering a state
+            //can return an Promise for async support
+        }
+        ,'doIt': function(args) {
+            //handle the command 'doIt'
+            //receiving exactly ONE argument
+            return this.doIt()
+        }
+        ... 
+        ,_onExit: function() {
+            //steps to perform right before transitioning
+            //out of this state
+        }
+    }
+}
 
-#### Queue
+```
 
-Processes queued commands, in serial, invoking _n_ handlers per command, collected
-by the `states` router.
+Note that each state's input handler, will receive _one_ argument. That means you must
+invoke the handlers this way:
 
-#### Deferrals
+```js
+model.handle('doIt','myArgument')
+```
 
-Exposes deferral api. A deferral is a specification which, when satisfied, requeues its
-command to be replayed immediately after the current handler has completed.
-Deferrals may be stored during an input handler.
+**Additional arguments will be ignored**.
 
+
+* `handlers` {Array} [optional]
+
+Provide handler objects can be in the form of :
+
+```js
+
+var handler = {
+    name: 'myHandler'
+    ,fn: function(args) {
+        // just like any other handler
+    }
+    ,match: function(spec) {
+        //spec.inputType is the input type being invoked
+        //spec.state is the current state of the possum instance
+        return true/false
+    }
+}
+
+```
+
+Or, you may provide **wildcard handlers** in the form of : 
+
+var handler = {
+    '*': function(args) {
+        //just like any other handler
+    }
+}
+
+
+The order of execution for matching handlers is:
+
+1. Wildcard handlers
+2. Handlers configured through `handlers` collection that match (not through state config)
+3. State input handler
+
+
+### Possum Instance API
+
+* `state` {String} 
+
+The current state of the possum instance. 
+This is `undefined` until the instance has been `.start()`-ed.
+
+* `priorState` {String}
+
+The priorState state of the possum instance, if any. 
+This is `undefined` until a transition has occurred.
+
+
+* `handle(inputType, args)` {Function} 
+
+Queues the command _inputType_ and processes it with the singular _args_ payload.
+Note that only **one** argument will be used. Other arguments will be ignored.
+
+Returns a Promise resolving the context.
+
+* `transition(toState)` {Function}
+
+Convenience method that queues the transition commands `_onExit`, `_transition`, and `_onEnter` and processes them.
+
+Returns a Promise resolving the context.
+
+* `start` {Function}
+
+Causes a transition to the `initialState`.
+
+Returns a Promise, resolving when transition has completed. 
+
+* `deferUntilTransition(toState)` {Function}
+
+Queues the current message (input) to be replayed after the possum has transitioned
+to `toState`. If `toState` is not provided, then it will replay after _any_
+transition has occurred.
+
+* `deferUntilNextHandler` {Function}
+
+Queues the current message (input) to be replayed after the possum has `handle`d another
+input, regardless of whether a transition has occurred. **Note:** be careful that
+you avoid infinite loops using this functionality.
 
 ##### Credits
 
-[ascii generation](http://www.network-science.de/ascii/)
+* [machina.js](https://github.com/ifandelse/machina.js)
+* [ascii generation](http://www.network-science.de/ascii/)

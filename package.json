@@ -18,7 +18,6 @@
   "author": "Mike Nichols <nichols.mike.s@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "bluebird": "^2.3.6",
     "browserify": "^6.2.0",
     "chai": "^1.9.2",
     "chai-as-promised": "^4.1.1",
@@ -31,6 +30,7 @@
     "vinyl-source-stream": "^1.0.0"
   },
   "dependencies": {
+    "bluebird": "^2.3.6",
     "cuid": "^1.2.4",
     "debug": "^2.1.0",
     "eventemitter2": "^0.4.14",

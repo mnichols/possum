@@ -201,6 +201,38 @@ model
 
 ```
 
+#### Extending a possum
+
+Sometimes you may want to merge two `spec` objects into a single instance. 
+Ideally, this is the burden of the calling code but `possum` exposes an `extend` function to assist with this form of composition.
+Note that will _overwrite_ states of the same name with this procedure. If you want fancier mixing then prepare the input `spec` object
+before passing it to `possum`.
+
+
+```js
+
+var spec = {
+    initialState: 'foo'
+    ,states: {
+        'foo': {
+            ...
+        }
+    }
+}
+var disposable = {
+    states: {
+        'disposed': {
+            _onEnter: function(){
+                this.disposed = true
+            }
+        }
+    }
+}
+var model = possum(spec).extend(disposable).create()
+model.transition('disposed') // model.disposed === true
+
+```
+
 ### Asynchronous transitions and handlers
 
 We needed asynchronous support for transitioning to states and for input handlers found on states.

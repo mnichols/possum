@@ -26,6 +26,9 @@ describe('Extending Possum',function(){
                         }
                     }
                 }
+                ,custom: function(args){
+                    this.customCalled = args
+                }
                 ,handlers: [ {
                         match: function(spec) {
                             return spec.inputType === 'b'
@@ -63,6 +66,12 @@ describe('Extending Possum',function(){
                 .then(function(){
                     sut.specialHandler.should.equal('goo')
                 })
+
+        })
+        it('should mixin additional attrs',function(){
+            sut.custom('foo')
+            sut.customCalled.should.equal('foo')
+
 
         })
     })

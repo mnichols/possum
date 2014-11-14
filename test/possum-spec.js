@@ -25,8 +25,11 @@ describe('Possum',function(){
                 .methods(emitter)
                 .create()
             })
-            it('should not be in the initial state',function(){
-                expect(sut.state).to.be.undefined
+            it('should throw when accessing state before started',function(){
+                function accessingState(){
+                    return sut.state
+                }
+                accessingState.should.throw(/`state` is not set on unstarted possums./)
             })
             it('should be namespaced',function(){
                 sut.namespace.should.equal('foo')
@@ -597,6 +600,28 @@ describe('Possum',function(){
             it('should transition',function(){
                 sut.state.should.equal('bar')
             })
+        })
+
+    })
+    describe('when accessing api before starting',function(){
+        beforeEach(function(){
+            sut = possum({
+                initialState: 'foo'
+                ,states: {
+                    'foo': {}
+                }
+            })
+            .create()
+        })
+        it('should throw on transition',function(){
+            sut.transition.bind(sut)
+                .should.throw(/This possum has not been `start`ed/)
+
+        })
+        it('should throw on handle',function(){
+            sut.handle.bind(sut)
+                .should.throw(/This possum has not been `start`ed/)
+
         })
 
     })

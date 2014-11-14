@@ -121,7 +121,6 @@ describe('Possum',function(){
             })
         })
         describe('given transition to invalid state',function(){
-            var emitter
             beforeEach(function(){
                 events = []
                 sut = possum({

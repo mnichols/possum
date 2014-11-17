@@ -2,6 +2,7 @@
 
 describe('Extending Possum',function(){
     var possum = require('..')
+        ,stampit = require('stampit')
         ,mockEmitter = require('./mock-emitter')
         ,Promise = require('bluebird')
     var sut
@@ -40,6 +41,7 @@ describe('Extending Possum',function(){
                     }
                 ]
             }
+
             sut = possum(spec)
                 .extend(spec2)
                 .create()

@@ -1,6 +1,6 @@
 {
   "name": "possum",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "I am able. Evented State Machine.",
   "main": "index.js",
   "directories": {

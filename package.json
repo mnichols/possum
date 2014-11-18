@@ -1,6 +1,6 @@
 {
   "name": "possum",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "I am able. Evented State Machine.",
   "main": "index.js",
   "directories": {
@@ -16,6 +16,10 @@
     "marsupial"
   ],
   "author": "Mike Nichols <nichols.mike.s@gmail.com>",
+  "repository": {
+      "type":"git",
+      "url":"https://github.com/mnichols/possum"
+  },
   "license": "MIT",
   "devDependencies": {
     "browserify": "^6.2.0",

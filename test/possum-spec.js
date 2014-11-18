@@ -209,8 +209,8 @@ describe('Possum',function(){
             })
             it('should emit a transitioned event',function(){
                 transitioned.length.should.equal(1)
-                transitioned[0].payload.toState.should.equal('a')
-                transitioned[0].payload.fromState.should.equal('uninitialized')
+                transitioned[0].toState.should.equal('a')
+                transitioned[0].fromState.should.equal('uninitialized')
             })
         })
 

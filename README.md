@@ -371,7 +371,7 @@ you avoid infinite loops using this functionality.
 
 Returns `this` possum instance.
 
-##### `current` {Function}
+##### `currentProcessContext` {Function}
 
 Returns an `processContext` which exposes:
 

@@ -76,7 +76,12 @@ describe('Possum',function(){
         })
         beforeEach(function(){
             sut.on('handled', events.push.bind(events))
-            return sut.start()
+            return sut.start().then(function(result){
+                return result
+
+            },function(err){
+                console.error('err',err)
+            })
         })
         it('should be started',function(){
             sut.started.should.be.true

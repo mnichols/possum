@@ -105,55 +105,6 @@ describe('AsyncQueue',function(){
             })
 
         })
-        describe('given consequetive `process` invocations',function(){
-            var model
-                ,deferred
-                ,events
-            beforeEach(function(){
-                events = []
-                deferred = queue()
-                    .state({
-                        router: testRouter
-                        ,name: 'possum.deferred.queue'
-                    })
-                    .methods({
-                        raise: events.push.bind(events)
-                    })
-                    .create()
-
-            })
-            beforeEach(function(){
-                model = {
-                    handled: []
-                }
-                sut = queue()
-                    .state({
-                        router: testRouter
-                    })
-                    .methods({
-                        raise: events.push.bind(events)
-                    })
-                    .create()
-
-                sut.queues.push(deferred)
-            })
-
-            beforeEach(function(){
-                model = {
-                    handled: []
-                }
-            })
-            beforeEach(function() {
-                return Promise.all([
-                    sut.process(model,[{ inputType: 'a', payload: 'aaa'}])
-                    ,sut.process(model, [{inputType: 'b', payload: 'bbb'}])
-                ])
-            })
-            it('should process each command in serial',function(){
-                model.handled[0].should.equal('aaa')
-                model.handled[1].should.equal('bbb')
-            })
-        })
         describe('given none deferred',function(){
             var model
                 ,events

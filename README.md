@@ -371,6 +371,11 @@ you avoid infinite loops using this functionality.
 
 Returns `this` possum instance.
 
+##### `schedule` {Function}
+
+If the possum instance is currently processing messages, this will cause `inputType` to be `handle`d immediately after the current processing messages have 
+completed; otherwise, this will simply `handle` them immediately.
+
 ##### `currentProcessContext` {Function}
 
 Returns an `processContext` which exposes:

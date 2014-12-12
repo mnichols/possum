@@ -4,6 +4,7 @@
 describe('AsyncQueue',function(){
     var queue = require('../lib/async-queue')
         ,command = require('../lib/command')
+        ,Promise = require('bluebird')
         ,sut
     describe('when processing commands',function(){
         var testRouter

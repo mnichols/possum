@@ -335,6 +335,19 @@ This is `undefined` until the instance has been `.start()`-ed.
 The priorState state of the possum instance, if any. 
 This is `undefined` until a transition has occurred.
 
+##### `namespaced([str,namespace])` {Function}
+
+Receives an optional `str` argument to produce an namespaced string using underlying delimiter rules.
+
+If `str` is not provided, the instance's `namespace` is returned (from the spec).
+
+If the instance has an `undefined` namespace the input `namespace` argument is used; if that is undefined
+the `str` is returned.
+
+This utility is used for producing underlying events for subscription; eg : 
+
+`possumInstance.on(possumInstance.namespaced('handled'),function(){...})`
+
 
 ##### `handle(inputType, args)` {Function} 
 

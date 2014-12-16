@@ -54,5 +54,91 @@ describe('PossumAsynchrony',function(){
             sut.handled[2].should.equal('b.b')
         })
     })
+    describe('when configuring complex interleaving of event listeners with promises',function(){
+        var inner
+        beforeEach(function(){
+            emitter = mockEmitter()
+
+            sut = possum({
+                initialState: 'a'
+                ,namespace: 'foo'
+                ,handled: []
+                ,states: {
+                    'a': {
+                        _onEnter: function(){
+                            this.inner.on('transitioned',function(e){
+                                if(e.toState === 'z') {
+                                    return this.schedule('z')
+                                }
+                            }.bind(this))
+                        }
+                        ,'a': function(){
+                            this.handled.push('a.a')
+                            return this.inner.handle('foo')
+                                .then(function(result){
+                                    console.log('done calling inner.foo')
+                                    return result
+                                })
+                        }
+                        ,'z': function(){
+                            this.handled.push('a.z')
+                            this.deferUntilTransition()
+                            return this.transition('b')
+
+                        }
+                    }
+                    ,'b': {
+                        'z': function(){
+                            this.handled.push('b.z')
+                        }
+                    }
+
+                }
+            })
+            .methods(emitter)
+            .create()
+
+            var innerPossum = possum({
+                initialState: 'x'
+                ,states: {
+                    'x': {
+                        'foo': function(){
+                            this.deferUntilTransition()
+                            return this.transition('y')
+                        }
+                    }
+                    ,'y': {
+                        'foo': function(){
+                            return this.transition('z')
+                        }
+                    }
+                    ,'z': {
+
+                    }
+                }
+            })
+            sut.inner = inner = innerPossum()
+
+            return sut.inner.start()
+                .then(sut.start.bind(sut))
+        })
+        beforeEach(function(done){
+            sut.handle('a')
+            setTimeout(function(){
+                done()
+
+            })
+        })
+        it('should work ok',function(){
+            sut.handled.length.should.equal(3)
+            sut.handled[0].should.equal('a.a')
+            sut.handled[1].should.equal('a.z')
+            sut.handled[2].should.equal('b.z')
+        })
+        it('should not interfere with inner',function(){
+            inner.state.should.equal('z')
+        })
+
+    })
 
 })

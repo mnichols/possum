@@ -18,7 +18,8 @@ describe('PossumAsynchrony',function(){
                     'a': {
                         'a': function(){
                             this.handled.push('a.a')
-                            return this.handle('a1')
+                            return Promise.delay(500)
+                                .then(this.handle.bind(this,'a1'))
                                 .then(this.transition.bind(this,'b'))
                         }
                         ,'b': function(){
@@ -67,16 +68,22 @@ describe('PossumAsynchrony',function(){
                     'a': {
                         _onEnter: function(){
                             this.inner.on('transitioned',function(e){
+                                var ctx = this.currentProcessContext()
                                 if(e.toState === 'z') {
+                                    //note that this use of `schedule` will hang the current context
+                                    //and could potentially _never_ resolve
                                     return this.schedule('z')
                                 }
+                                return null
                             }.bind(this))
                         }
                         ,'a': function(){
                             this.handled.push('a.a')
-                            return this.inner.handle('foo')
+                            //note that we are _not_ returning the result from
+                            //inner since that would cause the context to hang
+                            //when using `schedule` above
+                            this.inner.handle('foo')
                                 .then(function(result){
-                                    console.log('done calling inner.foo')
                                     return result
                                 })
                         }
@@ -126,14 +133,16 @@ describe('PossumAsynchrony',function(){
             sut.handle('a')
             setTimeout(function(){
                 done()
-
-            })
+            },100)
         })
         it('should work ok',function(){
             sut.handled.length.should.equal(3)
             sut.handled[0].should.equal('a.a')
             sut.handled[1].should.equal('a.z')
             sut.handled[2].should.equal('b.z')
+        })
+        it('should transition properly',function(){
+            sut.state.should.equal('b')
         })
         it('should not interfere with inner',function(){
             inner.state.should.equal('z')

@@ -1,7 +1,7 @@
 'use strict';
 
 var stampit = require('stampit')
-    ,EventEmitter2 = require('eventemitter2').EventEmitter2
+    ,EventEmitter2 = require('chained-emitter').EventEmitter
 module.exports = function mock(emitter){
     emitter = emitter || new EventEmitter2({
         wildcard: true
@@ -18,6 +18,7 @@ module.exports = function mock(emitter){
         })
         this.emit = emitter.emit.bind(emitter)
         this.on = emitter.on.bind(emitter)
+        this.once = emitter.once.bind(emitter)
         this.emitted = function(e){
             if(e) {
                 return (events[e] || [])

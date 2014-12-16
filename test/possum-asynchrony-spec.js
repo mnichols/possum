@@ -1,6 +1,6 @@
 'use strict';
 
-describe.skip('PossumAsynchrony',function(){
+describe('PossumAsynchrony',function(){
     var possum = require('..')
         ,mockEmitter = require('./mock-emitter')
         ,Promise = require('bluebird')
@@ -70,7 +70,7 @@ describe.skip('PossumAsynchrony',function(){
                     'a': {
                         _onEnter: function(){
 
-                            this.inner.on('*.transitioned',function(e){
+                            this.inner.on(this.inner.namespaced('transitioned'),function(e){
                                 var ctx = this.currentProcessContext()
                                 if(e.toState === 'z') {
                                     //note that this use of `schedule` will hang the current context

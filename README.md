@@ -401,49 +401,49 @@ This is really for internal use, but you _may_ use this inside a handler to get 
 
 ### Possum Events
 
-##### `handled` 
+##### `{namespace}.handled` 
 
 Emitted _just after_ an input handler has been invoked but probably before
 the handler has completed (asynchronously).
 
 Event properties:
 
-* topic: 'handled'
+* topic: '{namespace}.handled'
 * inputType: {String} the name of the handler you just called
 * payload: {Any} The arguments passed into the `handle` call
 * action: {String} the path of the handler you just called ; eg 'myState.myHandler'
 
 
-##### `completed` 
+##### `{namespace}.completed` 
 
 Emitted _after_ an input handler Promise has resolved.
 
 Event properties:
 
-* topic: 'completed'
+* topic: '{namespace}.completed'
 * inputType: {String} the name of the handler you just called
 * payload: {Any} The arguments passed into the `handle` call
 * action: {String} the path of the handler you just called ; eg 'myState.myHandler'
 
-##### `transitioned` 
+##### `{namespace}.transitioned` 
 
 Emitted _after_ a possum has transitioned into a state, 
 but _before_ its entry callback has been invoked (`_onEnter`).
 
 Event properties:
 
-* topic: 'completed'
+* topic: '{namespace}.transitioned'
 * inputType: {String} the name of the handler you just called
 * payload: {Object} having these properties
     - `toState` The state you just transitioned to
     - `fromState` The state you just transitioned from
 * action: {String} the path of the handler you just called ; eg 'myState.myHandler'
 
-##### `noHandler`
+##### `{namespace}.noHandler`
 
 Emitted when an input has been attempted on a state that does not declare it.
 
-#### `invalidTransition`
+#### `{namespace}.invalidTransition`
 
 Emitted when an transition is attempted to a state that does not exist.
 

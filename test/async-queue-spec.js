@@ -46,7 +46,10 @@ describe('AsyncQueue',function(){
                         ,name: 'possum.deferred.queue'
                     })
                     .methods({
-                        raise: events.push.bind(events)
+                        raise: function(e) {
+                            events.push.call(events,e)
+                            return Promise.resolve(this)
+                        }
                     })
                     .create()
 
@@ -64,7 +67,10 @@ describe('AsyncQueue',function(){
                         router: testRouter
                     })
                     .methods({
-                        raise: events.push.bind(events)
+                        raise: function(e) {
+                            events.push.call(events,e)
+                            return Promise.resolve(this)
+                        }
                     })
                     .create()
 
@@ -118,7 +124,10 @@ describe('AsyncQueue',function(){
                         router: testRouter
                     })
                     .methods({
-                        raise: events.push.bind(events)
+                        raise: function(e) {
+                            events.push.call(events,e)
+                            return Promise.resolve(this)
+                        }
                     })
                     .create()
             })

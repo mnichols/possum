@@ -42,9 +42,11 @@ describe('PossumAsynchrony',function(){
             return sut.start()
         })
 
-        beforeEach(function(){
+        beforeEach(function(done){
             sut.handle('a')
-            return sut.schedule('b')
+            sut.schedule('b')
+            //be sure this delay is > delay in Promise.delay(..) above
+            setTimeout(done,1000)
         })
         /**
          * we want to guarantee that a call to handle will enqueue subsequent calls to handle */
@@ -67,14 +69,16 @@ describe('PossumAsynchrony',function(){
                 ,states: {
                     'a': {
                         _onEnter: function(){
+
                             this.inner.on('transitioned',function(e){
                                 var ctx = this.currentProcessContext()
                                 if(e.toState === 'z') {
                                     //note that this use of `schedule` will hang the current context
                                     //and could potentially _never_ resolve
+                                    //but this was resolved by relying on context.completed event
                                     return this.schedule('z')
                                 }
-                                return null
+                                return null //superfluous
                             }.bind(this))
                         }
                         ,'a': function(){
@@ -82,7 +86,7 @@ describe('PossumAsynchrony',function(){
                             //note that we are _not_ returning the result from
                             //inner since that would cause the context to hang
                             //when using `schedule` above
-                            this.inner.handle('foo')
+                            return this.inner.handle('foo')
                                 .then(function(result){
                                     return result
                                 })

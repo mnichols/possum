@@ -6,6 +6,15 @@ describe('Possum',function(){
         ,Promise = require('bluebird')
     var sut
         ,emitter
+    describe('its prototype',function(){
+        it('should should expose its EVENTS',function(){
+            possum.EVENTS.HANDLED.should.equal('handled')
+            possum.EVENTS.COMPLETED.should.equal('completed')
+            possum.EVENTS.DEFERRED.should.equal('deferred')
+            possum.EVENTS.TRANSITIONED.should.equal('transitioned')
+
+        })
+    })
     describe('when created',function(){
         describe('given simple configuration',function(){
             beforeEach(function(){
@@ -24,6 +33,13 @@ describe('Possum',function(){
                 })
                 .methods(emitter)
                 .create()
+            })
+            it('should should expose its EVENTS',function(){
+                sut.EVENTS.HANDLED.should.equal('handled')
+                sut.EVENTS.COMPLETED.should.equal('completed')
+                sut.EVENTS.DEFERRED.should.equal('deferred')
+                sut.EVENTS.TRANSITIONED.should.equal('transitioned')
+
             })
             it('should throw when accessing state before started',function(){
                 function accessingState(){

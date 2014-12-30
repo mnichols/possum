@@ -77,7 +77,7 @@ describe('Possum',function(){
             })
         })
     })
-    describe('when started',function(){
+    describe('when started via the api',function(){
         var events
         beforeEach(function(){
             events = []
@@ -111,7 +111,34 @@ describe('Possum',function(){
         })
 
     })
-
+    describe('when started manually', function() {
+        beforeEach(function () {
+            sut = possum({
+                initialState: 'uninitialized'
+                , namespace: 'foo'
+                , states: {
+                    'uninitialized': {}
+                    , 'initialized': {}
+                }
+            })
+            .create()
+        })
+        beforeEach(function () {
+            return sut.handle('_start', {
+                toState: 'uninitialized'
+            })
+        })
+        it('should be started', function() {
+           sut.started.should.be.true
+        })
+        it('should be on initialState',function(){
+            sut.state.should.equal('uninitialized')
+        })
+        it('should have an undefined priorState',function(){
+            sut.should.contain.keys('priorState')
+            expect(sut.priorState).to.be.undefined
+        })
+    })
     describe('when transitioning',function(){
         var events
         describe('given transition to current state',function(){
@@ -639,12 +666,13 @@ describe('Possum',function(){
                 .should.throw(/This possum has not been `start`ed/)
 
         })
-        it('should throw on handle',function(){
+        it('should throw on any non "_start" handle', function(){
             sut.handle.bind(sut)
                 .should.throw(/This possum has not been `start`ed/)
-
         })
-
+        it('should allow handling "_start" manually', function () {
+            sut.handle.bind(sut, '_start')
+                .should.not.throw()
+        })
     })
-
 })

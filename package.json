@@ -1,6 +1,6 @@
 {
   "name": "possum",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "I am able. Evented State Machine.",
   "main": "index.js",
   "directories": {
@@ -34,7 +34,7 @@
     "vinyl-source-stream": "^1.0.0"
   },
   "dependencies": {
-    "bluebird": "^2.3.6",
+    "bluebird": "^2.9.3",
     "chained-emitter": "^0.1.2",
     "cuid": "^1.2.4",
     "debug": "^2.1.0",

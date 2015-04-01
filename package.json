@@ -34,7 +34,7 @@
     "vinyl-source-stream": "^1.0.0"
   },
   "dependencies": {
-    "bluebird": "^2.9.3",
+    "bluebird": "^2.9.15",
     "chained-emitter": "^0.1.2",
     "cuid": "^1.2.4",
     "debug": "^2.1.0",

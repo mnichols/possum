@@ -32,6 +32,7 @@ describe('Extending Possum',function(){
                 }
                 ,handlers: [ {
                         match: function(spec) {
+                            this.matched = (this.matched || []).concat(spec.inputType)
                             return spec.inputType === 'b'
                         }
                         ,fn: function(args) {
@@ -75,6 +76,12 @@ describe('Extending Possum',function(){
             sut.customCalled.should.equal('foo')
 
 
+        })
+        it('should preserve context in matchers',function(){
+            return sut.handle('b','goo')
+                .then(function(){
+                    sut.matched.should.contain('b')
+                })
         })
     })
 

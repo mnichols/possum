@@ -1,6 +1,6 @@
 'use strict';
 
-describe('PossumAsynchrony',function(){
+describe.skip('PossumAsynchrony',function(){
     var possum = require('..')
         ,mockEmitter = require('./mock-emitter')
         ,Promise = require('bluebird')

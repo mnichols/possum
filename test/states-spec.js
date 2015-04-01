@@ -56,8 +56,6 @@ describe('States',function(){
             model.handled[0].should.eql(['*','foo'])
             model.handled[1].should.eql(['_start','foo'])
             model.started.should.be.true
-
-
         })
     })
     describe('when collecting handlers',function(){

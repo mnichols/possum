@@ -29,6 +29,16 @@ example: build
 	cp ./build/bundle.js ./examples
 	pushd ./examples; python -m SimpleHTTPServer; popd
 
+tape:
+	./node_modules/.bin/babel-tape-runner ./test/**/*-test.js # | ./node_modules/.bin/faucet
+
+browser:
+	./node_modules/.bin/browserify \
+		--transform [babelify --blacklist regenerator ] \
+		--debug ./test/*.js \
+		| ./node_modules/.bin/browser-run -p 2222  \
+		| ./node_modules/.bin/faucet
 
 
-.PHONY: test build verbose silent docs node
+
+.PHONY: test build verbose silent docs node tape

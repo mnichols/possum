@@ -21,7 +21,25 @@
     "url": "https://github.com/mnichols/possum"
   },
   "license": "MIT",
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "blacklist": "regenerator",
+          "optional": [ "runtime" ],
+          "plugins": [
+            "object-assign"
+          ]
+        }
+      ]
+    ]
+  },
   "devDependencies": {
+    "babel": "^5.8.21",
+    "babel-tape-runner": "^1.2.0",
+    "babelify": "^6.2.0",
+    "blue-tape": "^0.1.10",
     "browserify": "^6.2.0",
     "chai": "^1.9.2",
     "chai-as-promised": "^4.1.1",
@@ -39,6 +57,6 @@
     "cuid": "^1.2.4",
     "debug": "^2.1.0",
     "eventemitter2": "^0.4.14",
-    "stampit": "^1.1.0"
+    "stampit": "^2.1.0"
   }
 }

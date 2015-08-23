@@ -227,10 +227,26 @@ test('[async] multiple deferrals', (assert) => {
         })
         .build()
 
-    return machine.handle('b')
+    return machine.handle('b', { foo: 'bar'})
         .then(function(it){
+            let hits = machine.target().hits
             assert.equal(machine.currentState,'dob')
-            assert.equal(machine.target().hits.length, 3)
+            assert.equal(hits.length, 3)
+            assert.deepEqual(hits[0], {
+                state: 'a'
+                , inputType: 'b'
+                , args: { foo: 'bar'}
+            })
+            assert.deepEqual(hits[1], {
+                state: 'b'
+                , inputType: 'b'
+                , args: { foo: 'bar'}
+            })
+            assert.deepEqual(hits[2], {
+                state: 'dob'
+                , inputType: 'b'
+                , args: { foo: 'bar'}
+            })
         })
 
 

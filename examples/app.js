@@ -152,8 +152,8 @@ var model = possum()
                 this.enable(['liftNeedle'])
             }
             ,'aim': function(args){
-                this.deferUntilNextHandler()
-                return this.handle('liftNeedle')
+                this.handle('liftNeedle')
+                this.handle('aim',args)
             }
             ,'liftNeedle': function(){
                 if(this.bullets.length) {
@@ -165,9 +165,6 @@ var model = possum()
         ,'emptied': {
             _enter: function(){
                 this.enable(['reload'])
-                return this.handle('aim')
-            }
-            ,'aim': function(args){
                 return this.recordPlayer.returnArm()
             }
             ,'reload': function(){

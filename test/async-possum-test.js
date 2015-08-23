@@ -91,6 +91,7 @@ test('events are emitted', (assert) => {
 
 
 })
+
 test('transition deferral', ( assert ) => {
     let model = stampit()
         .refs({ name: 'deadbolt', code: '123'})

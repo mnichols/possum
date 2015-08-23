@@ -55,8 +55,8 @@ test('handler transitions [synchronous]',(assert) => {
     assert.equal(machine.currentState, 'locked')
 })
 
-test('transition deferral', ( assert ) => {
-    assert.plan(27)
+test('deferred transitions [synchronous]', ( assert ) => {
+    assert.plan(32)
     let model = stampit()
         .refs({ name: 'deadbolt', code: '123'})
 
@@ -70,22 +70,23 @@ test('transition deferral', ( assert ) => {
     //use bad code
     machine.handle('enterCode', { code: '456'})
     setTimeout(function() {
+        console.log(events);
         assert.equal(events.length, 12)
         assert.equal(machine.currentState, 'locked')
 
         assert.equal(events[0].topic, 'handling')
         assert.equal(events[0].payload.inputType, 'enterCode')
 
-        assert.equal(events[1].topic, 'invoked')
-        assert.equal(events[1].payload.inputType, 'enterCode')
+        assert.equal(events[1].topic, 'handling')
+        assert.equal(events[1].payload.inputType, 'deny')
 
-        assert.equal(events[2].topic, 'handled')
+        assert.equal(events[2].topic, 'deferred')
         assert.equal(events[2].payload.inputType, 'deny')
 
-        assert.equal(events[3].topic, 'handling')
-        assert.equal(events[3].payload.inputType, 'deny')
+        assert.equal(events[3].topic, 'transitioned')
+        assert.equal(events[3].payload.toState, 'denied')
 
-        assert.equal(events[4].topic, 'deferred')
+        assert.equal(events[4].topic, 'handling')
         assert.equal(events[4].payload.inputType, 'deny')
 
         assert.equal(events[5].topic, 'invoked')
@@ -93,24 +94,27 @@ test('transition deferral', ( assert ) => {
 
         assert.equal(events[6].topic, 'handled')
         assert.equal(events[6].payload.inputType, 'deny')
+        assert.equal(events[6].state, 'denied')
 
-        assert.equal(events[7].topic, 'transitioned')
-        assert.equal(events[7].payload.toState, 'denied')
+        assert.equal(events[7].topic, 'invoked')
+        assert.equal(events[7].payload.inputType, 'deny')
+        assert.equal(events[7].state, 'locked')
 
-        assert.equal(events[8].topic, 'handling')
+        assert.equal(events[8].topic, 'handled')
         assert.equal(events[8].payload.inputType, 'deny')
-        assert.equal(events[8].state, 'denied')
+        assert.equal(events[8].state, 'locked')
 
         assert.equal(events[9].topic, 'invoked')
-        assert.equal(events[9].payload.inputType, 'deny')
-        assert.equal(events[9].state, 'denied')
+        assert.equal(events[9].payload.inputType, 'enterCode')
+        assert.equal(events[9].state, 'locked')
 
         assert.equal(events[10].topic, 'handled')
         assert.equal(events[10].payload.inputType, 'enterCode')
+        assert.equal(events[10].state, 'locked')
 
         assert.equal(events[11].topic, 'transitioned')
         assert.equal(events[11].payload.toState, 'locked')
-
+        assert.equal(events[11].payload.fromState, 'denied')
 
     }, 1100)
 })

@@ -369,12 +369,6 @@ Emitted when an input has been attempted on a state that does not declare it.
 
 Emitted when an transition is attempted to a state that does not exist.
 
-### Diagnostics
-
-`possum` likes to talk alot using the `debug` npm module. 
-To enable logging, drop into your console and type `localStorage.debug = 'possum*'`.
-To turn it back off, type `localStorage.debug = undefined`.
-In node, you can  pass `DEBUG=possum*` as an environment variable.
 
 ### Tests
 

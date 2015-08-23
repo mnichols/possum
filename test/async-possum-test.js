@@ -36,9 +36,15 @@ const promiseBased = (cfg) => {
                 }
             }
             , 'denied': {
-                'deny': function( args, target ) {
+                '_enter': function( target ) {
+                    target.denials++
+                }
+                , 'deny': function( args, target ) {
                     return Promise.delay(1000)
                         .then(this.transition.bind(this,'locked'))
+                }
+                , '_exit': function( target ) {
+                    target.restarts++
                 }
             }
         })
@@ -47,10 +53,33 @@ const promiseBased = (cfg) => {
 
 }
 
+test.only('state lifecycle', (assert) => {
+    let model = stampit()
+        .refs({
+            name: 'deadbolt'
+            , code: '123'
+            , denials: 0
+            , restarts: 0
+        })
+        .create()
+
+
+    let machine = promiseBased({ initialState: 'locked' })
+    machine.target(model)
+
+    return machine.handle('enterCode', { code: '456' })
+    .then(function(){
+        assert.equal(machine.currentState, 'locked')
+        assert.equal(model.denials,1)
+        assert.equal(model.restarts,1)
+    })
+
+})
 test('handler transitions [promise based]',(assert) => {
     assert.plan(1)
     let model = stampit()
         .refs({ name: 'deadbolt', code: '123'})
+        .create()
 
     let machine = promiseBased()
     machine.target(model)
@@ -62,6 +91,7 @@ test('handler transitions [promise based]',(assert) => {
 test('events are emitted', (assert) => {
     let model = stampit()
         .refs({ name: 'deadbolt', code: '123'})
+        .create()
 
     let machine = promiseBased()
     machine.target(model)

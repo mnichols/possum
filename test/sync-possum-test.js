@@ -47,6 +47,7 @@ test('handler transitions [synchronous]',(assert) => {
     assert.plan(1)
     let model = stampit()
         .refs({ name: 'deadbolt', code: '123'})
+        .create()
 
     let machine = synchronous()
     machine.target(model)
@@ -59,6 +60,7 @@ test('deferred transitions [synchronous]', ( assert ) => {
     assert.plan(32)
     let model = stampit()
         .refs({ name: 'deadbolt', code: '123'})
+        .create()
 
     let machine = synchronous({initialState: 'locked'})
     let events = []
@@ -70,7 +72,6 @@ test('deferred transitions [synchronous]', ( assert ) => {
     //use bad code
     machine.handle('enterCode', { code: '456'})
     setTimeout(function() {
-        console.log(events);
         assert.equal(events.length, 12)
         assert.equal(machine.currentState, 'locked')
 

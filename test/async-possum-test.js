@@ -181,3 +181,57 @@ test('[async] transition deferral', ( assert ) => {
     })
 
 })
+
+test('[async] multiple deferrals', (assert) => {
+    let machine = possum()
+        .config({
+            initialState: 'a'
+            , namespace: 'foo'
+        })
+        .target({ hits: []})
+        .states({
+            'a': {
+                'b': function(args, target) {
+                    this.deferUntilTransition()
+                    target.hits.push({
+                        state: this.currentState
+                        , args: args
+                        , inputType: 'b'
+                    })
+                    return Promise.resolve()
+                        .then(this.transition.bind(this,'b'))
+                }
+            }
+            , 'b': {
+                'b': function(args, target ) {
+                    this.deferUntilTransition()
+                    target.hits.push({
+                        state: this.currentState
+                        , args: args
+                        , inputType: 'b'
+                    })
+                    return Promise.resolve()
+                        .then(this.transition.bind(this,'dob'))
+                }
+            }
+            , 'dob': {
+                'b': function(args, target) {
+                    target.hits.push({
+                        state: this.currentState
+                        , args: args
+                        , inputType: 'b'
+                    })
+                }
+            }
+
+        })
+        .build()
+
+    return machine.handle('b')
+        .then(function(it){
+            assert.equal(machine.currentState,'dob')
+            assert.equal(machine.target().hits.length, 3)
+        })
+
+
+})

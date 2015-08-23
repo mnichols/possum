@@ -178,3 +178,52 @@ test('[sync] invalid transition', (assert) => {
 
 
 })
+test('[sync] multiple deferrals', (assert) => {
+    assert.plan(2)
+    let machine = possum()
+        .config({
+            initialState: 'a'
+            , namespace: 'foo'
+        })
+        .target({ hits: []})
+        .states({
+            'a': {
+                'b': function(args, target) {
+                    this.deferUntilTransition()
+                    target.hits.push({
+                        state: this.currentState
+                        , args: args
+                        , inputType: 'b'
+                    })
+                    return this.transition('b')
+                }
+            }
+            , 'b': {
+                'b': function(args, target ) {
+                    this.deferUntilTransition()
+                    target.hits.push({
+                        state: this.currentState
+                        , args: args
+                        , inputType: 'b'
+                    })
+                    return this.transition('dob')
+                }
+            }
+            , 'dob': {
+                'b': function(args, target) {
+                    target.hits.push({
+                        state: this.currentState
+                        , args: args
+                        , inputType: 'b'
+                    })
+                }
+            }
+
+        })
+        .build()
+
+    machine.handle('b')
+    assert.equal(machine.currentState,'dob')
+    assert.equal(machine.target().hits.length, 3)
+
+})

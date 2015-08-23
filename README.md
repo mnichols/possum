@@ -9,7 +9,7 @@
 - _From potis (“able, capable”) + sum (“I am”)._
 
 
-#### Inspiration
+#### Acknowledgements
 
 API inspiration from [machina.js](https://github.com/ifandelse/machina.js).
 Thanks to [Jim Cowart](http://freshbrewedcode.com/jimcowart/) and contributors
@@ -31,7 +31,6 @@ for formulating a powerful api.
 
 * Hierarchical State Machine support
 * Behavior tree generation (ala [machine.js](https://github.com/maryrosecook/machinejs)).
-* Separate config from actor 
 
 
 ### Module Support
@@ -50,23 +49,38 @@ AMD isn't going to be supported, sorry.
 
 //first, define our state machine spec
 
-var gun = {
-    namespace: 'kiss'
-    ,initialState: 'uninitialized'
-    ,enable: function(actions) {
-        Object.keys(controls).forEach(function(key){
-            controls[key].setAttribute('disabled','disabled')
-        })
-        if(!actions || !actions.length) {
-            return
+let gun = possum()
+    .config({
+        namespace: 'kiss'
+        , initialState: 'uninitialized'
+    })
+    .methods({
+        enable: function(actions) {
+            Object.keys(controls).forEach(function(key){
+                controls[key].setAttribute('disabled','disabled')
+            })
+            if(!actions || !actions.length) {
+                return
+            }
+            actions.forEach(function(action){
+                controls[action].removeAttribute('disabled')
+            })
         }
-        actions.forEach(function(action){
-            controls[action].removeAttribute('disabled')
-        })
-    }
-    ,states: {
+        ,loadWeapon: function(bullets){
+            return this.bullets = bullets || [
+                'I Stole Your Love'
+                ,'Shock Me'
+                ,'Love Gun'
+            ]
+        }
+        ,fire: function(){
+            //asynchronous, returns a Promise
+            return this.recordPlayer.play(this.song)
+        }
+    })
+    .states({
         'uninitialized': {
-            _onEnter: function(){
+            _enter: function(){
                 this.enable(['initialize'])
                 return this.recordPlayer.turnOn()
             }
@@ -76,7 +90,7 @@ var gun = {
             }
         }
         ,'initialized': {
-            _onEnter: function(){
+            _enter: function(){
                 this.enable(['pullTrigger','load'])
             }
             ,'pullTrigger': function() {
@@ -88,7 +102,7 @@ var gun = {
             }
         }
         ,'loading': {
-            _onEnter: function(){
+            _enter: function(){
                 this.enable(['load'])
             }
             ,'load': function(args) {
@@ -100,7 +114,7 @@ var gun = {
             }
         }
         ,'loaded': {
-            _onEnter: function(){
+            _enter: function(){
                 document.querySelector('.remaining').innerHTML = ''
                 this.enable(['aim'])
             }
@@ -111,7 +125,7 @@ var gun = {
             }
         }
         ,'aimed':{
-            _onEnter: function(){
+            _enter: function(){
                 this.enable(['pullTrigger'])
             }
             ,'pullTrigger': function() {
@@ -120,7 +134,7 @@ var gun = {
             }
         }
         ,'smoking': {
-            _onEnter: function(){
+            _enter: function(){
                 console.log('light cigarette, sit back and relax')
                 this.enable(['liftNeedle'])
             }
@@ -136,7 +150,7 @@ var gun = {
             }
         }
         ,'emptied': {
-            _onEnter: function(){
+            _enter: function(){
                 this.enable(['reload'])
                 return this.handle('aim')
             }
@@ -148,26 +162,11 @@ var gun = {
                 return this.transition('loading')
             }
         }
-    }
-    ,loadWeapon: function(bullets){
-        return this.bullets = bullets || [
-            'I Stole Your Love'
-            ,'Shock Me'
-            ,'Love Gun'
-        ]
-    }
-    ,fire: function(){
-        //asynchronous, returns a Promise
-        return this.recordPlayer.play(this.song)
-    }
-}
 
-//now pass the spec to possum to get a prototype
-var model = possum(spec).create() // model.state === undefined
+    })
+    .build()
 
-model.start().then(function(){
-    console.log(model.state) // ->'uninitialized'
-})
+gun.currentState == 'uninitialized'
 
 ```
 
@@ -186,63 +185,37 @@ var model = possum(spec)
 
 ```
 
-what you get is a 'stamp' that allows to to:
+what you get is a builder 'stamp' that allows to to:
 
 ```js
 
 model
-.state({ prop: 'erty'})
-.methods({ meth: function isBad(){..}})
-.enclose(function(){
+.config( /* configure initialState, namespace, etc */) // alias to stampit `props`
+.states( /* configure states */) 
+.methods(/* special methods */) //stampit method
+.init(function(){
+    //initializing stuff
     var secretData = 'shhhh'
     this.prop == 'erty' // -> true
-})
-.create() //this creates the possum instance; you may also just call it as a function
+}) //stampit method
+.compose(/* mixin other stamps into the machine */) //stampit method
+.target(/* the state object to use (default is the machine itself) */)
+.build() //this creates the possum instance; you may also just call it as a function
 
 ```
 
-#### Extending a possum
+### Asynchronous and synchronous transitions and handlers
 
-Sometimes you may want to merge two `spec` objects into a single instance. 
-Ideally, this is the burden of the calling code but `possum` exposes an `extend` function to assist with this form of composition.
-Note that will _overwrite_ states of the same name with this procedure. If you want fancier mixing then prepare the input `spec` object
-before passing it to `possum`.
+Oftentimes handlers end up being async, breaking all the callers. Initially
+`possum` did Promises for all api calls.
+
+As of `v0.1.0` possum supports both synchronous and Promised handlers.
+
+It is worth noting that the events which are emitted are ordered differently
+depending on the synchronous model you choose.
 
 
-```js
-
-var spec = {
-    initialState: 'foo'
-    ,states: {
-        'foo': {
-            ...
-        }
-    }
-}
-var disposable = {
-    states: {
-        'disposed': {
-            _onEnter: function(){
-                this.disposed = true
-            }
-        }
-    }
-}
-var model = possum(spec).extend(disposable).create()
-model.transition('disposed') // model.disposed === true
-
-```
-
-### Asynchronous transitions and handlers
-
-We needed asynchronous support for transitioning to states and for input handlers found on states.
-
-Due to asynchronous `_onEnter` callback potential, a `possum` must
-invoke `.start()` to be properly initialized.
-
-This allows separation between construction and initialization.
-
-### Possum Spec API
+### Possum Builder API
 
 ##### `namespace` {String} [optional]
 The namespace for this instance
@@ -256,18 +229,19 @@ The states configuration in the shape of:
 ```js
 var states = {
     'myState': {
-        _onEnter: function(){
+        _enter: function( target ){
             //optional
             //steps to perform right when entering a state
             //can return an Promise for async support
         }
-        ,'doIt': function(args) {
+        ,'doIt': function(args, target) {
+            //optionally make changes to the state target
             //handle the command 'doIt'
             //receiving exactly ONE argument
             return this.doIt()
         }
         ... 
-        ,_onExit: function() {
+        ,_exit: function( target ) {
             //optional
             //steps to perform right before transitioning
             //out of this state
@@ -287,48 +261,12 @@ model.handle('doIt','myArgument')
 **Additional arguments will be ignored**.
 
 
-##### `handlers` {Array} [optional]
-
-Provide handler objects can be in the form of :
-
-```js
-
-var handler = {
-    name: 'myHandler'
-    ,fn: function(args) {
-        // just like any other handler
-    }
-    ,match: function(spec) {
-        //spec.inputType is the input type being invoked
-        //spec.state is the current state of the possum instance
-        return true/false
-    }
-}
-
-```
-
-Or, you may provide **wildcard handlers** in the form of : 
-
-var handler = {
-    '*': function(args) {
-        //just like any other handler
-    }
-}
-
-
-The order of execution for matching handlers is:
-
-1. Wildcard handlers
-2. Handlers configured through `handlers` collection that match (not through state config)
-3. State input handler
-
-
 ### Possum Instance API
 
-##### `state` {String} 
+##### `currentState` {String} 
 
 The current state of the possum instance. 
-This is `undefined` until the instance has been `.start()`-ed.
+This is the same as `initialState` upon creation
 
 ##### `priorState` {String}
 
@@ -354,19 +292,13 @@ This utility is used for producing underlying events for subscription; eg :
 Queues the command _inputType_ and processes it with the singular _args_ payload.
 Note that only **one** argument will be used. Other arguments will be ignored.
 
-Returns a Promise resolving the context.
+Returns the result of the handler (Promise or not)
 
 ##### `transition(toState)` {Function}
 
-Convenience method that queues the transition commands `_onExit`, `_transition`, and `_onEnter` and processes them.
-
-Returns a Promise resolving the context.
-
-##### `start` {Function}
-
-Causes a transition to the `initialState`.
-
-Returns a Promise, resolving when transition has completed. 
+Convenience method that queues the transition commands `exit`, `_transition`, and `_onEnter` and processes them.
+Returns a Promise if an `_enter` or `_exit` handler does so; otherwise, it returns
+the possum instance.
 
 ##### `deferUntilTransition(toState)` {Function}
 
@@ -384,27 +316,27 @@ you avoid infinite loops using this functionality.
 
 Returns `this` possum instance.
 
-##### `schedule` {Function}
-
-If the possum instance is currently processing messages, this will cause `inputType` to be `handle`d immediately after the current processing messages have 
-completed; otherwise, this will simply `handle` them immediately.
-
-##### `currentProcessContext` {Function}
-
-Returns an `processContext` which exposes:
-
-* `currentMessage` {Function} The message currently being handled
-* `completed` {Boolean} A flag indicating if the processing has completed
-
-This is really for internal use, but you _may_ use this inside a handler to get access to the current message being invoked. 
-
+This is unimplemented in `v0.1.0`
 
 ### Possum Events
 
+##### `{namespace}.invoked` 
+
+Emitted _just after_ an input handler has been invoked but possibly before
+the handler has completed (asynchronously).
+
+Event properties:
+
+* topic: '{namespace}.invoked'
+* inputType: {String} the name of the handler you just called
+* payload: {Any} The arguments passed into the `handle` call
+* action: {String} the path of the handler you just called ; eg 'myState.myHandler'
+* namespace: {String} the namespace of the possum
+
+
 ##### `{namespace}.handled` 
 
-Emitted _just after_ an input handler has been invoked but probably before
-the handler has completed (asynchronously).
+Emitted _after_ an input handler Promise has resolved (if async).
 
 Event properties:
 
@@ -412,23 +344,12 @@ Event properties:
 * inputType: {String} the name of the handler you just called
 * payload: {Any} The arguments passed into the `handle` call
 * action: {String} the path of the handler you just called ; eg 'myState.myHandler'
-
-
-##### `{namespace}.completed` 
-
-Emitted _after_ an input handler Promise has resolved.
-
-Event properties:
-
-* topic: '{namespace}.completed'
-* inputType: {String} the name of the handler you just called
-* payload: {Any} The arguments passed into the `handle` call
-* action: {String} the path of the handler you just called ; eg 'myState.myHandler'
+* namespace: {String} the namespace of the possum
 
 ##### `{namespace}.transitioned` 
 
 Emitted _after_ a possum has transitioned into a state, 
-but _before_ its entry callback has been invoked (`_onEnter`).
+and _after_ its entry callback has been invoked (`_enter`).
 
 Event properties:
 
@@ -438,6 +359,7 @@ Event properties:
     - `toState` The state you just transitioned to
     - `fromState` The state you just transitioned from
 * action: {String} the path of the handler you just called ; eg 'myState.myHandler'
+* namespace: {String} the namespace of the possum
 
 ##### `{namespace}.noHandler`
 

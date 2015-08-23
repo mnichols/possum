@@ -1,6 +1,6 @@
 {
   "name": "possum",
-  "version": "0.0.25",
+  "version": "0.1.0",
   "description": "I am able. Evented State Machine.",
   "main": "index.js",
   "directories": {
@@ -13,7 +13,9 @@
     "hierarchical",
     "state",
     "machine",
-    "marsupial"
+    "marsupial", 
+    "fsm",
+    "finite"
   ],
   "author": "Mike Nichols <nichols.mike.s@gmail.com>",
   "repository": {
@@ -29,9 +31,6 @@
           "blacklist": "regenerator",
           "optional": [
             "runtime"
-          ],
-          "plugins": [
-            "object-assign"
           ]
         }
       ]
@@ -52,6 +51,7 @@
     "mocha": "^2.0.1",
     "source-map-support": "^0.2.8",
     "testem": "^0.6.22",
+    "uglifyify": "^3.0.1",
     "vinyl-source-stream": "^1.0.0"
   },
   "dependencies": {

@@ -42,6 +42,7 @@
     "babel-tape-runner": "^1.2.0",
     "babelify": "^6.2.0",
     "blue-tape": "^0.1.10",
+    "browser-run": "^2.1.2",
     "browserify": "^6.2.0",
     "faucet": "0.0.1",
     "glob": "^4.0.6",

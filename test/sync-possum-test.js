@@ -179,7 +179,7 @@ test('[sync] invalid transition', (assert) => {
 
 })
 test('[sync] multiple deferrals', (assert) => {
-    assert.plan(2)
+    assert.plan(5)
     let machine = possum()
         .config({
             initialState: 'a'
@@ -222,8 +222,24 @@ test('[sync] multiple deferrals', (assert) => {
         })
         .build()
 
-    machine.handle('b')
+    machine.handle('b', { foo: 'bar'})
+    let hits = machine.target().hits
     assert.equal(machine.currentState,'dob')
     assert.equal(machine.target().hits.length, 3)
+    assert.deepEqual(hits[0], {
+        state: 'a'
+        , inputType: 'b'
+        , args: { foo: 'bar'}
+    })
+    assert.deepEqual(hits[1], {
+        state: 'b'
+        , inputType: 'b'
+        , args: { foo: 'bar'}
+    })
+    assert.deepEqual(hits[2], {
+        state: 'dob'
+        , inputType: 'b'
+        , args: { foo: 'bar'}
+    })
 
 })

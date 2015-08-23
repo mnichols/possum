@@ -372,9 +372,8 @@ Emitted when an transition is attempted to a state that does not exist.
 
 ### Tests
 
-`make test` will by default run tests on Safari, Chrome, Firefox, and NodeJS.
-
-You can also do `make node` to quickly run tests or `make silent node` to shut possum up during test runs.
+- `make test` will by default run tests on Node.
+- `make browser` will run tape tests on any browser you visit at `http://localhost:2222`
 
 ### Credits
 

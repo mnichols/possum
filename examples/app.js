@@ -51,23 +51,49 @@ var recordPlayer = {
 }
 
 //define our state machine spec
-var gun = {
-    namespace: 'kiss'
-    ,initialState: 'uninitialized'
-    ,enable: function(actions) {
-        Object.keys(controls).forEach(function(key){
-            controls[key].setAttribute('disabled','disabled')
-        })
-        if(!actions || !actions.length) {
-            return
+var model = possum()
+    .config({
+        namespace: 'kiss'
+        ,initialState: 'uninitialized'
+    })
+    .methods({
+
+        enable: function(actions) {
+            Object.keys(controls).forEach(function(key){
+                controls[key].setAttribute('disabled','disabled')
+            })
+            if(!actions || !actions.length) {
+                return
+            }
+            actions.forEach(function(action){
+                controls[action].removeAttribute('disabled')
+            })
         }
-        actions.forEach(function(action){
-            controls[action].removeAttribute('disabled')
-        })
-    }
-    ,states: {
+        ,loadWeapon: function(bullets){
+            return this.bullets = bullets || [
+                'I Stole Your Love'
+                ,'Shock Me'
+                ,'Love Gun'
+            ]
+        }
+        ,fire: function(){
+            //asynchronous, returns a Promise
+            return this.recordPlayer.play(this.song)
+                .bind(this)
+                .then(function(result){
+                    var msg = 'No more songs remaining'
+                    if(this.bullets.length) {
+                        msg = 'Songs Remaining:' + this.bullets.join(', ')
+                    }
+
+                    document.querySelector('.remaining').innerHTML = msg
+                    return result
+                })
+        }
+    })
+    .states( {
         'uninitialized': {
-            _onEnter: function(){
+            _enter: function(){
                 this.enable(['initialize'])
                 return this.recordPlayer.turnOn()
             }
@@ -77,7 +103,7 @@ var gun = {
             }
         }
         ,'initialized': {
-            _onEnter: function(){
+            _enter: function(){
                 this.enable(['pullTrigger','load'])
             }
             ,'pullTrigger': function() {
@@ -89,7 +115,7 @@ var gun = {
             }
         }
         ,'loading': {
-            _onEnter: function(){
+            _enter: function(){
                 this.enable(['load'])
             }
             ,'load': function(args) {
@@ -101,7 +127,7 @@ var gun = {
             }
         }
         ,'loaded': {
-            _onEnter: function(){
+            _enter: function(){
                 document.querySelector('.remaining').innerHTML = ''
                 this.enable(['aim'])
             }
@@ -112,7 +138,7 @@ var gun = {
             }
         }
         ,'aimed':{
-            _onEnter: function(){
+            _enter: function(){
                 this.enable(['pullTrigger'])
             }
             ,'pullTrigger': function() {
@@ -121,7 +147,7 @@ var gun = {
             }
         }
         ,'smoking': {
-            _onEnter: function(){
+            _enter: function(){
                 console.log('light cigarette, sit back and relax')
                 this.enable(['liftNeedle'])
             }
@@ -137,7 +163,7 @@ var gun = {
             }
         }
         ,'emptied': {
-            _onEnter: function(){
+            _enter: function(){
                 this.enable(['reload'])
                 return this.handle('aim')
             }
@@ -149,51 +175,24 @@ var gun = {
                 return this.transition('loading')
             }
         }
-    }
-    ,loadWeapon: function(bullets){
-        return this.bullets = bullets || [
-            'I Stole Your Love'
-            ,'Shock Me'
-            ,'Love Gun'
-        ]
-    }
-    ,fire: function(){
-        //asynchronous, returns a Promise
-        return this.recordPlayer.play(this.song)
-            .bind(this)
-            .then(function(result){
-                var msg = 'No more songs remaining'
-                if(this.bullets.length) {
-                    msg = 'Songs Remaining:' + this.bullets.join(', ')
-                }
-
-                document.querySelector('.remaining').innerHTML = msg
-                return result
-            })
-    }
-}
-
-var model = possum(gun)
-    .state({
+    })
+    .build({
         recordPlayer: recordPlayer
         ,bullets: []
     })
-    .create()
+
 
 model.on('transitioned',function(e){
     document.querySelector('.state')
         .innerHTML = model.state
 })
-model.start().then(function(){
-    model.state === 'uninitialized'
-    Object.keys(controls).forEach(function(key){
-        var ctrl = controls[key]
-        ctrl.addEventListener('click',function(e){
-            console.log('clicked',key)
-            model.handle(key)
-        })
-
+Object.keys(controls).forEach(function(key){
+    var ctrl = controls[key]
+    ctrl.addEventListener('click',function(e){
+        console.log('clicked',key)
+        model.handle(key)
     })
+
 })
 
 

@@ -164,3 +164,17 @@ test('[sync] no handler emits', (assert) => {
     assert.equal(noHandler.payload.args, 'boop')
 
 })
+test('[sync] invalid transition', (assert) => {
+    assert.plan(5)
+    let machine = buildMachine({ initialState: 'locked', namespace: 'door'})
+    let events = []
+    machine.on('door.invalidTransition', events.push.bind(events))
+    machine.transition('bad')
+    assert.equal(machine.currentState,'locked')
+    assert.equal(events.length,1)
+    assert.equal(events[0].topic, 'invalidTransition')
+    assert.equal(events[0].payload.toState, 'bad')
+    assert.equal(events[0].payload.fromState, 'locked')
+
+
+})

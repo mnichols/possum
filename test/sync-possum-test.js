@@ -5,7 +5,7 @@ import possum from '../lib/possum'
 import stampit from 'stampit'
 import Promise from 'bluebird'
 
-const synchronous = (cfg) => {
+const buildMachine = (cfg) => {
     cfg = (cfg || {
         initialState: 'unlocked'
         , namespace: 'door'
@@ -32,10 +32,16 @@ const synchronous = (cfg) => {
                 }
             }
             , 'denied': {
-                'deny': function( args, target ) {
+                '_enter': function( target ) {
+                    target.denials++
+                }
+                ,'deny': function( args, target ) {
                     setTimeout(function(){
                         return this.transition('locked')
-                    }.bind(this), 1000) //prevent retries for 3 seconds
+                    }.bind(this), 90) //prevent retries for delay
+                }
+                , '_exit': function( target ) {
+                    target.restarts++
                 }
             }
         })
@@ -43,26 +49,49 @@ const synchronous = (cfg) => {
         .build()
 
 }
-test('handler transitions [synchronous]',(assert) => {
+test('[sync] state lifecycle', (assert) => {
+    assert.plan(3)
+    let model = stampit()
+        .refs({
+            name: 'deadbolt'
+            , code: '123'
+            , denials: 0
+            , restarts: 0
+        })
+        .create()
+
+
+    let machine = buildMachine({ initialState: 'locked' })
+    machine.target(model)
+
+    machine.handle('enterCode', { code: '456' })
+    setTimeout(function(){
+        assert.equal(machine.currentState, 'locked')
+        assert.equal(model.denials,1)
+        assert.equal(model.restarts,1)
+    }, 100)
+
+})
+test('[sync] handler transitions [buildMachine]',(assert) => {
     assert.plan(1)
     let model = stampit()
         .refs({ name: 'deadbolt', code: '123'})
         .create()
 
-    let machine = synchronous()
+    let machine = buildMachine()
     machine.target(model)
 
     machine.handle('lock')
     assert.equal(machine.currentState, 'locked')
 })
 
-test('deferred transitions [synchronous]', ( assert ) => {
+test('[sync] deferred transitions', ( assert ) => {
     assert.plan(32)
     let model = stampit()
         .refs({ name: 'deadbolt', code: '123'})
         .create()
 
-    let machine = synchronous({initialState: 'locked'})
+    let machine = buildMachine({initialState: 'locked'})
     let events = []
     machine.onAny(function(e) {
         if(e) {
@@ -117,5 +146,21 @@ test('deferred transitions [synchronous]', ( assert ) => {
         assert.equal(events[11].payload.toState, 'locked')
         assert.equal(events[11].payload.fromState, 'denied')
 
-    }, 1100)
+    }, 100)
+})
+
+test('[sync] no handler emits', (assert) => {
+    assert.plan(4)
+    let machine = buildMachine({ initialState: 'locked' , namespace: 'door'})
+
+    let noHandler
+    machine.on('door.noHandler',function(e) {
+        noHandler = e
+    })
+    machine.handle('bad', 'boop')
+    assert.equal(noHandler.state,machine.currentState)
+    assert.equal(noHandler.topic,'noHandler')
+    assert.equal(noHandler.payload.inputType, 'bad')
+    assert.equal(noHandler.payload.args, 'boop')
+
 })

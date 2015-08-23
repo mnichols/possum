@@ -5,7 +5,7 @@ import possum from '../lib/possum'
 import stampit from 'stampit'
 import Promise from 'bluebird'
 
-const promiseBased = (cfg) => {
+const buildMachine = (cfg) => {
     cfg  = (cfg || {
         initialState: 'unlocked'
         ,namespace: 'door'
@@ -40,7 +40,7 @@ const promiseBased = (cfg) => {
                     target.denials++
                 }
                 , 'deny': function( args, target ) {
-                    return Promise.delay(1000)
+                    return Promise.delay(90)
                         .then(this.transition.bind(this,'locked'))
                 }
                 , '_exit': function( target ) {
@@ -53,7 +53,7 @@ const promiseBased = (cfg) => {
 
 }
 
-test.only('state lifecycle', (assert) => {
+test('[async] state lifecycle', (assert) => {
     let model = stampit()
         .refs({
             name: 'deadbolt'
@@ -64,7 +64,7 @@ test.only('state lifecycle', (assert) => {
         .create()
 
 
-    let machine = promiseBased({ initialState: 'locked' })
+    let machine = buildMachine({ initialState: 'locked' })
     machine.target(model)
 
     return machine.handle('enterCode', { code: '456' })
@@ -75,25 +75,25 @@ test.only('state lifecycle', (assert) => {
     })
 
 })
-test('handler transitions [promise based]',(assert) => {
+test('[async] handler transitions',(assert) => {
     assert.plan(1)
     let model = stampit()
         .refs({ name: 'deadbolt', code: '123'})
         .create()
 
-    let machine = promiseBased()
+    let machine = buildMachine()
     machine.target(model)
 
     return machine.handle('lock').then(function(){
         assert.equal(machine.currentState, 'locked')
     })
 })
-test('events are emitted', (assert) => {
+test('[async] events are emitted', (assert) => {
     let model = stampit()
         .refs({ name: 'deadbolt', code: '123'})
         .create()
 
-    let machine = promiseBased()
+    let machine = buildMachine()
     machine.target(model)
     let events = {}
     machine.on('door.handled',function(e) { events[this.event] = e })
@@ -122,11 +122,11 @@ test('events are emitted', (assert) => {
 
 })
 
-test('transition deferral', ( assert ) => {
+test('[async] transition deferral', ( assert ) => {
     let model = stampit()
         .refs({ name: 'deadbolt', code: '123'})
 
-    let machine = promiseBased({initialState: 'locked'})
+    let machine = buildMachine({initialState: 'locked'})
     let events = []
     machine.onAny(function(e) {
         if(e) {

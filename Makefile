@@ -30,7 +30,7 @@ example: build
 	pushd ./examples; python -m SimpleHTTPServer; popd
 
 tape:
-	./node_modules/.bin/babel-tape-runner ./test/**/*-test.js # | ./node_modules/.bin/faucet
+	./node_modules/.bin/babel-tape-runner ./test/**/*-test.js #| ./node_modules/.bin/faucet
 
 browser:
 	./node_modules/.bin/browserify \

@@ -13,7 +13,7 @@
     "hierarchical",
     "state",
     "machine",
-    "marsupial", 
+    "marsupial",
     "fsm",
     "finite"
   ],
@@ -38,27 +38,20 @@
   },
   "devDependencies": {
     "babel": "^5.8.21",
+    "babel-core": "^5.8.22",
     "babel-tape-runner": "^1.2.0",
     "babelify": "^6.2.0",
     "blue-tape": "^0.1.10",
     "browserify": "^6.2.0",
-    "chai": "^1.9.2",
-    "chai-as-promised": "^4.1.1",
     "faucet": "0.0.1",
     "glob": "^4.0.6",
-    "gulp": "^3.8.9",
     "mkdirp": "^0.5.0",
-    "mocha": "^2.0.1",
-    "source-map-support": "^0.2.8",
-    "testem": "^0.6.22",
-    "uglifyify": "^3.0.1",
-    "vinyl-source-stream": "^1.0.0"
+    "uglifyify": "^3.0.1"
   },
   "dependencies": {
+    "babel-runtime": "^5.8.20",
     "bluebird": "^2.9.15",
-    "chained-emitter": "^0.1.2",
     "cuid": "^1.2.4",
-    "debug": "^2.1.0",
     "eventemitter2": "^0.4.14",
     "stampit": "^2.1.0"
   }

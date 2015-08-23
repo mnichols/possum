@@ -3,14 +3,14 @@ BUILD_DIR = build
 build: clean
 	./node_modules/.bin/browserify \
 		--outfile ./${BUILD_DIR}/possum.js \
-		--standalone possum \
-		--debug ./lib/index.js
+		--debug \
+		-r ./lib/index.js:possum
 	
-	./node_modules/.bin/browserify \
+	# TODO minified builds are busted by es6 features :(
+	#./node_modules/.bin/browserify \
 		--outfile ./${BUILD_DIR}/possum.min.js \
 		--standalone possum \
-		-- transform uglifyify \
-		./lib/index.js
+		--transform uglifyify ./lib/index.js
 
 verbose:
 	$(eval LOG= export DEBUG=possum:*)
@@ -20,7 +20,7 @@ silent:
 
 clean:
 	rm -rf $(BUILD_DIR)
-	rm -rf ./examples/bundle.js
+	rm -rf ./examples/possum.js
 	mkdir $(BUILD_DIR)
 
 docs:
@@ -29,7 +29,7 @@ docs:
 	pushd ./doc; python -m SimpleHTTPServer; popd
 
 example: build
-	cp ./build/bundle.js ./examples
+	cp ./build/possum.js ./examples
 	pushd ./examples; python -m SimpleHTTPServer; popd
 
 test:

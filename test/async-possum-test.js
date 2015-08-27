@@ -11,6 +11,7 @@ const buildMachine = (cfg) => {
         ,namespace: 'door'
     })
     return possum()
+        .builder()
         .config(cfg)
         .states({
             'locked': {
@@ -48,8 +49,7 @@ const buildMachine = (cfg) => {
                 }
             }
         })
-        //.target(model)
-        .build()
+        .create()
 
 }
 
@@ -184,6 +184,7 @@ test('[async] transition deferral', ( assert ) => {
 
 test('[async] multiple deferrals', (assert) => {
     let machine = possum()
+        .builder()
         .config({
             initialState: 'a'
             , namespace: 'foo'
@@ -225,7 +226,7 @@ test('[async] multiple deferrals', (assert) => {
             }
 
         })
-        .build()
+        .create()
 
     return machine.handle('b', { foo: 'bar'})
         .then(function(it){

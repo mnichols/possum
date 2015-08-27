@@ -50,6 +50,7 @@ AMD isn't going to be supported, sorry.
 //first, define our state machine spec
 
 let gun = possum()
+    .builder()
     .config({
         namespace: 'kiss'
         , initialState: 'uninitialized'
@@ -164,9 +165,9 @@ let gun = possum()
         }
 
     })
-    .build()
+    .create()
 
-gun.currentState == 'uninitialized'
+gun.currentState == 'uninitialized' // true
 
 ```
 
@@ -181,15 +182,31 @@ This means that when you do this:
 
 ```js
 
-var model = possum(spec)
+var p = possum()
+    .compose(cloneable) // make all possums cloneable
+    .methods({
+        phoneHome: function(){ /* make all possums be like ET */ }
+    })
+    .refs({
+        api: '/api' // make all possums hold this config info
+    })
+    .props(...)
 
 ```
 
-what you get is a builder 'stamp' that allows to to:
+Now you have a 'global' possum factory which exposes a single method:
 
 ```js
 
-model
+p.builder()  // possum builder for all your marsupial needs
+
+```
+
+A possum builder will compose any settings you put on the top level possum
+call and then exposes this api (see below for more details):
+
+```js
+p.builder()
 .config( /* configure initialState, namespace, etc */) // alias to stampit `props`
 .states( /* configure states */) 
 .methods(/* special methods */) //stampit method
@@ -200,7 +217,7 @@ model
 }) //stampit method
 .compose(/* mixin other stamps into the machine */) //stampit method
 .target(/* the state object to use (default is the machine itself) */)
-.build() //this creates the possum instance; you may also just call it as a function
+.create() //this creates the possum instance; you may also just call it as a function
 
 ```
 
@@ -212,19 +229,61 @@ Oftentimes handlers end up being async, breaking all the callers. Initially
 As of `v0.1.0` possum supports both synchronous and Promised handlers.
 
 It is worth noting that the events which are emitted are ordered differently
-depending on the synchronous model you choose.
+depending on the flow model you choose.
 
 
 ### Possum Builder API
 
 ##### `namespace` {String} [optional]
+
 The namespace for this instance
+```
+var p = possum().builder().config({
+    namespace: 'secure'
+})
+
+```
 
 ##### `initialState` {String} **required**
-The state to transition to when `.start()` is called
+
+The state to transition to initially
+
+```
+var p = possum().builder().config({
+    initialState: 'uninitialized'
+})
+```
+
+NOTE: 
+
+* the `_enter` callback will NOT get called immediately upon construction
+if the state designated by  `initialState` has one. This is to avoid the 
+need for asynchronous instantiation support. If really need an initialization routing
+you can just use stampit's built in facility for this:
+
+```js
+
+var p = possum().builder()
+.config({
+    initialState: 'a'
+})
+.states({
+    'a': {
+        '_enter': function(){
+            //wont get called on creation!
+        }
+    }
+})
+.init(function(){
+    //do init stuff here
+    //...you can even return a Promise and stampit will return the promise
+    //for you to control it
+})
+
+```
 
 ##### `states` {Object} **required**
-The states configuration in the shape of:
+The states handlers configuration in the shape of:
 
 ```js
 var states = {
@@ -251,7 +310,7 @@ var states = {
 
 ```
 
-Note that each state's input handler, will receive _one_ argument. That means you must
+Note that each state's input handler, will receive _one_ `arguments` parameter. That means you must
 invoke the handlers this way:
 
 ```js
@@ -308,17 +367,19 @@ transition has occurred.
 
 Returns `this` possum instance.
 
-##### `deferUntilNextHandler` {Function}
-
-Queues the current message (input) to be replayed after the possum has `handle`d another
-input, regardless of whether a transition has occurred. **Note:** be careful that
-you avoid infinite loops using this functionality.
-
-Returns `this` possum instance.
-
-This is unimplemented in `v0.1.0`
-
 ### Possum Events
+
+##### `{namespace}.handling` 
+
+Emitted _during_ an input handler.
+
+Event properties:
+
+* topic: 'handling'
+* inputType: {String} the name of the handler you just called
+* payload: {Any} The arguments passed into the `handle` call
+* action: {String} the path of the handler you just called ; eg 'myState.myHandler'
+* namespace: {String} the namespace of the possum
 
 ##### `{namespace}.invoked` 
 
@@ -327,7 +388,7 @@ the handler has completed (asynchronously).
 
 Event properties:
 
-* topic: '{namespace}.invoked'
+* topic: 'invoked'
 * inputType: {String} the name of the handler you just called
 * payload: {Any} The arguments passed into the `handle` call
 * action: {String} the path of the handler you just called ; eg 'myState.myHandler'
@@ -340,7 +401,7 @@ Emitted _after_ an input handler Promise has resolved (if async).
 
 Event properties:
 
-* topic: '{namespace}.handled'
+* topic: 'handled'
 * inputType: {String} the name of the handler you just called
 * payload: {Any} The arguments passed into the `handle` call
 * action: {String} the path of the handler you just called ; eg 'myState.myHandler'
@@ -353,7 +414,7 @@ and _after_ its entry callback has been invoked (`_enter`).
 
 Event properties:
 
-* topic: '{namespace}.transitioned'
+* topic: 'transitioned'
 * inputType: {String} the name of the handler you just called
 * payload: {Object} having these properties
     - `toState` The state you just transitioned to

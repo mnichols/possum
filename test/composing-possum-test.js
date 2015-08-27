@@ -6,7 +6,7 @@ import stampit from 'stampit'
 import Promise from 'bluebird'
 
 
-test('composing with possum is sensible', (assert) => {
+test('composing with possum builder stamp is sensible', (assert) => {
     assert.plan(5)
     let cloneable = stampit()
     .init(function({instance, stamp}){
@@ -14,6 +14,7 @@ test('composing with possum is sensible', (assert) => {
     })
 
     let machine = possum()
+        .builder()
         .config({
             initialState: 'a'
         })
@@ -36,7 +37,6 @@ test('composing with possum is sensible', (assert) => {
         .props({
             'foo': 'bar'
         })
-        .stamp()
 
     let first = cloneable.compose(machine)({},machine.emitterOpts)
     assert.ok(first.handle)
@@ -49,7 +49,7 @@ test('composing with possum is sensible', (assert) => {
     assert.equal(first.currentState,'b')
 
 })
-test('composition into possum is sensible', (assert) => {
+test('composition into possum builder stamps is sensible', (assert) => {
     assert.plan(2)
     let cloneable = stampit()
     .init(function({instance, stamp}){
@@ -57,6 +57,7 @@ test('composition into possum is sensible', (assert) => {
     })
 
     let machine = possum()
+        .builder()
         .config({
             initialState: 'a'
         })
@@ -71,10 +72,74 @@ test('composition into possum is sensible', (assert) => {
             'foo': 'bar'
         })
         .compose(cloneable) //compose our behaviors in!
-        .build()
+        .create()
 
 
     assert.ok(machine.clone)
     let clone = machine.clone()
     assert.equal(clone.foo,'bar')
+})
+
+test('composition into possum factory is sensible', (assert) => {
+    assert.plan(8)
+    let cloneable = stampit()
+    .init(function({instance, stamp}){
+        instance.clone = () => stamp(instance)
+    })
+
+    let p = possum
+        .compose(cloneable) //compose our behaviors in for all instances!
+        .refs({
+            goo: 'begone'
+        })
+        .methods({
+            print: function(){
+                console.log('marsupial')
+            }
+        })
+        .create()
+    let machine = p
+        .builder()
+        .config({
+            initialState: 'a'
+        })
+        .states({
+            'a': {
+                'b': function(args, target) {
+
+                }
+            }
+        })
+        .props({
+            'foo': 'bar'
+        })
+        .create()
+    let machine2 = p
+        .builder()
+        .config({
+            initialState: 'x'
+        })
+        .states({
+            'x': {
+                'y': function(args, target) {
+
+                }
+            }
+        })
+        .props({
+            'fooz': 'barz'
+        })
+        .create()
+
+
+    assert.ok(machine.clone)
+    assert.ok(machine2.clone)
+    assert.ok(machine.print)
+    assert.ok(machine2.print)
+    assert.equal(machine.goo,'begone')
+    assert.equal(machine2.goo,'begone')
+    let clone = machine.clone()
+    assert.equal(clone.foo,'bar')
+    clone = machine2.clone()
+    assert.equal(clone.fooz,'barz')
 })

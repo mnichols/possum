@@ -11,7 +11,6 @@ const buildMachine = (cfg) => {
         , namespace: 'door'
     })
     return possum
-        .builder()
         .config(cfg)
         .states({
             'locked': {
@@ -182,7 +181,6 @@ test('[sync] invalid transition', (assert) => {
 test('[sync] multiple deferrals', (assert) => {
     assert.plan(5)
     let machine = possum
-        .builder()
         .config({
             initialState: 'a'
             , namespace: 'foo'

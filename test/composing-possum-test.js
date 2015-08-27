@@ -14,7 +14,6 @@ test('composing with possum builder stamp is sensible', (assert) => {
     })
 
     let machine = possum
-        .builder()
         .config({
             initialState: 'a'
         })
@@ -57,7 +56,6 @@ test('composition into possum builder stamps is sensible', (assert) => {
     })
 
     let machine = possum
-        .builder()
         .config({
             initialState: 'a'
         })
@@ -105,7 +103,6 @@ test('composition into possum factory is sensible', (assert) => {
                 console.log('marsupial')
             }
         })
-        .builder()
     let machine = p
         .config({
             initialState: 'a'
@@ -151,4 +148,19 @@ test('composition into possum factory is sensible', (assert) => {
 
     clone.emit('foo')
     assert.equal(clone.emitted,'FOO')
+})
+
+test('compositions are discrete', (assert) => {
+    assert.plan(2)
+
+    let beh1 = stampit().refs({ foo: 'bar'})
+    let beh2 = stampit().refs({ boo: 'far'})
+    let p = possum.compose(beh1)
+    let p2 = possum.compose(beh2)
+    let model = p.config({ initialState: 'a' }).create()
+    let model2 = p2.config({ initialState: 'a' }).create()
+
+    assert.notOk(model.boo)
+    assert.notOk(model2.foo)
+
 })

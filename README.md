@@ -49,8 +49,7 @@ AMD isn't going to be supported, sorry.
 
 //first, define our state machine spec
 
-let gun = possum()
-    .builder()
+let gun = possum
     .config({
         namespace: 'kiss'
         , initialState: 'uninitialized'
@@ -182,32 +181,15 @@ This means that when you do this:
 
 ```js
 
-var p = possum
-    .compose(cloneable) // make all possums cloneable
-    .methods({
-        phoneHome: function(){ /* make all possums be like ET */ }
-    })
-    .refs({
-        api: '/api' // make all possums hold this config info
-    })
-    .props(...)
-    .create() // create top level possum
+var p = possum.states({ ... }).create()
 
 ```
 
-Now you have a 'global' possum factory which exposes a single method:
+A possum will compose any settings you put on the top level possum
+call and then exposes this to the api (see below for more details):
 
 ```js
-
-p.builder()  // possum builder for all your marsupial needs
-
-```
-
-A possum builder will compose any settings you put on the top level possum
-call and then exposes this api (see below for more details):
-
-```js
-p.builder()
+possum
 .config( /* configure initialState, namespace, etc */) // alias to stampit `props`
 .states( /* configure states */) 
 .methods(/* special methods */) //stampit method
@@ -222,6 +204,25 @@ p.builder()
 
 ```
 
+### Isolation and prototypes
+
+Every call to the builder functions on `possum` return a new stamp. This is important
+to know and also to take advantage of. Consider the following:
+
+```js
+
+let loggable = possum.compose(logger)
+let eventable = possum.compose(eventSourcer)
+let kitchen = loggable.compose(eventable)
+
+let model = loggable.config({initialState: 'a'}).create() //has loggable, not eventable, behavior
+let model2 = eventable.config({initialState:'a'}).create() //has eventable, not loggable, behavior
+let everything = kitchen.config({initialState:'a' }).create() // has both 
+```
+
+See the tests [here](https://github.com/mnichols/possum/blob/master/test/composing-possum-test.js) for
+seeing in action.
+
 ### Asynchronous and synchronous transitions and handlers
 
 Oftentimes handlers end up being async, breaking all the callers. Initially
@@ -233,24 +234,28 @@ It is worth noting that the events which are emitted are ordered differently
 depending on the flow model you choose.
 
 
-### Possum Builder API
+### Possum Builder API (extensions atop stampit)
 
-##### `namespace` {String} [optional]
+##### `config` {Object} **required**
+
+These attributes can (should) be set here:
+
+###### `namespace` {String} [optional]
 
 The namespace for this instance
 ```
-var p = possum().builder().config({
+var p = possum.config({
     namespace: 'secure'
 })
 
 ```
 
-##### `initialState` {String} **required**
+###### `initialState` {String} **required**
 
 The state to transition to initially
 
 ```
-var p = possum().builder().config({
+var p = possum.config({
     initialState: 'uninitialized'
 })
 ```
@@ -264,7 +269,7 @@ you can just use stampit's built in facility for this:
 
 ```js
 
-var p = possum().builder()
+var p = possum
 .config({
     initialState: 'a'
 })

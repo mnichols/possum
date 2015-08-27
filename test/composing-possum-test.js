@@ -13,7 +13,7 @@ test('composing with possum builder stamp is sensible', (assert) => {
         instance.clone = () => stamp(instance)
     })
 
-    let machine = possum()
+    let machine = possum
         .builder()
         .config({
             initialState: 'a'
@@ -56,7 +56,7 @@ test('composition into possum builder stamps is sensible', (assert) => {
         instance.clone = () => stamp(instance)
     })
 
-    let machine = possum()
+    let machine = possum
         .builder()
         .config({
             initialState: 'a'
@@ -81,14 +81,22 @@ test('composition into possum builder stamps is sensible', (assert) => {
 })
 
 test('composition into possum factory is sensible', (assert) => {
-    assert.plan(8)
+    assert.plan(9)
     let cloneable = stampit()
     .init(function({instance, stamp}){
         instance.clone = () => stamp(instance)
     })
 
+    let reliesOnPossum = stampit()
+        .init(function({instance}){
+            this.on('foo',function(){
+                this.emitted = 'FOO'
+            }.bind(this))
+        })
+
     let p = possum
         .compose(cloneable) //compose our behaviors in for all instances!
+        .compose(reliesOnPossum)
         .refs({
             goo: 'begone'
         })
@@ -97,9 +105,8 @@ test('composition into possum factory is sensible', (assert) => {
                 console.log('marsupial')
             }
         })
-        .create()
-    let machine = p
         .builder()
+    let machine = p
         .config({
             initialState: 'a'
         })
@@ -115,7 +122,6 @@ test('composition into possum factory is sensible', (assert) => {
         })
         .create()
     let machine2 = p
-        .builder()
         .config({
             initialState: 'x'
         })
@@ -142,4 +148,7 @@ test('composition into possum factory is sensible', (assert) => {
     assert.equal(clone.foo,'bar')
     clone = machine2.clone()
     assert.equal(clone.fooz,'barz')
+
+    clone.emit('foo')
+    assert.equal(clone.emitted,'FOO')
 })

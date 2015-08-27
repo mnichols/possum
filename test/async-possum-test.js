@@ -10,7 +10,7 @@ const buildMachine = (cfg) => {
         initialState: 'unlocked'
         ,namespace: 'door'
     })
-    return possum()
+    return possum
         .builder()
         .config(cfg)
         .states({
@@ -183,7 +183,7 @@ test('[async] transition deferral', ( assert ) => {
 })
 
 test('[async] multiple deferrals', (assert) => {
-    let machine = possum()
+    let machine = possum
         .builder()
         .config({
             initialState: 'a'

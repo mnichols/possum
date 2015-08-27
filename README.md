@@ -182,7 +182,7 @@ This means that when you do this:
 
 ```js
 
-var p = possum()
+var p = possum
     .compose(cloneable) // make all possums cloneable
     .methods({
         phoneHome: function(){ /* make all possums be like ET */ }
@@ -191,6 +191,7 @@ var p = possum()
         api: '/api' // make all possums hold this config info
     })
     .props(...)
+    .create() // create top level possum
 
 ```
 

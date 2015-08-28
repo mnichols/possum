@@ -1,7 +1,8 @@
 BUILD_DIR = build
 
 build: clean
-	./node_modules/.bin/browserify  --outfile ./${BUILD_DIR}/possum.js  --debug  -r ./lib/index.js:possum
+	@echo building in $(CURDIR)
+	./node_modules/.bin/browserify  --outfile ./$(BUILD_DIR)/possum.js  --debug  -r ./lib/index.js:possum
 	
 	# TODO minified builds are busted by es6 features :(
 	#./node_modules/.bin/browserify \
@@ -16,9 +17,9 @@ silent:
 	$(eval LOG= unset DEBUG)
 
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf ./$(BUILD_DIR)
 	rm -rf ./examples/possum.js
-	mkdir $(BUILD_DIR)
+	mkdir ./$(BUILD_DIR)
 
 docs:
 	pip install Pygments

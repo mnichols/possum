@@ -43,12 +43,6 @@ browser:
 		| ./node_modules/.bin/faucet
 
 ci: build test
-	./node_modules/.bin/browserify \
-		--debug ./test/*.js \
-		--outfile ./$(BUILD_DIR)/possum.test.js
-	./node_modules/.bin/zuul -- ./$(BUILD_DIR)/possum.test.js
-
-
-
+	./node_modules/.bin/zuul -- ./test/**/*-test.js
 
 .PHONY: test build verbose silent docs ci browser

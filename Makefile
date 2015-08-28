@@ -2,7 +2,7 @@ BUILD_DIR = build
 
 build: clean
 	@echo building in $(CURDIR)
-	./node_modules/.bin/browserify  --debug  -r ./lib/index.js:possum > ./$(BUILD_DIR)/possum.js
+	./node_modules/.bin/browserify  --outfile ./$(BUILD_DIR)/possum.js  --debug  -r ./lib/index.js:possum
 
 verbose:
 	$(eval LOG= export DEBUG=possum:*)

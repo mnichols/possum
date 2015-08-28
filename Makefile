@@ -33,7 +33,7 @@ example: build
 	pushd ./examples; python -m SimpleHTTPServer; popd
 
 test:
-	./node_modules/.bin/babel-tape-runner ./test/**/*-test.js #\
+	./node_modules/.bin/babel-tape-runner ./test/**/*-test.js \
 		| ./node_modules/.bin/faucet
 
 browser:
@@ -42,6 +42,13 @@ browser:
 		| ./node_modules/.bin/browser-run -p 2222  \
 		| ./node_modules/.bin/faucet
 
+ci: build test
+	./node_modules/.bin/browserify \
+		--debug ./test/*.js \
+		--outfile ./$(BUILD_DIR)/possum.test.js
+	./node_modules/.bin/zuul -- ./$(BUILD_DIR)/possum.test.js
 
 
-.PHONY: test build verbose silent docs node tape
+
+
+.PHONY: test build verbose silent docs ci browser

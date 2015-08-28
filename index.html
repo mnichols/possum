@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width" charset="utf-8">
+    <title>possum</title>
+    <link rel="stylesheet" href="http://getbootstrap.com/2.3.2/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="http://getbootstrap.com/2.3.2/assets/css/bootstrap-responsive.css">
+    <link rel="stylesheet" href="http://getbootstrap.com/2.3.2/assets/css/docs.css">
+    <style>
+      body > .navbar .brand {
+        float:left;
+        text-shadow: rgba(255, 255, 255, 0.0980392) 0px 1px 0px, rgba(255, 255, 255, 0.4) 0px 0px 30px;
+        color: white;
+        margin-left:0px;
+        font-weight:normal;
+      }
+      
+      .bs-docs-sidenav.affix {
+        box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.5);
+        z-index: 10;
+      }
+      
+      .bs-docs-sidenav i{
+        width: 8px;
+        height: 8px;
+        padding: 0px;
+        margin: 0px;
+        display: inline-block;
+        margin-right:0.5em;
+      }
+      
+      .bs-docs-sidenav > li > a {
+          word-wrap: break-word;
+      }
+      
+      .bs-docs-sidenav > li:first-child > a {
+        border-top-right-radius: 6px;
+        border-top-left-radius: 6px;
+      }
+      
+      code[class*="language-"],pre[class*="language-"]{color:black;text-shadow:0 1px white;font-family:Consolas,Monaco,'Andale Mono',monospace;direction:ltr;text-align:left;white-space:pre;word-spacing:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*="language-"]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*="language-"],pre[class*="language-"]{background:#f5f2f0}:not(pre)>code[class*="language-"]{padding:.1em;border-radius:.3em}.token.comment,.token.prolog,.token.doctype,.token.cdata{color:slategray}.token.punctuation{color:#999}.namespace{opacity:.7}.token.property,.token.tag,.token.boolean,.token.number{color:#905}.token.selector,.token.attr-name,.token.string{color:#690}.token.operator,.token.entity,.token.url,.language-css .token.string,.style .token.string{color:#a67f59;background:hsla(0,0%,100%,.5)}.token.atrule,.token.attr-value,.token.keyword{color:#07a}.token.regex,.token.important{color:#e90}.token.important{font-weight:bold}.token.entity{cursor:help}
+      div.description {margin: 14px 0; padding-top: 14px; border-bottom:1px solid #eee; }
+      .tags {}
+      .ctx-type {
+        display:inline-block;
+        margin-right:0.5em;
+        //- float:right; margin-top:8px
+      }
+      
+      footer iframe{vertical-align:middle;}
+      
+    </style>
+  </head>
+  <body data-spy="scroll" data-target=".scrollspy">
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container"><a class="brand">Doxx</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav pull-right sponsored"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <header id="overview" class="jumbotron subhead">
+      <div class="container">
+        <h1>possum</h1>
+        <p class="lead"></p>
+      </div>
+    </header>
+    <div class="container">
+      <div class="row">
+        <div class="span3 bs-docs-sidebar">
+          <ul class="nav nav-list bs-docs-sidenav affix-top">
+            <li class="active"><a href="index.html">Main</a></li>
+            <li><a href="index.js.html">index.js</a></li>
+          </ul>
+          <div class="scrollspy">
+            <ul class="nav nav-list bs-docs-sidenav affix-top">
+            </ul>
+          </div>
+        </div>
+        <div class="span9">
+          <section id="Main"><pre><code class="lang-js"> _  _  _ _    _  
+|_)(_)_)_)|_|||| 
+| state machine
+</code></pre>
+<blockquote>
+<p>I am able.</p></blockquote>
+<ul>
+<li><em>From potis (“able, capable”) + sum (“I am”).</em></li>
+</ul>
+<p>========<br /><a href="https://travis-ci.org/mnichols/possum"><img src="https://travis-ci.org/mnichols/possum.svg?branch=master" alt="Build Status"></a></p><h2>License</h2>
+<p><a href="https://raw.githubusercontent.com/mnichols/possum/master/LICENSE">MIT</a></p><h3>Install</h3>
+<p><code>npm install --save possum</code></p><h3>Building</h3>
+<p><code>make build</code></p><h3>Example</h3>
+<p><code>make example</code></p><h3>Roadmap</h3>
+<ul>
+<li>Hierarchical State Machine support</li>
+<li>Behavior tree generation (ala <a href="https://github.com/maryrosecook/machinejs">machine.js</a>).</li>
+</ul>
+<h3>Module Support</h3>
+<p>Works in nodejs and the browser using CJS modules.<br />For the browser maybe use <a href="http://browserify.org/index.html">browserify</a>.<br />AMD isn&#39;t going to be supported, sorry.</p><h3>Getting Started</h3>
+<blockquote>
+<p>This is in the <code>app.js</code> for the example.</p></blockquote>
+<pre><code class="lang-js">
+//listening to Kiss&#39; Love Gun on my record player
+
+//first, define our state machine spec
+
+let gun = possum
+    .config({
+        namespace: &#39;kiss&#39;
+        , initialState: &#39;uninitialized&#39;
+    })
+    .methods({
+        enable: function(actions) {
+            Object.keys(controls).forEach(function(key){
+                controls[key].setAttribute(&#39;disabled&#39;,&#39;disabled&#39;)
+            })
+            if(!actions || !actions.length) {
+                return
+            }
+            actions.forEach(function(action){
+                controls[action].removeAttribute(&#39;disabled&#39;)
+            })
+        }
+        ,loadWeapon: function(bullets){
+            return this.bullets = bullets || [
+                &#39;I Stole Your Love&#39;
+                ,&#39;Shock Me&#39;
+                ,&#39;Love Gun&#39;
+            ]
+        }
+        ,fire: function(){
+            //asynchronous, returns a Promise
+            return this.recordPlayer.play(this.song)
+        }
+    })
+    .states({
+        &#39;uninitialized&#39;: {
+            _enter: function(){
+                this.enable([&#39;initialize&#39;])
+                return this.recordPlayer.turnOn()
+            }
+            ,&#39;initialize&#39;: function(args) {
+                return this.recordPlayer.spinRecord()
+                    .then(this.transition.bind(this,&#39;initialized&#39;))
+            }
+        }
+        ,&#39;initialized&#39;: {
+            _enter: function(){
+                this.enable([&#39;pullTrigger&#39;,&#39;load&#39;])
+            }
+            ,&#39;pullTrigger&#39;: function() {
+                this.deferUntilTransition(&#39;aimed&#39;)
+            }
+            ,&#39;load&#39;: function(args) {
+                this.deferUntilTransition(&#39;loading&#39;)
+                return this.transition(&#39;loading&#39;)
+            }
+        }
+        ,&#39;loading&#39;: {
+            _enter: function(){
+                this.enable([&#39;load&#39;])
+            }
+            ,&#39;load&#39;: function(args) {
+                this.loadWeapon(args &amp;&amp; args.bullets)
+                return this.transition(&#39;loaded&#39;)
+            }
+            ,&#39;reload&#39;: function() {
+                return this.handle(&#39;load&#39;)
+            }
+        }
+        ,&#39;loaded&#39;: {
+            _enter: function(){
+                document.querySelector(&#39;.remaining&#39;).innerHTML = &#39;&#39;
+                this.enable([&#39;aim&#39;])
+            }
+            ,&#39;aim&#39;: function(args) {
+                this.song = (args &amp;&amp; args.target) || this.bullets.shift()
+                this.recordPlayer.hoverNeedleOver(this.song)
+                return this.transition(&#39;aimed&#39;)
+            }
+        }
+        ,&#39;aimed&#39;:{
+            _enter: function(){
+                this.enable([&#39;pullTrigger&#39;])
+            }
+            ,&#39;pullTrigger&#39;: function() {
+                return this.fire()
+                    .then(this.transition.bind(this,&#39;smoking&#39;))
+            }
+        }
+        ,&#39;smoking&#39;: {
+            _enter: function(){
+                console.log(&#39;light cigarette, sit back and relax&#39;)
+                this.enable([&#39;liftNeedle&#39;])
+            }
+            ,&#39;aim&#39;: function(args){
+                this.deferUntilNextHandler()
+                return this.handle(&#39;liftNeedle&#39;)
+            }
+            ,&#39;liftNeedle&#39;: function(){
+                if(this.bullets.length) {
+                    return this.transition(&#39;loaded&#39;)
+                }
+                return this.transition(&#39;emptied&#39;)
+            }
+        }
+        ,&#39;emptied&#39;: {
+            _enter: function(){
+                this.enable([&#39;reload&#39;])
+                return this.handle(&#39;aim&#39;)
+            }
+            ,&#39;aim&#39;: function(args){
+                return this.recordPlayer.returnArm()
+            }
+            ,&#39;reload&#39;: function(){
+                this.deferUntilTransition(&#39;loading&#39;)
+                return this.transition(&#39;loading&#39;)
+            }
+        }
+
+    })
+    .create()
+
+gun.currentState == &#39;uninitialized&#39; // true
+</code></pre>
+<h3>What is a Possum?</h3>
+<p>A marsupial.</p><p>But for our purposes, <code>possum</code> uses <a href="https://github.com/ericelliott/stampit">stampit</a> under-the-hood for<br />model prototyping.</p><p>This means that when you do this:</p><pre><code class="lang-js">
+var p = possum.states({ ... }).create()
+</code></pre>
+<p>A possum will compose any settings you put on the top level possum<br />call and then exposes this to the api (see below for more details):</p><pre><code class="lang-js">possum
+.config( /* configure initialState, namespace, etc */) // alias to stampit `props`
+.states( /* configure states */) 
+.methods(/* special methods */) //stampit method
+.init(function(){
+    //initializing stuff
+    var secretData = &#39;shhhh&#39;
+    this.prop == &#39;erty&#39; // -&gt; true
+}) //stampit method
+.compose(/* mixin other stamps into the machine */) //stampit method
+.target(/* the state object to use (default is the machine itself) */)
+.create() //this creates the possum instance; you may also just call it as a function
+</code></pre>
+<h3>Isolation and prototypes</h3>
+<p>Every call to the builder functions on <code>possum</code> return a new stamp. This is important<br />to know and also to take advantage of. Consider the following:</p><pre><code class="lang-js">
+let loggable = possum.compose(logger)
+let eventable = possum.compose(eventSourcer)
+let kitchen = loggable.compose(eventable)
+
+let model = loggable.config({initialState: &#39;a&#39;}).create() //has loggable, not eventable, behavior
+let model2 = eventable.config({initialState:&#39;a&#39;}).create() //has eventable, not loggable, behavior
+let everything = kitchen.config({initialState:&#39;a&#39; }).create() // has both
+</code></pre>
+<p>See the tests <a href="https://github.com/mnichols/possum/blob/master/test/composing-possum-test.js">here</a> for<br />seeing in action.</p><h3>Asynchronous and synchronous transitions and handlers</h3>
+<p>Oftentimes handlers end up being async, breaking all the callers. Initially<br /><code>possum</code> did Promises for all api calls.</p><p>As of <code>v0.1.0</code> possum supports both synchronous and Promised handlers.</p><p>It is worth noting that the events which are emitted are ordered differently<br />depending on the flow model you choose.</p><h3>Possum Builder API (extensions atop stampit)</h3>
+<h5><code>config</code> {Object} <strong>required</strong></h5>
+<p>These attributes can (should) be set here:</p><h6><code>namespace</code> {String} [optional]</h6>
+<p>The namespace for this instance</p><pre><code>var p = possum.config({
+    namespace: &#39;secure&#39;
+})
+</code></pre><h6><code>initialState</code> {String} <strong>required</strong></h6>
+<p>The state to transition to initially</p><pre><code>var p = possum.config({
+    initialState: &#39;uninitialized&#39;
+})
+</code></pre><p>NOTE: </p><ul>
+<li>the <code>_enter</code> callback will NOT get called immediately upon construction<br />if the state designated by  <code>initialState</code> has one. This is to avoid the<br />need for asynchronous instantiation support. If really need an initialization routing<br />you can just use stampit&#39;s built in facility for this:</li>
+</ul>
+<pre><code class="lang-js">
+var p = possum
+.config({
+    initialState: &#39;a&#39;
+})
+.states({
+    &#39;a&#39;: {
+        &#39;_enter&#39;: function(){
+            //wont get called on creation!
+        }
+    }
+})
+.init(function(){
+    //do init stuff here
+    //...you can even return a Promise and stampit will return the promise
+    //for you to control it
+})
+</code></pre>
+<h5><code>states</code> {Object} <strong>required</strong></h5>
+<p>The states handlers configuration in the shape of:</p><pre><code class="lang-js">var states = {
+    &#39;myState&#39;: {
+        _enter: function( target ){
+            //optional
+            //steps to perform right when entering a state
+            //can return an Promise for async support
+        }
+        ,&#39;doIt&#39;: function(args, target) {
+            //optionally make changes to the state target
+            //handle the command &#39;doIt&#39;
+            //receiving exactly ONE argument
+            return this.doIt()
+        }
+        ... 
+        ,_exit: function( target ) {
+            //optional
+            //steps to perform right before transitioning
+            //out of this state
+        }
+    }
+}
+</code></pre>
+<p>Note that each state&#39;s input handler, will receive <em>one</em> <code>arguments</code> parameter. That means you must<br />invoke the handlers this way:</p><pre><code class="lang-js">model.handle(&#39;doIt&#39;,&#39;myArgument&#39;)
+</code></pre>
+<p><strong>Additional arguments will be ignored</strong>.</p><h3>Possum Instance API</h3>
+<h5><code>currentState</code> {String}</h5>
+<p>The current state of the possum instance.<br />This is the same as <code>initialState</code> upon creation</p><h5><code>priorState</code> {String}</h5>
+<p>The priorState state of the possum instance, if any.<br />This is <code>undefined</code> until a transition has occurred.</p><h5><code>namespaced([str,namespace])</code> {Function}</h5>
+<p>Receives an optional <code>str</code> argument to produce an namespaced string using underlying delimiter rules.</p><p>If <code>str</code> is not provided, the instance&#39;s <code>namespace</code> is returned (from the spec).</p><p>If the instance has an <code>undefined</code> namespace the input <code>namespace</code> argument is used; if that is undefined<br />the <code>str</code> is returned.</p><p>This utility is used for producing underlying events for subscription; eg : </p><p><code>possumInstance.on(possumInstance.namespaced(&#39;handled&#39;),function(){...})</code></p><h5><code>handle(inputType, args)</code> {Function}</h5>
+<p>Queues the command <em>inputType</em> and processes it with the singular <em>args</em> payload.<br />Note that only <strong>one</strong> argument will be used. Other arguments will be ignored.</p><p>Returns the result of the handler (Promise or not)</p><h5><code>transition(toState)</code> {Function}</h5>
+<p>Convenience method that queues the transition commands <code>exit</code>, <code>_transition</code>, and <code>_onEnter</code> and processes them.<br />Returns a Promise if an <code>_enter</code> or <code>_exit</code> handler does so; otherwise, it returns<br />the possum instance.</p><h5><code>deferUntilTransition(toState)</code> {Function}</h5>
+<p>Queues the current message (input) to be replayed after the possum has transitioned<br />to <code>toState</code>. If <code>toState</code> is not provided, then it will replay after <em>any</em><br />transition has occurred.</p><p>Returns <code>this</code> possum instance.</p><h3>Possum Events</h3>
+<h5><code>{namespace}.handling</code></h5>
+<p>Emitted <em>during</em> an input handler.</p><p>Event properties:</p><ul>
+<li>topic: &#39;handling&#39;</li>
+<li>inputType: {String} the name of the handler you just called</li>
+<li>payload: {Any} The arguments passed into the <code>handle</code> call</li>
+<li>action: {String} the path of the handler you just called ; eg &#39;myState.myHandler&#39;</li>
+<li>namespace: {String} the namespace of the possum</li>
+</ul>
+<h5><code>{namespace}.invoked</code></h5>
+<p>Emitted <em>just after</em> an input handler has been invoked but possibly before<br />the handler has completed (asynchronously).</p><p>Event properties:</p><ul>
+<li>topic: &#39;invoked&#39;</li>
+<li>inputType: {String} the name of the handler you just called</li>
+<li>payload: {Any} The arguments passed into the <code>handle</code> call</li>
+<li>action: {String} the path of the handler you just called ; eg &#39;myState.myHandler&#39;</li>
+<li>namespace: {String} the namespace of the possum</li>
+</ul>
+<h5><code>{namespace}.handled</code></h5>
+<p>Emitted <em>after</em> an input handler Promise has resolved (if async).</p><p>Event properties:</p><ul>
+<li>topic: &#39;handled&#39;</li>
+<li>inputType: {String} the name of the handler you just called</li>
+<li>payload: {Any} The arguments passed into the <code>handle</code> call</li>
+<li>action: {String} the path of the handler you just called ; eg &#39;myState.myHandler&#39;</li>
+<li>namespace: {String} the namespace of the possum</li>
+</ul>
+<h5><code>{namespace}.transitioned</code></h5>
+<p>Emitted <em>after</em> a possum has transitioned into a state,<br />and <em>after</em> its entry callback has been invoked (<code>_enter</code>).</p><p>Event properties:</p><ul>
+<li>topic: &#39;transitioned&#39;</li>
+<li>inputType: {String} the name of the handler you just called</li>
+<li>payload: {Object} having these properties<ul>
+<li><code>toState</code> The state you just transitioned to</li>
+<li><code>fromState</code> The state you just transitioned from</li>
+</ul>
+</li>
+<li>action: {String} the path of the handler you just called ; eg &#39;myState.myHandler&#39;</li>
+<li>namespace: {String} the namespace of the possum</li>
+</ul>
+<h5><code>{namespace}.noHandler</code></h5>
+<p>Emitted when an input has been attempted on a state that does not declare it.</p><h4><code>{namespace}.invalidTransition</code></h4>
+<p>Emitted when an transition is attempted to a state that does not exist.</p><h3>Tests</h3>
+<ul>
+<li><code>make test</code> will by default run tests on Node.</li>
+<li><code>make browser</code> will run tape tests on any browser you visit at <code>http://localhost:2222</code></li>
+</ul>
+<h4>Acknowledgements</h4>
+<p>API inspiration from <a href="https://github.com/ifandelse/machina.js">machina.js</a>.<br />Thanks to <a href="http://freshbrewedcode.com/jimcowart/">Jim Cowart</a> and contributors<br />for formulating a powerful api.</p><h3>Credits</h3>
+<ul>
+<li><a href="https://github.com/ifandelse/machina.js">machina.js</a></li>
+<li><a href="http://www.network-science.de/ascii/">ascii generation</a></li>
+</ul>
+</section>
+        </div>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <p>Documentation generated with <a href="https://github.com/FGRibreau/doxx">Doxx </a> created by <a href="https://twitter.com/FGRibreau" data-show-count="false" class="twitter-follow-button">Francois-Guillaume Ribreau </a></p>
+        <p>Doxx is sponsored by <a href="http://bringr.net/?btt" title="Outil d'analyse des réseaux sociaux" class="bringr">Bringr </a> and <a href="https://redsmin.com/?btt" title="Full Redis GUI" class="redsmin">Redsmin</a></p>
+        <p>Theme borrowed from Twitter Bootstrap</p>
+      </div>
+    </footer>
+    <script src="http://platform.twitter.com/widgets.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+    <script src="http://leaverou.github.com/prefixfree/prefixfree.js"></script>
+    <script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-transition.js"></script>
+    <script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-scrollspy.js"></script>
+    <script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-dropdown.js"></script>
+    <script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-collapse.js"></script>
+    <script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-affix.js"></script>
+    <script>
+      /**
+       * Prism: Lightweight, robust, elegant syntax highlighting
+       * MIT license http://www.opensource.org/licenses/mit-license.php/
+       * @author Lea Verou http://lea.verou.me
+       */(function(){var e=/\blang(?:uage)?-(?!\*)(\w+)\b/i,t=self.Prism={util:{type:function(e){return Object.prototype.toString.call(e).match(/\[object (\w+)\]/)[1]},clone:function(e){var n=t.util.type(e);switch(n){case"Object":var r={};for(var i in e)e.hasOwnProperty(i)&&(r[i]=t.util.clone(e[i]));return r;case"Array":return e.slice()}return e}},languages:{extend:function(e,n){var r=t.util.clone(t.languages[e]);for(var i in n)r[i]=n[i];return r},insertBefore:function(e,n,r,i){i=i||t.languages;var s=i[e],o={};for(var u in s)if(s.hasOwnProperty(u)){if(u==n)for(var a in r)r.hasOwnProperty(a)&&(o[a]=r[a]);o[u]=s[u]}return i[e]=o},DFS:function(e,n){for(var r in e){n.call(e,r,e[r]);t.util.type(e)==="Object"&&t.languages.DFS(e[r],n)}}},highlightAll:function(e,n){var r=document.querySelectorAll('code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code');for(var i=0,s;s=r[i++];)t.highlightElement(s,e===!0,n)},highlightElement:function(r,i,s){var o,u,a=r;while(a&&!e.test(a.className))a=a.parentNode;if(a){o=(a.className.match(e)||[,""])[1];u=t.languages[o]}if(!u)return;r.className=r.className.replace(e,"").replace(/\s+/g," ")+" language-"+o;a=r.parentNode;/pre/i.test(a.nodeName)&&(a.className=a.className.replace(e,"").replace(/\s+/g," ")+" language-"+o);var f=r.textContent;if(!f)return;f=f.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\u00a0/g," ");var l={element:r,language:o,grammar:u,code:f};t.hooks.run("before-highlight",l);if(i&&self.Worker){var c=new Worker(t.filename);c.onmessage=function(e){l.highlightedCode=n.stringify(JSON.parse(e.data));l.element.innerHTML=l.highlightedCode;s&&s.call(l.element);t.hooks.run("after-highlight",l)};c.postMessage(JSON.stringify({language:l.language,code:l.code}))}else{l.highlightedCode=t.highlight(l.code,l.grammar);l.element.innerHTML=l.highlightedCode;s&&s.call(r);t.hooks.run("after-highlight",l)}},highlight:function(e,r){return n.stringify(t.tokenize(e,r))},tokenize:function(e,n){var r=t.Token,i=[e],s=n.rest;if(s){for(var o in s)n[o]=s[o];delete n.rest}e:for(var o in n){if(!n.hasOwnProperty(o)||!n[o])continue;var u=n[o],a=u.inside,f=!!u.lookbehind||0;u=u.pattern||u;for(var l=0;l<i.length;l++){var c=i[l];if(i.length>e.length)break e;if(c instanceof r)continue;u.lastIndex=0;var h=u.exec(c);if(h){f&&(f=h[1].length);var p=h.index-1+f,h=h[0].slice(f),d=h.length,v=p+d,m=c.slice(0,p+1),g=c.slice(v+1),y=[l,1];m&&y.push(m);var b=new r(o,a?t.tokenize(h,a):h);y.push(b);g&&y.push(g);Array.prototype.splice.apply(i,y)}}}return i},hooks:{all:{},add:function(e,n){var r=t.hooks.all;r[e]=r[e]||[];r[e].push(n)},run:function(e,n){var r=t.hooks.all[e];if(!r||!r.length)return;for(var i=0,s;s=r[i++];)s(n)}}},n=t.Token=function(e,t){this.type=e;this.content=t};n.stringify=function(e){if(typeof e=="string")return e;if(Object.prototype.toString.call(e)=="[object Array]"){for(var r=0;r<e.length;r++)e[r]=n.stringify(e[r]);return e.join("")}var i={type:e.type,content:n.stringify(e.content),tag:"span",classes:["token",e.type],attributes:{}};i.type=="comment"&&(i.attributes.spellcheck="true");t.hooks.run("wrap",i);var s="";for(var o in i.attributes)s+=o+'="'+(i.attributes[o]||"")+'"';return"<"+i.tag+' class="'+i.classes.join(" ")+'" '+s+">"+i.content+"</"+i.tag+">"};if(!self.document){self.addEventListener("message",function(e){var n=JSON.parse(e.data),r=n.language,i=n.code;self.postMessage(JSON.stringify(t.tokenize(i,t.languages[r])));self.close()},!1);return}var r=document.getElementsByTagName("script");r=r[r.length-1];if(r){t.filename=r.src;document.addEventListener&&!r.hasAttribute("data-manual")&&document.addEventListener("DOMContentLoaded",t.highlightAll)}})();;
+      Prism.languages.markup={comment:/&lt;!--[\w\W]*?--(&gt;|&gt;)/g,prolog:/&lt;\?.+?\?&gt;/,doctype:/&lt;!DOCTYPE.+?&gt;/,cdata:/&lt;!\[CDATA\[[\w\W]+?]]&gt;/i,tag:{pattern:/&lt;\/?[\w:-]+\s*(?:\s+[\w:-]+(?:=(?:("|')(\\?[\w\W])*?\1|\w+))?\s*)*\/?&gt;/gi,inside:{tag:{pattern:/^&lt;\/?[\w:-]+/i,inside:{punctuation:/^&lt;\/?/,namespace:/^[\w-]+?:/}},"attr-value":{pattern:/=(?:('|")[\w\W]*?(\1)|[^\s>]+)/gi,inside:{punctuation:/=|&gt;|"/g}},punctuation:/\/?&gt;/g,"attr-name":{pattern:/[\w:-]+/g,inside:{namespace:/^[\w-]+?:/}}}},entity:/&amp;#?[\da-z]{1,8};/gi};Prism.hooks.add("wrap",function(e){e.type==="entity"&&(e.attributes.title=e.content.replace(/&amp;/,"&"))});;
+      Prism.languages.css={comment:/\/\*[\w\W]*?\*\//g,atrule:/@[\w-]+?(\s+[^;{]+)?(?=\s*{|\s*;)/gi,url:/url\((["']?).*?\1\)/gi,selector:/[^\{\}\s][^\{\}]*(?=\s*\{)/g,property:/(\b|\B)[a-z-]+(?=\s*:)/ig,string:/("|')(\\?.)*?\1/g,important:/\B!important\b/gi,ignore:/&(lt|gt|amp);/gi,punctuation:/[\{\};:]/g};Prism.languages.markup&&Prism.languages.insertBefore("markup","tag",{style:{pattern:/(&lt;|<)style[\w\W]*?(>|&gt;)[\w\W]*?(&lt;|<)\/style(>|&gt;)/ig,inside:{tag:{pattern:/(&lt;|<)style[\w\W]*?(>|&gt;)|(&lt;|<)\/style(>|&gt;)/ig,inside:Prism.languages.markup.tag.inside},rest:Prism.languages.css}}});;
+      Prism.languages.clike={comment:{pattern:/(^|[^\\])(\/\*[\w\W]*?\*\/|\/\/.*?(\r?\n|$))/g,lookbehind:!0},string:/("|')(\\?.)*?\1/g,keyword:/\b(if|else|while|do|for|return|in|instanceof|function|new|try|catch|finally|null|break|continue)\b/g,"boolean":/\b(true|false)\b/g,number:/\b-?(0x)?\d*\.?[\da-f]+\b/g,operator:/[-+]{1,2}|!|=?&lt;|=?&gt;|={1,2}|(&amp;){1,2}|\|?\||\?|\*|\//g,ignore:/&(lt|gt|amp);/gi,punctuation:/[{}[\];(),.:]/g};;
+      Prism.languages.javascript=Prism.languages.extend("clike",{keyword:/\b(var|let|if|else|while|do|for|return|in|instanceof|function|new|with|typeof|try|catch|finally|null|break|continue)\b/g,number:/\b(-?(0x)?\d*\.?[\da-f]+|NaN|-?Infinity)\b/g});Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:/(^|[^/])\/(?!\/)(\[.+?]|\\.|[^/\r\n])+\/[gim]{0,3}(?=\s*($|[\r\n,.;})]))/g,lookbehind:!0}});Prism.languages.markup&&Prism.languages.insertBefore("markup","tag",{script:{pattern:/(&lt;|<)script[\w\W]*?(>|&gt;)[\w\W]*?(&lt;|<)\/script(>|&gt;)/ig,inside:{tag:{pattern:/(&lt;|<)script[\w\W]*?(>|&gt;)|(&lt;|<)\/script(>|&gt;)/ig,inside:Prism.languages.markup.tag.inside},rest:Prism.languages.javascript}}});;
+      
+    </script>
+    <!-- App js-->
+    <script>
+      $(function(){
+        var $window = $(window);
+        $('.scrollspy .nav').affix({
+          offset: {
+            top: function () { return $window.width() <= 980 ? 480 : 400 }
+          , bottom: 50
+          }
+        });
+      })
+    </script>
+  </body>
+</html>

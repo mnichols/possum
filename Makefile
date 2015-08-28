@@ -31,6 +31,6 @@ browser:
 	./node_modules/.bin/browserify --debug ./test/*.js | ./node_modules/.bin/browser-run -p 2222 | ./node_modules/.bin/faucet
 
 ci: build test
-	zuul -- ./test/**/*-test.js
+	./node_modules/.bin/zuul -- ./test/**/*-test.js
 
 .PHONY: test build verbose silent docs ci browser

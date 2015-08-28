@@ -13,9 +13,3 @@ browsers:
     version: latest
   - name: internet explorer
     version: latest
-  - name: microsoftedge
-    version: latest
-  - name: iphone
-    version: latest
-  - name: android
-    version: latest

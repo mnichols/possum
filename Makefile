@@ -1,10 +1,7 @@
 BUILD_DIR = build
 
 build: clean
-	./node_modules/.bin/browserify \
-		--outfile ./${BUILD_DIR}/possum.js \
-		--debug \
-		-r ./lib/index.js:possum
+	./node_modules/.bin/browserify  --outfile ./${BUILD_DIR}/possum.js  --debug  -r ./lib/index.js:possum
 	
 	# TODO minified builds are busted by es6 features :(
 	#./node_modules/.bin/browserify \
@@ -33,14 +30,10 @@ example: build
 	pushd ./examples; python -m SimpleHTTPServer; popd
 
 test:
-	./node_modules/.bin/babel-tape-runner ./test/**/*-test.js \
-		| ./node_modules/.bin/faucet
+	./node_modules/.bin/babel-tape-runner ./test/**/*-test.js | ./node_modules/.bin/faucet
 
 browser:
-	./node_modules/.bin/browserify \
-		--debug ./test/*.js \
-		| ./node_modules/.bin/browser-run -p 2222  \
-		| ./node_modules/.bin/faucet
+	./node_modules/.bin/browserify --debug ./test/*.js | ./node_modules/.bin/browser-run -p 2222 | ./node_modules/.bin/faucet
 
 ci: build test
 	./node_modules/.bin/zuul -- ./test/**/*-test.js

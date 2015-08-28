@@ -8,12 +8,12 @@
 
 - _From potis (“able, capable”) + sum (“I am”)._
 
+========
+[![Build Status](https://travis-ci.org/mnichols/possum.svg?branch=master)](https://travis-ci.org/mnichols/possum)
 
-#### Acknowledgements
+## License
+[MIT](https://raw.githubusercontent.com/mnichols/possum/master/LICENSE)
 
-API inspiration from [machina.js](https://github.com/ifandelse/machina.js).
-Thanks to [Jim Cowart](http://freshbrewedcode.com/jimcowart/) and contributors
-for formulating a powerful api.
 
 ### Install
 
@@ -441,6 +441,12 @@ Emitted when an transition is attempted to a state that does not exist.
 
 - `make test` will by default run tests on Node.
 - `make browser` will run tape tests on any browser you visit at `http://localhost:2222`
+
+#### Acknowledgements
+
+API inspiration from [machina.js](https://github.com/ifandelse/machina.js).
+Thanks to [Jim Cowart](http://freshbrewedcode.com/jimcowart/) and contributors
+for formulating a powerful api.
 
 ### Credits
 

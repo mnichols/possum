@@ -1,6 +1,6 @@
 {
   "name": "possum",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "I am able. A State Machine.",
   "main": "./dist/possum.js",
   "directories": {
@@ -8,9 +8,9 @@
   },
   "scripts": {
     "clean": "make clean",
-    "test": "babel-tape-runner ./tests/**/*-test.js | faucet",
+    "test": "make test",
     "build": "make build",
-    "prepublish": "make build && make test"
+    "prepublish": "make build && make test && make publish"
   },
   "keywords": [
     "hierarchical",
@@ -40,7 +40,7 @@
     ]
   },
   "devDependencies": {
-    "babel": "^5.8.21",
+    "babel": "^5.8.23",
     "babel-core": "^5.8.22",
     "babel-tape-runner": "^1.2.0",
     "babelify": "^6.2.0",

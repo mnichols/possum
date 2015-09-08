@@ -51,7 +51,7 @@ var recordPlayer = {
 }
 
 //define our state machine spec
-var model = possum()
+var model = possum
     .config({
         namespace: 'kiss'
         ,initialState: 'uninitialized'

@@ -214,21 +214,17 @@
               </li>
               <li><a href="#states"><i class="alert alert-info"></i><span>states</span></a>
               </li>
-              <li><a href="#target"><i class="alert alert-info"></i><span>target</span></a>
-              </li>
-              <li><a href="#config"><i class="alert alert-info"></i><span>config</span></a>
-              </li>
               <li><a href="#currentState"><i class="alert alert-success"></i><span>currentState</span></a>
               </li>
               <li><a href="#priorState"><i class="alert alert-success"></i><span>priorState</span></a>
               </li>
               <li><a href="#handle"><i class="alert alert-info"></i><span>handle</span></a>
               </li>
-              <li><a href="#deferUntilTransition"><i class="alert alert-info"></i><span>deferUntilTransition</span></a>
+              <li><a href="#deferUntilTransition"><i class="alert alert-success"></i><span>deferUntilTransition</span></a>
               </li>
               <li><a href="#transition"><i class="alert alert-info"></i><span>transition</span></a>
               </li>
-              <li><a href="#target"><i class="alert alert-info"></i><span>target</span></a>
+              <li><a href="#target"><i class="alert alert-success"></i><span>target</span></a>
               </li>
             </ul>
           </div>
@@ -242,56 +238,73 @@
             </p>
           </section>
           <div class="description"><p>possums are event emitters</p></div>
-          <pre><code class="language-javascript">var emittable = (0, _stampit2['default'])().methods({
-    emitEvent: function emitEvent(e) {
-        this.emit(this.namespaced(e.topic), e);
-        return this;
-    },
-    namespaced: function namespaced(value, namespace) {
-        namespace = namespace || this.namespace;
-        var pre = '';
-        if (namespace) {
-            pre = '' + namespace + this.emitterOpts.delimiter;
-        }
-        return '' + pre + value;
+          <pre><code class="language-javascript">const emittable =  stampit()
+.methods({
+    emitEvent: function(e) {
+        this.emit(this.namespaced(e.topic), e)
+        return this
     }
-}).init(function () {
-    var _this = this;
-
+    ,namespaced: function(value, namespace) {
+        namespace = (namespace || this.namespace)
+        let pre = ''
+        if(namespace) {
+            pre = `${namespace}${this.emitterOpts.delimiter}`
+        }
+        return `${pre}${value}`
+    }
+})
+.init(function(){
     //expose emitter
-    this.emitter = this.emitter || new _eventemitter2.EventEmitter2(this.emitterOpts);
+    this.emitter = (this.emitter || new EventEmitter(this.emitterOpts))
 
-    var eventModel = (0, _stampit2['default'])().refs({
-        topic: undefined,
-        payload: undefined,
-        state: undefined,
-        timestamp: undefined,
-        id: undefined,
-        namespace: undefined
-    }).init(function () {
-        this.timestamp = new Date().toUTCString();
-        this.id = (0, _cuid2['default'])();
-    });
+    const eventModel = stampit()
+        .refs({
+            topic: undefined
+             , payload: undefined
+             , state: undefined
+             , timestamp: undefined
+             , id: undefined
+             , namespace: undefined
+        })
+        .init(function() {
+            this.timestamp = new Date().toUTCString()
+            this.id = cuid()
+        })
 
-    this.createEvent = eventModel;
-    this.copyEvent = function (e, topic) {
-        return _this.createEvent({
-            topic: topic || e.topic,
-            payload: e.payload,
-            state: e.state,
-            timestamp: new Date().toUTCString(),
-            namespace: e.namespace,
-            id: (0, _cuid2['default'])()
-        });
-    };
+    this.createEvent = eventModel
+    this.copyEvent = (e, topic) =&gt; {
+        return this.createEvent({
+            topic: (topic || e.topic)
+            , payload: e.payload
+            , state: e.state
+            , timestamp: new Date().toUTCString()
+            , namespace: e.namespace
+            , id: cuid()
+        })
+    }
 
-    var forwardFn = function forwardFn(fn) {
-        _this[fn] = _this.emitter[fn].bind(_this.emitter);
-    };
+    const forwardFn = (fn) =&gt; {
+        this[fn] = this.emitter[fn].bind(this.emitter)
+    }
 
-    var eventApi = ['addListener', 'on', 'onAny', 'offAny', 'once', 'many', 'removeListener', 'off', 'listeners', 'listenersAny', 'emit', 'removeAllListeners', 'listeners', 'listenersAny'];
-    eventApi.forEach(forwardFn);
-});</code></pre>
+    let eventApi = [
+        'addListener'
+        ,'on'
+        , 'onAny'
+        , 'offAny'
+        , 'once'
+        , 'many'
+        , 'removeListener'
+        , 'off'
+        , 'listeners'
+        , 'listenersAny'
+        , 'emit'
+        , 'removeAllListeners'
+        , 'listeners'
+        , 'listenersAny'
+    ]
+    eventApi.forEach(forwardFn)
+})</code></pre>
           <section id="stateModel">
             <h1>stateModel</h1>
             <h5 class="subheader"></h5>
@@ -300,50 +313,48 @@
             </p>
           </section>
           <div class="description"><p>represents a single state in config passed by <code>states</code></p></div>
-          <pre><code class="language-javascript">var stateModel = (0, _stampit2['default'])().refs({
-    name: undefined
-}).init(function () {
-    var _this2 = this;
-
-    if (!this.name) {
-        throw new Error('`name` is required');
-    }
-    var enter = undefined;
-    var exit = undefined;
-    var handlers = new Map();
-
-    function noop() {}
-
-    this.entry = function () {
-        return enter || noop;
-    };
-    this.exit = function () {
-        return exit || noop;
-    };
-    this.get = function (inputType) {
-        return handlers.get(inputType);
-    };
-    this.set = function () {
-        var handlers = arguments.length &lt;= 0 || arguments[0] === undefined ? {} : arguments[0];
-
-        for (var inputType in handlers) {
-            _this2.handler(inputType, handlers[inputType]);
+          <pre><code class="language-javascript">let stateModel = stampit()
+    .refs({
+        name: undefined
+    })
+    .init(function(){
+        if(!this.name) {
+            throw new Error('`name` is required')
         }
-    };
-    this.handler = function (inputType, fn) {
-        switch (inputType) {
-            case '_enter':
-                enter = fn;
-                break;
-            case '_exit':
-                exit = fn;
-                break;
-            default:
-                handlers.set(inputType, fn);
+        let enter
+        let exit
+        let handlers = new Map()
+
+        function noop(){}
+
+        this.entry = () =&gt; {
+            return (enter || noop)
         }
-        return _this2;
-    };
-});</code></pre>
+        this.exit = () =&gt; {
+            return (exit || noop)
+        }
+        this.get = (inputType) =&gt; {
+            return handlers.get(inputType)
+        }
+        this.set = (handlers = {}) =&gt; {
+            for(let inputType in handlers) {
+                this.handler(inputType,handlers[inputType])
+            }
+        }
+        this.handler = (inputType, fn) =&gt; {
+            switch(inputType) {
+                case '_enter':
+                    enter = fn
+                    break;
+                case '_exit':
+                    exit = fn
+                    break;
+                default:
+                    handlers.set(inputType,fn)
+            }
+            return this
+        }
+    })</code></pre>
           <section id="statesCollection">
             <h1>statesCollection</h1>
             <h5 class="subheader"></h5>
@@ -352,42 +363,41 @@
             </p>
           </section>
           <div class="description"><p>maps state names to their config and exposes<br />api for retrieving and setting them</p></div>
-          <pre><code class="language-javascript">var statesCollection = (0, _stampit2['default'])().init(function () {
-    var _this3 = this;
+          <pre><code class="language-javascript">let statesCollection = stampit()
+    .init(function(){
+        let map = new Map()
 
-    var map = new Map();
-
-    this.set = function (states) {
-        for (var stateName in states) {
-            var state = stateModel({ name: stateName });
-            state.set(states[stateName]);
-            map.set(stateName, state);
+        this.set = (states) =&gt; {
+            for(let stateName in states) {
+                let state = stateModel({ name: stateName})
+                state.set(states[stateName])
+                map.set(stateName, state)
+            }
+            return this
         }
-        return _this3;
-    };
-    this.get = function (stateName, inputType) {
-        var cfg = map.get(stateName);
-        if (!cfg) {
-            return undefined;
+        this.get = ( stateName, inputType ) =&gt; {
+            let cfg = map.get(stateName)
+            if(!cfg) {
+                return undefined
+            }
+            let handler = cfg.get(inputType)
+            if(!handler) {
+                return undefined
+            }
+            return handler
         }
-        var handler = cfg.get(inputType);
-        if (!handler) {
-            return undefined;
+        this.getEntry = ( stateName ) =&gt; {
+            let cfg = map.get(stateName)
+            return cfg.entry()
         }
-        return handler;
-    };
-    this.getEntry = function (stateName) {
-        var cfg = map.get(stateName);
-        return cfg.entry();
-    };
-    this.getExit = function (stateName) {
-        var cfg = map.get(stateName);
-        return cfg.exit();
-    };
-    this.has = function (stateName) {
-        return map.has(stateName);
-    };
-});</code></pre>
+        this.getExit = ( stateName ) =&gt; {
+            let cfg = map.get(stateName)
+            return cfg.exit()
+        }
+        this.has = ( stateName ) =&gt; {
+            return map.has(stateName)
+        }
+    })</code></pre>
           <section id="api">
             <h1>api</h1>
             <h5 class="subheader"></h5>
@@ -396,14 +406,16 @@
             </p>
           </section>
           <div class="description"><p>possum api</p></div>
-          <pre><code class="language-javascript">var api = (0, _stampit2['default'])().refs({
-    emitterOpts: {
-        wildcards: true,
-        delimiter: '.',
-        newListener: true,
-        maxListeners: 10
-    }
-})['static']({</code></pre>
+          <pre><code class="language-javascript">let api = stampit()
+    .refs({
+        emitterOpts: {
+            wildcards: true
+            ,delimiter: '.'
+            ,newListener: true
+            ,maxListeners: 10
+        }
+    })
+    .static({</code></pre>
           <section id="states">
             <h1>states</h1>
             <h5 class="subheader"></h5>
@@ -433,18 +445,11 @@
             </tbody>
           </table>
           <div class="description"><p>Assign states config to instance</p></div>
-          <pre><code class="language-javascript">states: function states(cfg) {
+          <pre><code class="language-javascript">states (cfg) {
     return this.props({
         states: cfg
-    });
-},</code></pre>
-          <section id="target">
-            <h1>target</h1>
-            <h5 class="subheader"></h5>
-            <p>
-              <div class="label label-info radius ctx-type">method</div><span>target()</span><span>&nbsp;</span>
-            </p>
-          </section>
+    })
+}</code></pre>
           <table class="table table-bordered table-striped">
             <thead>
               <tr>
@@ -467,18 +472,11 @@
             </tbody>
           </table>
           <div class="description"><p>Set the state target. Uses <code>this</code> if not provided.</p></div>
-          <pre><code class="language-javascript">target: function target(obj) {
+          <pre><code class="language-javascript">, target (obj) {
     return this.props({
         target: obj
-    });
-},</code></pre>
-          <section id="config">
-            <h1>config</h1>
-            <h5 class="subheader"></h5>
-            <p>
-              <div class="label label-info radius ctx-type">method</div><span>config()</span><span>&nbsp;</span>
-            </p>
-          </section>
+    })
+}</code></pre>
           <table class="table table-bordered table-striped">
             <thead>
               <tr>
@@ -501,58 +499,48 @@
             </tbody>
           </table>
           <div class="description"><p>Configure the instance</p></div>
-          <pre><code class="language-javascript">config: function config() {
-    return this.props.apply(this, arguments);
+          <pre><code class="language-javascript">, config (...args) {
+    return this.props(...args)
 }
-}).compose(emittable).init(function () {
-var _this4 = this;
-
-if (!this.initialState) {
-    throw new Error('an `initialState` config is required');
+    })
+    .compose(emittable)
+    .init(function(){
+if(!this.initialState) {
+    throw new Error('an `initialState` config is required')
 }
 
-var handlers = statesCollection();
-handlers.set(this.states);
+let handlers = statesCollection()
+handlers.set(this.states)
 
-var target = this.target || this;
+let target = (this.target || this)
 
-var invocations = [];
+let invocations = []
 
-var deferrals = new Map();
+let deferrals = new Map()
 
-var replay = function replay(_x3, _x4) {
-    var _again = true;
-
-    _function: while (_again) {
-        var deferred = _x3,
-            lastResult = _x4;
-        next = undefined;
-        _again = false;
-
-        if (!deferred.length) {
-            return lastResult;
-        }
-        var next = deferred.shift();
-        if (lastResult &amp;&amp; lastResult.then) {
-            return lastResult.then(_this4.handle.bind(_this4, next.inputType, next.args)).then(function (res) {
-                return replay(deferred, res);
-            });
-        }
-        _x3 = deferred;
-        _x4 = _this4.handle(next.inputType, next.args);
-        _again = true;
-        continue _function;
+const replay = (deferred, lastResult) =&gt;  {
+    if(!deferred.length) {
+        return lastResult
     }
-};
+    let next = deferred.shift()
+    if(lastResult &amp;&amp; lastResult.then) {
+        return lastResult
+            .then(this.handle.bind(this, next.inputType, next.args))
+            .then(function(res){
+                return replay(deferred, res)
+            })
+    }
+    return replay(deferred, this.handle(next.inputType,next.args))
+}
 
-var done = function done(len, completed, result) {
+const done = (len, completed, result) =&gt; {
     //remove the invocation
-    if (invocations.length &gt;= len) {
-        invocations.splice(len - 1, 1);
+    if(invocations.length &gt;= len) {
+        invocations.splice(len -1, 1)
     }
-    _this4.emitEvent(completed);
-    return result;
-};</code></pre>
+    this.emitEvent(completed)
+    return result
+}</code></pre>
           <section id="currentState">
             <h1>currentState</h1>
             <h5 class="subheader"></h5>
@@ -561,7 +549,7 @@ var done = function done(len, completed, result) {
             </p>
           </section>
           <div class="description"><p>The current state</p></div>
-          <pre><code class="language-javascript">this.currentState = this.initialState;</code></pre>
+          <pre><code class="language-javascript">this.currentState = this.initialState</code></pre>
           <section id="priorState">
             <h1>priorState</h1>
             <h5 class="subheader"></h5>
@@ -570,7 +558,7 @@ var done = function done(len, completed, result) {
             </p>
           </section>
           <div class="description"><p>The prior state</p></div>
-          <pre><code class="language-javascript">this.priorState = undefined;</code></pre>
+          <pre><code class="language-javascript">this.priorState = undefined</code></pre>
           <section id="handle">
             <h1>handle</h1>
             <h5 class="subheader"></h5>
@@ -605,50 +593,52 @@ var done = function done(len, completed, result) {
             </tbody>
           </table>
           <div class="description"><p>Handle an <code>inputType</code> with the configure states handlers</p></div>
-          <pre><code class="language-javascript">this.handle = function (inputType, args) {
-    var len = invocations.push({ inputType: inputType, args: args });
-    var handler = handlers.get(this.currentState, inputType);
-    if (!handler) {
-        var noHandler = this.createEvent({
-            topic: EVENTS.NO_HANDLER,
-            payload: {
-                args: args,
-                inputType: inputType
-            },
-            namespace: this.namespace,
-            state: this.currentState
-        });
-        this.emitEvent(noHandler);
-        return this;
+          <pre><code class="language-javascript">this.handle = function(inputType, args) {
+    let len = invocations.push({ inputType, args})
+    let handler = handlers.get(this.currentState, inputType)
+    if(!handler) {
+        let noHandler = this.createEvent({
+            topic: EVENTS.NO_HANDLER
+            , payload: {
+                args: args
+                , inputType: inputType
+            }
+            , namespace: this.namespace
+            , state: this.currentState
+        })
+        this.emitEvent(noHandler)
+        return this
     }
     //create events
-    var handling = this.createEvent({
-        topic: EVENTS.HANDLING,
-        payload: {
-            args: args,
-            inputType: inputType
-        },
-        namespace: this.namespace,
-        state: this.currentState
-    });
-    var invoked = this.copyEvent(handling, EVENTS.INVOKED);
-    var handled = this.copyEvent(handling, EVENTS.HANDLED);
+    let handling = this.createEvent({
+        topic: EVENTS.HANDLING
+        , payload: {
+            args: args
+            , inputType: inputType
+        }
+        , namespace: this.namespace
+        , state: this.currentState
+    })
+    let invoked = this.copyEvent(handling, EVENTS.INVOKED)
+    let handled = this.copyEvent(handling, EVENTS.HANDLED)
 
     //do it
-    this.emitEvent(handling);
-    var result = handler.call(this, args, target);
-    this.emitEvent(invoked);
+    this.emitEvent(handling)
+    let result = handler.call(this, args, target)
+    this.emitEvent(invoked)
 
-    if (result &amp;&amp; result.then) {
-        return result.bind(this).then(done.bind(this, len, handled));
+    if(result &amp;&amp; result.then) {
+        return result
+            .bind(this)
+            .then(done.bind(this, len, handled))
     }
-    return done(len, handled, result);
-};</code></pre>
+    return done(len, handled, result)
+}</code></pre>
           <section id="deferUntilTransition">
             <h1>deferUntilTransition</h1>
             <h5 class="subheader"></h5>
             <p>
-              <div class="label label-info radius ctx-type">method</div><span>this.deferUntilTransition()</span><span>&nbsp;</span>
+              <div class="label label-success radius ctx-type">property</div><span>this.deferUntilTransition</span><span>&nbsp;</span>
             </p>
           </section>
           <table class="table table-bordered table-striped">
@@ -673,42 +663,41 @@ var done = function done(len, completed, result) {
             </tbody>
           </table>
           <div class="description"><p>Defers the invocation for replay after transition</p></div>
-          <pre><code class="language-javascript">this.deferUntilTransition = function () {
-    var toState = arguments.length &lt;= 0 || arguments[0] === undefined ? ANY_TRANSITION : arguments[0];
+          <pre><code class="language-javascript">this.deferUntilTransition = (toState = ANY_TRANSITION) =&gt; {
+    let coll = (deferrals.get(toState) || [])
+    let invocation = invocations.pop()
+    let deferred = this.createEvent({
+        topic: 'deferred'
+        , state: this.currentState
+        , payload: invocation
+        , namespace: this.namespace
+    })
+    coll.push(invocation)
+    deferrals.set(toState, coll)
 
-    var coll = deferrals.get(toState) || [];
-    var invocation = invocations.pop();
-    var deferred = _this4.createEvent({
-        topic: 'deferred',
-        state: _this4.currentState,
-        payload: invocation,
-        namespace: _this4.namespace
-    });
-    coll.push(invocation);
-    deferrals.set(toState, coll);
+    this.emitEvent(deferred)
+    return this
+}
 
-    _this4.emitEvent(deferred);
-    return _this4;
-};
-
-var doTransition = function doTransition(toState, target) {
-    _this4.priorState = _this4.currentState;
-    _this4.currentState = toState;
-    var e = _this4.createEvent({
-        topic: 'transitioned',
-        payload: {
-            toState: _this4.currentState,
-            fromState: _this4.priorState
-        },
-        state: _this4.currentState,
-        namespace: _this4.namespace
-    });
-    _this4.emit(_this4.namespaced(e.topic), e);
-    var deferred = (deferrals.get(toState) || []).concat(deferrals.get(ANY_TRANSITION) || []);
-    deferrals['delete'](toState);
-    deferrals['delete'](ANY_TRANSITION);
-    return replay(deferred);
-};</code></pre>
+const doTransition = (toState, target) =&gt; {
+    this.priorState = this.currentState
+    this.currentState = toState
+    let e = this.createEvent({
+        topic: 'transitioned'
+        , payload: {
+            toState: this.currentState
+            , fromState: this.priorState
+        }
+        , state: this.currentState
+        , namespace: this.namespace
+    })
+    this.emit(this.namespaced(e.topic),e)
+    let deferred = (deferrals.get(toState) || [])
+        .concat(deferrals.get(ANY_TRANSITION) || [])
+    deferrals.delete(toState)
+    deferrals.delete(ANY_TRANSITION)
+    return replay(deferred)
+}</code></pre>
           <section id="transition">
             <h1>transition</h1>
             <h5 class="subheader"></h5>
@@ -741,35 +730,38 @@ var doTransition = function doTransition(toState, target) {
             </tbody>
           </table>
           <div class="description"><p>Transition to another state.<br />Prefer calling this internally; eg inside a handler.</p></div>
-          <pre><code class="language-javascript">this.transition = function (toState) {
-    if (!handlers.has(toState)) {
+          <pre><code class="language-javascript">this.transition = function(toState) {
+    if(!handlers.has( toState )) {
         this.emitEvent(this.createEvent({
-            topic: EVENTS.INVALID_TRANSITION,
-            namespace: this.namespace,
-            payload: { toState: toState, fromState: this.currentState },
-            state: this.currentState
-        }));
-        return this;
+            topic: EVENTS.INVALID_TRANSITION
+            , namespace: this.namespace
+            , payload: { toState: toState, fromState: this.currentState}
+            , state: this.currentState
+        }))
+        return this
     }
     // first exit current state
-    var exit = handlers.getExit(this.currentState);
-    var enter = handlers.getEntry(toState);
-    var result = exit.call(this, target);
-    var doTransitionBound = doTransition.bind(this, toState, target);
-    if (result &amp;&amp; result.then) {
-        return result.bind(this).then(enter).then(doTransitionBound);
+    let exit = handlers.getExit(this.currentState)
+    let enter = handlers.getEntry(toState)
+    let result = exit.call(this, target )
+    let doTransitionBound = doTransition.bind(this, toState, target )
+    if(result &amp;&amp; result.then) {
+        return result
+            .bind(this)
+            .then(enter)
+            .then(doTransitionBound)
     }
-    result = enter.call(this, target);
-    if (result &amp;&amp; result.then) {
-        return result.then(doTransitionBound);
+    result = enter.call(this, target )
+    if( result &amp;&amp; result.then ) {
+        return result.then(doTransitionBound)
     }
-    return doTransitionBound();
-};</code></pre>
+    return doTransitionBound()
+}</code></pre>
           <section id="target">
             <h1>target</h1>
             <h5 class="subheader"></h5>
             <p>
-              <div class="label label-info radius ctx-type">method</div><span>this.target()</span><span>&nbsp;</span>
+              <div class="label label-success radius ctx-type">property</div><span>this.target</span><span>&nbsp;</span>
             </p>
           </section>
           <table class="table table-bordered table-striped">
@@ -794,16 +786,15 @@ var doTransition = function doTransition(toState, target) {
             </tbody>
           </table>
           <div class="description"><p>Getter/setter for the state target to pass<br />into each handler</p></div>
-          <pre><code class="language-javascript">this.target = function (obj) {
-    if (obj) {
-        return target = obj;
+          <pre><code class="language-javascript">this.target = (obj) =&gt; {
+    if(obj) {
+        return (target = obj)
     }
-    return target;
-};
-});
+    return target
+}
+    })
 
-exports['default'] = api;
-module.exports = exports['default'];</code></pre>
+export default api</code></pre>
         </div>
       </div>
     </div>

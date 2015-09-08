@@ -47,6 +47,7 @@
     "blue-tape": "^0.1.10",
     "browser-run": "^2.1.2",
     "browserify": "^11.0.1",
+    "doxx": "^2.0.0",
     "faucet": "0.0.1",
     "gh-pages": "^0.3.1",
     "glob": "^4.0.6",

@@ -1,10 +1,16 @@
 {
   "name": "possum",
   "version": "0.2.4",
-  "description": "I am able. Evented State Machine.",
-  "main": "index.js",
+  "description": "I am able. A State Machine.",
+  "main": "./dist/possum.js",
   "directories": {
     "test": "test"
+  },
+  "scripts": {
+    "clean": "make clean",
+    "test": "babel-tape-runner ./tests/**/*-test.js | faucet",
+    "build": "make build",
+    "prepublish": "make build && make test"
   },
   "keywords": [
     "hierarchical",

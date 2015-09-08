@@ -1,8 +1,8 @@
-BUILD_DIR = build
+DIST_DIR = build
 
 build: clean
 	@echo building in $(CURDIR)
-	./node_modules/.bin/browserify  --outfile ./$(BUILD_DIR)/possum.js  --debug  -r ./lib/index.js:possum
+	@./node_modules/.bin/babel src --out-dir dist
 
 verbose:
 	$(eval LOG= export DEBUG=possum:*)
@@ -11,9 +11,9 @@ silent:
 	$(eval LOG= unset DEBUG)
 
 clean:
-	rm -rf ./$(BUILD_DIR)
+	rm -rf ./$(DIST_DIR)
 	rm -rf ./examples/possum.js
-	mkdir ./$(BUILD_DIR)
+	mkdir ./$(DIST_DIR)
 
 example: build
 	cp ./build/possum.js ./examples

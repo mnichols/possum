@@ -9,6 +9,7 @@
 - _From potis (“able, capable”) + sum (“I am”)._
 
 ========
+
 [![Build Status](https://travis-ci.org/mnichols/possum.svg?branch=master)](https://travis-ci.org/mnichols/possum)
 
 ## License
@@ -21,16 +22,13 @@
 
 ### Building
 
-`make build`
+`make build` => `./build/possum.js`
+
+minified builds are broken atm
 
 ### Example
 
 `make example`
-
-### Roadmap
-
-* Hierarchical State Machine support
-* Behavior tree generation (ala [machine.js](https://github.com/maryrosecook/machinejs)).
 
 
 ### Module Support
@@ -441,6 +439,11 @@ Emitted when an transition is attempted to a state that does not exist.
 
 - `make test` will by default run tests on Node.
 - `make browser` will run tape tests on any browser you visit at `http://localhost:2222`
+
+### Roadmap
+
+* Hierarchical State Machine support
+* Behavior tree generation (ala [machine.js](https://github.com/maryrosecook/machinejs)).
 
 #### Acknowledgements
 

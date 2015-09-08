@@ -15,11 +15,6 @@ clean:
 	rm -rf ./examples/possum.js
 	mkdir ./$(BUILD_DIR)
 
-docs:
-	pip install Pygments
-	./node_modules/.bin/groc ./lib/**/*.js README.md
-	pushd ./doc; python -m SimpleHTTPServer; popd
-
 example: build
 	cp ./build/possum.js ./examples
 	pushd ./examples; python -m SimpleHTTPServer; popd

@@ -20,8 +20,9 @@ example: build
 test:
 	./node_modules/.bin/babel-tape-runner ./test/**/*-test.js | ./node_modules/.bin/faucet
 
-docs:
-	./node_modules/.bin/doxx --title possum --source dist --target docs
+docs: build
+	rm -rf docs
+	./node_modules/.bin/doxx --title possum --source src --target docs
 
 publish: docs
 	./node_modules/.bin/gh-pages -d docs

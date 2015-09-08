@@ -9,6 +9,7 @@
 - _From potis (“able, capable”) + sum (“I am”)._
 
 ========
+<a href="https://github.com/mnichols/possum"><img style="position: absolute; top: 0; right: 0; border: 0;z-index:1100" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
 
 [![Build Status](https://travis-ci.org/mnichols/possum.svg?branch=master)](https://travis-ci.org/mnichols/possum)
 
@@ -26,16 +27,17 @@
 
 minified builds are broken atm
 
+### Documentation
+
+Found [here](https://mnichols.github.io/possum)
+
 ### Example
 
 `make example`
 
-
 ### Module Support
 
-Works in nodejs and the browser using CJS modules. 
-For the browser maybe use [browserify](http://browserify.org/index.html).
-AMD isn't going to be supported, sorry.
+Works in nodejs and the browser. 
 
 ### Getting Started
 
@@ -434,7 +436,6 @@ Emitted when an input has been attempted on a state that does not declare it.
 
 Emitted when an transition is attempted to a state that does not exist.
 
-
 ### Tests
 
 - `make test` will by default run tests on Node.
@@ -448,8 +449,6 @@ Emitted when an transition is attempted to a state that does not exist.
 #### Acknowledgements
 
 API inspiration from [machina.js](https://github.com/ifandelse/machina.js).
-Thanks to [Jim Cowart](http://freshbrewedcode.com/jimcowart/) and contributors
-for formulating a powerful api.
 
 ### Credits
 

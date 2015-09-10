@@ -6,7 +6,7 @@ logs
 specs.js
 
 doc/
-build/
+dist/
 
 # Runtime data
 pids

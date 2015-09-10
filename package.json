@@ -1,10 +1,16 @@
 {
   "name": "possum",
-  "version": "0.2.4",
-  "description": "I am able. Evented State Machine.",
-  "main": "index.js",
+  "version": "0.2.7",
+  "description": "I am able. A State Machine.",
+  "main": "./dist/possum.js",
   "directories": {
     "test": "test"
+  },
+  "scripts": {
+    "clean": "make clean",
+    "test": "make test",
+    "build": "make build",
+    "prepublish": "make build && make test && make publish"
   },
   "keywords": [
     "hierarchical",
@@ -34,13 +40,15 @@
     ]
   },
   "devDependencies": {
-    "babel": "^5.8.21",
+    "babel": "^5.8.23",
     "babel-core": "^5.8.22",
     "babel-tape-runner": "^1.2.0",
     "babelify": "^6.2.0",
     "blue-tape": "^0.1.10",
     "browser-run": "^2.1.2",
     "browserify": "^11.0.1",
+    "documentation": "^2.0.1",
+    "doxx": "^2.0.0",
     "faucet": "0.0.1",
     "gh-pages": "^0.3.1",
     "glob": "^4.0.6",

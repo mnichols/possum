@@ -1,29 +1,28 @@
-BUILD_DIR = build
+DIST_DIR = dist
 
 build: clean
 	@echo building in $(CURDIR)
-	./node_modules/.bin/browserify  --outfile ./$(BUILD_DIR)/possum.js  --debug  -r ./lib/index.js:possum
-
-verbose:
-	$(eval LOG= export DEBUG=possum:*)
-
-silent:
-	$(eval LOG= unset DEBUG)
+	@./node_modules/.bin/babel src --out-dir dist
 
 clean:
-	rm -rf ./$(BUILD_DIR)
+	rm -rf ./$(DIST_DIR)
 	rm -rf ./examples/possum.js
-	mkdir ./$(BUILD_DIR)
+	mkdir ./$(DIST_DIR)
 
 example: build
-	cp ./build/possum.js ./examples
+	./node_modules/.bin/browserify \
+		--debug \
+		--outfile ./examples/possum.js \
+		--require ./$(DIST_DIR)/possum.js:possum
+
 	pushd ./examples; python -m SimpleHTTPServer; popd
 
 test:
 	./node_modules/.bin/babel-tape-runner ./test/**/*-test.js | ./node_modules/.bin/faucet
 
-docs:
-	./node_modules/.bin/doxx --title possum --source lib --target docs
+docs: build
+	rm -rf docs
+	./node_modules/.bin/doxx --title possum --source src --target docs
 
 publish: docs
 	./node_modules/.bin/gh-pages -d docs

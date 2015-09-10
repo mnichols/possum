@@ -229,7 +229,7 @@ let api = stampit()
          * Configure the instance
          *
          * @method config
-         * @param {Object...} args any number of args to configure
+         * @param {Object} args any number of args to configure
          * @return {stamp}
          * */
         , config (...args) {

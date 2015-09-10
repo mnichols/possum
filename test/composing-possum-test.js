@@ -1,7 +1,7 @@
 'use strict';
 
 import test from 'blue-tape'
-import possum from '../lib'
+import possum from '../src/possum'
 import stampit from 'stampit'
 import Promise from 'bluebird'
 

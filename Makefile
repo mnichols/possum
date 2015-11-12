@@ -18,7 +18,7 @@ example: build
 	pushd ./examples; python -m SimpleHTTPServer; popd
 
 test:
-	./node_modules/.bin/babel-tape-runner ./test/**/*-test.js | ./node_modules/.bin/faucet
+	./node_modules/.bin/babel-tape-runner ./test/**/*-test.js  | ./node_modules/.bin/faucet
 
 docs: build
 	rm -rf docs

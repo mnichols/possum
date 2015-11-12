@@ -3,186 +3,17 @@
   <head>
     <meta name="viewport" content="width=device-width" charset="utf-8">
     <title>possum</title>
-    <link rel="stylesheet" href="http://getbootstrap.com/2.3.2/assets/css/bootstrap.css">
-    <link rel="stylesheet" href="http://getbootstrap.com/2.3.2/assets/css/bootstrap-responsive.css">
-    <link rel="stylesheet" href="http://getbootstrap.com/2.3.2/assets/css/docs.css">
-    <style>
-      body > .navbar .brand {
-        float:left;
-        text-shadow: rgba(255, 255, 255, 0.0980392) 0px 1px 0px, rgba(255, 255, 255, 0.4) 0px 0px 30px;
-        color: white;
-        margin-left:0px;
-        font-weight:normal;
-      }
-      .bs-docs-sidenav.affix {
-        box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.5);
-        z-index: 10;
-      }
-      .bs-docs-sidenav i{
-        width: 8px;
-        height: 8px;
-        padding: 0px;
-        margin: 0px;
-        display: inline-block;
-        margin-right:0.5em;
-      }
-      .bs-docs-sidenav > li > a {
-          word-wrap: break-word;
-      }
-      .bs-docs-sidenav > li:first-child > a {
-        border-top-right-radius: 6px;
-        border-top-left-radius: 6px;
-      }
-      /* http://prismjs.com/download.html?themes=prism&languages=markup+css+clike+javascript */
-      /**
-      * prism.js default theme for JavaScript, CSS and HTML
-      * Based on dabblet (http://dabblet.com)
-      * @author Lea Verou
-      */
-      
-      code[class*="language-"],
-      pre[class*="language-"] {
-        color: black;
-        text-shadow: 0 1px white;
-        font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-        direction: ltr;
-        text-align: left;
-        white-space: pre;
-        word-spacing: normal;
-        word-break: normal;
-        word-wrap: normal;
-        line-height: 1.5;
-      
-        -moz-tab-size: 4;
-        -o-tab-size: 4;
-        tab-size: 4;
-      
-        -webkit-hyphens: none;
-        -moz-hyphens: none;
-        -ms-hyphens: none;
-        hyphens: none;
-      }
-      
-      pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
-      code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
-        text-shadow: none;
-        background: #b3d4fc;
-      }
-      
-      pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
-      code[class*="language-"]::selection, code[class*="language-"] ::selection {
-        text-shadow: none;
-        background: #b3d4fc;
-      }
-      
-      @media print {
-        code[class*="language-"],
-        pre[class*="language-"] {
-          text-shadow: none;
-        }
-      }
-      
-      /* Code blocks */
-      pre[class*="language-"] {
-        padding: 1em;
-        margin: .5em 0;
-        overflow: auto;
-      }
-      
-      :not(pre) > code[class*="language-"],
-      pre[class*="language-"] {
-        background: #f5f2f0;
-      }
-      
-      /* Inline code */
-      :not(pre) > code[class*="language-"] {
-        padding: .1em;
-        border-radius: .3em;
-      }
-      
-      .token.comment,
-      .token.prolog,
-      .token.doctype,
-      .token.cdata {
-        color: slategray;
-      }
-      
-      .token.punctuation {
-        color: #999;
-      }
-      
-      .namespace {
-        opacity: .7;
-      }
-      
-      .token.property,
-      .token.tag,
-      .token.boolean,
-      .token.number,
-      .token.constant,
-      .token.symbol,
-      .token.deleted {
-        color: #905;
-      }
-      
-      .token.selector,
-      .token.attr-name,
-      .token.string,
-      .token.char,
-      .token.builtin,
-      .token.inserted {
-        color: #690;
-      }
-      
-      .token.operator,
-      .token.entity,
-      .token.url,
-      .language-css .token.string,
-      .style .token.string {
-        color: #a67f59;
-        background: hsla(0, 0%, 100%, .5);
-      }
-      
-      .token.atrule,
-      .token.attr-value,
-      .token.keyword {
-        color: #07a;
-      }
-      
-      .token.function {
-        color: #DD4A68;
-      }
-      
-      .token.regex,
-      .token.important,
-      .token.variable {
-        color: #e90;
-      }
-      
-      .token.important,
-      .token.bold {
-        font-weight: bold;
-      }
-      .token.italic {
-        font-style: italic;
-      }
-      
-      .token.entity {
-        cursor: help;
-      }
-      .tags {}
-      .ctx-type {
-        display:inline-block;
-        margin-right:0.5em;
-        //- float:right; margin-top:8px
-      }
-      footer iframe{vertical-align:middle;}
-    </style>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/cayman.min.css">
+    <link rel="stylesheet" href="css/prism.min.css">
+    <link rel="stylesheet" href="css/index.min.css">
+    <link rel="stylesheet" href="css/docs.min.css">
+    <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
   </head>
   <body data-spy="scroll" data-target=".scrollspy">
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
-        <div class="container"><a class="brand">Doxx</a>
+        <div class="container"><a class="brand">Mr. Doc</a>
           <div class="nav-collapse collapse">
             <ul class="nav pull-right sponsored"></ul>
           </div>
@@ -199,8 +30,10 @@
       <div class="row">
         <div class="span3 bs-docs-sidebar">
           <ul class="nav nav-list bs-docs-sidenav affix-top">
-            <li class="active"><a href="index.html">Main</a></li>
-            <li><a href="possum.js.html">possum.js</a></li>
+            <li class="active"><a>Main</a></li>
+            <li><a>possum.js</a></li>
+            <li><a>spec-support.js</a></li>
+            <li><a>tappable.js</a></li>
           </ul>
           <div class="scrollspy">
             <ul class="nav nav-list bs-docs-sidenav affix-top">
@@ -208,51 +41,63 @@
           </div>
         </div>
         <div class="span9">
-          <section id="Main"><pre><code class="lang-js"> _  _  _ _    _  
+          <section id="Main" class="readme"><pre><code class="language-js"> _  _  _ _    _  
 |_)(_)_)_)|_|||| 
 | state machine
 </code></pre>
 <blockquote>
-<p>I am able.</p></blockquote>
+<p>I am able.</p>
+</blockquote>
 <ul>
 <li><em>From potis (“able, capable”) + sum (“I am”).</em></li>
 </ul>
-<p>========<br /><a href="https://github.com/mnichols/possum"><img style="position: absolute; top: 0; right: 0; border: 0;z-index:1100" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a></p><p><a href="https://travis-ci.org/mnichols/possum"><img src="https://travis-ci.org/mnichols/possum.svg?branch=master" alt="Build Status"></a></p><h2>License</h2>
-<p><a href="https://raw.githubusercontent.com/mnichols/possum/master/LICENSE">MIT</a></p><h3>Install</h3>
-<p><code>npm install --save possum</code></p><h3>Building</h3>
-<p><code>make build</code> =&gt; <code>./build/possum.js</code></p><p>minified builds are broken atm</p><h3>Documentation</h3>
-<p>Found <a href="https://mnichols.github.io/possum">here</a></p><h3>Example</h3>
-<p><code>make example</code></p><h3>Module Support</h3>
-<p>Works in nodejs and the browser. </p><h3>Getting Started</h3>
+<p>========
+&lt;a href=&quot;https://github.com/mnichols/possum&quot;&gt;&lt;img style=&quot;position: absolute; top: 0; right: 0; border: 0;z-index:1100&quot; src=&quot;https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67&quot; alt=&quot;Fork me on GitHub&quot; data-canonical-src=&quot;https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png&quot;&gt;&lt;/a&gt;</p>
+<p><a href="https://travis-ci.org/mnichols/possum"><img src="https://travis-ci.org/mnichols/possum.svg?branch=master" alt="Build Status"></a></p>
+<h2>License</h2>
+<p><a href="https://raw.githubusercontent.com/mnichols/possum/master/LICENSE">MIT</a></p>
+<h3>Install</h3>
+<p><code>npm install --save possum</code></p>
+<h3>Building</h3>
+<p><code>make build</code> =&gt; <code>./build/possum.js</code></p>
+<p>minified builds are broken atm</p>
+<h3>Documentation</h3>
+<p>Found <a href="https://mnichols.github.io/possum">here</a></p>
+<h3>Example</h3>
+<p><code>make example</code></p>
+<h3>Module Support</h3>
+<p>Works in nodejs and the browser.</p>
+<h3>Getting Started</h3>
 <blockquote>
-<p>This is in the <code>app.js</code> for the example.</p></blockquote>
-<pre><code class="lang-js">
-//listening to Kiss&#39; Love Gun on my record player
+<p>This is in the <code>app.js</code> for the example.</p>
+</blockquote>
+<pre><code class="language-js">
+//listening to Kiss' Love Gun on my record player
 
 //first, define our state machine spec
 
 let gun = possum
     .config({
-        namespace: &#39;kiss&#39;
-        , initialState: &#39;uninitialized&#39;
+        namespace: 'kiss'
+        , initialState: 'uninitialized'
     })
     .methods({
         enable: function(actions) {
             Object.keys(controls).forEach(function(key){
-                controls[key].setAttribute(&#39;disabled&#39;,&#39;disabled&#39;)
+                controls[key].setAttribute('disabled','disabled')
             })
             if(!actions || !actions.length) {
                 return
             }
             actions.forEach(function(action){
-                controls[action].removeAttribute(&#39;disabled&#39;)
+                controls[action].removeAttribute('disabled')
             })
         }
         ,loadWeapon: function(bullets){
             return this.bullets = bullets || [
-                &#39;I Stole Your Love&#39;
-                ,&#39;Shock Me&#39;
-                ,&#39;Love Gun&#39;
+                'I Stole Your Love'
+                ,'Shock Me'
+                ,'Love Gun'
             ]
         }
         ,fire: function(){
@@ -261,144 +106,172 @@ let gun = possum
         }
     })
     .states({
-        &#39;uninitialized&#39;: {
+        'uninitialized': {
             _enter: function(){
-                this.enable([&#39;initialize&#39;])
+                this.enable(['initialize'])
                 return this.recordPlayer.turnOn()
             }
-            ,&#39;initialize&#39;: function(args) {
+            ,'initialize': function(args) {
                 return this.recordPlayer.spinRecord()
-                    .then(this.transition.bind(this,&#39;initialized&#39;))
+                    .then(this.transition.bind(this,'initialized'))
             }
         }
-        ,&#39;initialized&#39;: {
+        ,'initialized': {
             _enter: function(){
-                this.enable([&#39;pullTrigger&#39;,&#39;load&#39;])
+                this.enable(['pullTrigger','load'])
             }
-            ,&#39;pullTrigger&#39;: function() {
-                this.deferUntilTransition(&#39;aimed&#39;)
+            ,'pullTrigger': function() {
+                this.deferUntilTransition('aimed')
             }
-            ,&#39;load&#39;: function(args) {
-                this.deferUntilTransition(&#39;loading&#39;)
-                return this.transition(&#39;loading&#39;)
+            ,'load': function(args) {
+                this.deferUntilTransition('loading')
+                return this.transition('loading')
             }
         }
-        ,&#39;loading&#39;: {
+        ,'loading': {
             _enter: function(){
-                this.enable([&#39;load&#39;])
+                this.enable(['load'])
             }
-            ,&#39;load&#39;: function(args) {
+            ,'load': function(args) {
                 this.loadWeapon(args &amp;&amp; args.bullets)
-                return this.transition(&#39;loaded&#39;)
+                return this.transition('loaded')
             }
-            ,&#39;reload&#39;: function() {
-                return this.handle(&#39;load&#39;)
+            ,'reload': function() {
+                return this.handle('load')
             }
         }
-        ,&#39;loaded&#39;: {
+        ,'loaded': {
             _enter: function(){
-                document.querySelector(&#39;.remaining&#39;).innerHTML = &#39;&#39;
-                this.enable([&#39;aim&#39;])
+                document.querySelector('.remaining').innerHTML = ''
+                this.enable(['aim'])
             }
-            ,&#39;aim&#39;: function(args) {
+            ,'aim': function(args) {
                 this.song = (args &amp;&amp; args.target) || this.bullets.shift()
                 this.recordPlayer.hoverNeedleOver(this.song)
-                return this.transition(&#39;aimed&#39;)
+                return this.transition('aimed')
             }
         }
-        ,&#39;aimed&#39;:{
+        ,'aimed':{
             _enter: function(){
-                this.enable([&#39;pullTrigger&#39;])
+                this.enable(['pullTrigger'])
             }
-            ,&#39;pullTrigger&#39;: function() {
+            ,'pullTrigger': function() {
                 return this.fire()
-                    .then(this.transition.bind(this,&#39;smoking&#39;))
+                    .then(this.transition.bind(this,'smoking'))
             }
         }
-        ,&#39;smoking&#39;: {
+        ,'smoking': {
             _enter: function(){
-                console.log(&#39;light cigarette, sit back and relax&#39;)
-                this.enable([&#39;liftNeedle&#39;])
+                console.log('light cigarette, sit back and relax')
+                this.enable(['liftNeedle'])
             }
-            ,&#39;aim&#39;: function(args){
+            ,'aim': function(args){
                 this.deferUntilNextHandler()
-                return this.handle(&#39;liftNeedle&#39;)
+                return this.handle('liftNeedle')
             }
-            ,&#39;liftNeedle&#39;: function(){
+            ,'liftNeedle': function(){
                 if(this.bullets.length) {
-                    return this.transition(&#39;loaded&#39;)
+                    return this.transition('loaded')
                 }
-                return this.transition(&#39;emptied&#39;)
+                return this.transition('emptied')
             }
         }
-        ,&#39;emptied&#39;: {
+        ,'emptied': {
             _enter: function(){
-                this.enable([&#39;reload&#39;])
-                return this.handle(&#39;aim&#39;)
+                this.enable(['reload'])
+                return this.handle('aim')
             }
-            ,&#39;aim&#39;: function(args){
+            ,'aim': function(args){
                 return this.recordPlayer.returnArm()
             }
-            ,&#39;reload&#39;: function(){
-                this.deferUntilTransition(&#39;loading&#39;)
-                return this.transition(&#39;loading&#39;)
+            ,'reload': function(){
+                this.deferUntilTransition('loading')
+                return this.transition('loading')
             }
         }
 
     })
     .create()
 
-gun.currentState == &#39;uninitialized&#39; // true
+gun.currentState == 'uninitialized' // true
+
 </code></pre>
 <h3>What is a Possum?</h3>
-<p>A marsupial.</p><p>But for our purposes, <code>possum</code> uses <a href="https://github.com/ericelliott/stampit">stampit</a> under-the-hood for<br />model prototyping.</p><p>This means that when you do this:</p><pre><code class="lang-js">
+<p>A marsupial.</p>
+<p>But for our purposes, <code>possum</code> uses <a href="https://github.com/ericelliott/stampit">stampit</a> under-the-hood for
+model prototyping.</p>
+<p>This means that when you do this:</p>
+<pre><code class="language-js">
 var p = possum.states({ ... }).create()
+
 </code></pre>
-<p>A possum will compose any settings you put on the top level possum<br />call and then exposes this to the api (see below for more details):</p><pre><code class="lang-js">possum
+<p>A possum will compose any settings you put on the top level possum
+call and then exposes this to the api (see below for more details):</p>
+<pre><code class="language-js">possum
 .config( /* configure initialState, namespace, etc */) // alias to stampit `props`
 .states( /* configure states */) 
 .methods(/* special methods */) //stampit method
 .init(function(){
     //initializing stuff
-    var secretData = &#39;shhhh&#39;
-    this.prop == &#39;erty&#39; // -&gt; true
+    var secretData = 'shhhh'
+    this.prop == 'erty' // -&gt; true
 }) //stampit method
 .compose(/* mixin other stamps into the machine */) //stampit method
 .target(/* the state object to use (default is the machine itself) */)
 .create() //this creates the possum instance; you may also just call it as a function
+
 </code></pre>
 <h3>Isolation and prototypes</h3>
-<p>Every call to the builder functions on <code>possum</code> return a new stamp. This is important<br />to know and also to take advantage of. Consider the following:</p><pre><code class="lang-js">
+<p>Every call to the builder functions on <code>possum</code> return a new stamp. This is important
+to know and also to take advantage of. Consider the following:</p>
+<pre><code class="language-js">
 let loggable = possum.compose(logger)
 let eventable = possum.compose(eventSourcer)
 let kitchen = loggable.compose(eventable)
 
-let model = loggable.config({initialState: &#39;a&#39;}).create() //has loggable, not eventable, behavior
-let model2 = eventable.config({initialState:&#39;a&#39;}).create() //has eventable, not loggable, behavior
-let everything = kitchen.config({initialState:&#39;a&#39; }).create() // has both
+let model = loggable.config({initialState: 'a'}).create() //has loggable, not eventable, behavior
+let model2 = eventable.config({initialState:'a'}).create() //has eventable, not loggable, behavior
+let everything = kitchen.config({initialState:'a' }).create() // has both 
 </code></pre>
-<p>See the tests <a href="https://github.com/mnichols/possum/blob/master/test/composing-possum-test.js">here</a> for<br />seeing in action.</p><h3>Asynchronous and synchronous transitions and handlers</h3>
-<p>Oftentimes handlers end up being async, breaking all the callers. Initially<br /><code>possum</code> did Promises for all api calls.</p><p>As of <code>v0.1.0</code> possum supports both synchronous and Promised handlers.</p><p>It is worth noting that the events which are emitted are ordered differently<br />depending on the flow model you choose.</p><h3>Possum Builder API (extensions atop stampit)</h3>
+<p>See the tests <a href="https://github.com/mnichols/possum/blob/master/test/composing-possum-test.js">here</a> for
+seeing in action.</p>
+<h3>Asynchronous and synchronous transitions and handlers</h3>
+<p>Oftentimes handlers end up being async, breaking all the callers. Initially
+<code>possum</code> did Promises for all api calls.</p>
+<p>As of <code>v0.1.0</code> possum supports both synchronous and Promised handlers.</p>
+<p>It is worth noting that the events which are emitted are ordered differently
+depending on the flow model you choose.</p>
+<h3>Possum Builder API (extensions atop stampit)</h3>
 <h5><code>config</code> {Object} <strong>required</strong></h5>
-<p>These attributes can (should) be set here:</p><h6><code>namespace</code> {String} [optional]</h6>
-<p>The namespace for this instance</p><pre><code>var p = possum.config({
-    namespace: &#39;secure&#39;
+<p>These attributes can (should) be set here:</p>
+<h6><code>namespace</code> {String} [optional]</h6>
+<p>The namespace for this instance</p>
+<pre><code>var p = possum.config({
+    namespace: 'secure'
 })
-</code></pre><h6><code>initialState</code> {String} <strong>required</strong></h6>
-<p>The state to transition to initially</p><pre><code>var p = possum.config({
-    initialState: &#39;uninitialized&#39;
+
+</code></pre>
+<h6><code>initialState</code> {String} <strong>required</strong></h6>
+<p>The state to transition to initially</p>
+<pre><code>var p = possum.config({
+    initialState: 'uninitialized'
 })
-</code></pre><p>NOTE: </p><ul>
-<li>the <code>_enter</code> callback will NOT get called immediately upon construction<br />if the state designated by  <code>initialState</code> has one. This is to avoid the<br />need for asynchronous instantiation support. If really need an initialization routing<br />you can just use stampit&#39;s built in facility for this:</li>
+</code></pre>
+<p>NOTE:</p>
+<ul>
+<li>the <code>_enter</code> callback will NOT get called immediately upon construction
+if the state designated by  <code>initialState</code> has one. This is to avoid the
+need for asynchronous instantiation support. If really need an initialization routing
+you can just use stampit's built in facility for this:</li>
 </ul>
-<pre><code class="lang-js">
+<pre><code class="language-js">
 var p = possum
 .config({
-    initialState: &#39;a&#39;
+    initialState: 'a'
 })
 .states({
-    &#39;a&#39;: {
-        &#39;_enter&#39;: function(){
+    'a': {
+        '_enter': function(){
             //wont get called on creation!
         }
     }
@@ -408,18 +281,20 @@ var p = possum
     //...you can even return a Promise and stampit will return the promise
     //for you to control it
 })
+
 </code></pre>
 <h5><code>states</code> {Object} <strong>required</strong></h5>
-<p>The states handlers configuration in the shape of:</p><pre><code class="lang-js">var states = {
-    &#39;myState&#39;: {
+<p>The states handlers configuration in the shape of:</p>
+<pre><code class="language-js">var states = {
+    'myState': {
         _enter: function( target ){
             //optional
             //steps to perform right when entering a state
             //can return an Promise for async support
         }
-        ,&#39;doIt&#39;: function(args, target) {
+        ,'doIt': function(args, target) {
             //optionally make changes to the state target
-            //handle the command &#39;doIt&#39;
+            //handle the command 'doIt'
             //receiving exactly ONE argument
             return this.doIt()
         }
@@ -431,56 +306,93 @@ var p = possum
         }
     }
 }
+
 </code></pre>
-<p>Note that each state&#39;s input handler, will receive <em>one</em> <code>arguments</code> parameter. That means you must<br />invoke the handlers this way:</p><pre><code class="lang-js">model.handle(&#39;doIt&#39;,&#39;myArgument&#39;)
+<p>Note that each state's input handler, will receive <em>one</em> <code>arguments</code> parameter. That means you must
+invoke the handlers this way:</p>
+<pre><code class="language-js">model.handle('doIt','myArgument')
 </code></pre>
-<p><strong>Additional arguments will be ignored</strong>.</p><h3>Possum Instance API</h3>
+<p><strong>Additional arguments will be ignored</strong>.</p>
+<h3>Possum Instance API</h3>
 <h5><code>currentState</code> {String}</h5>
-<p>The current state of the possum instance.<br />This is the same as <code>initialState</code> upon creation</p><h5><code>priorState</code> {String}</h5>
-<p>The priorState state of the possum instance, if any.<br />This is <code>undefined</code> until a transition has occurred.</p><h5><code>namespaced([str,namespace])</code> {Function}</h5>
-<p>Receives an optional <code>str</code> argument to produce an namespaced string using underlying delimiter rules.</p><p>If <code>str</code> is not provided, the instance&#39;s <code>namespace</code> is returned (from the spec).</p><p>If the instance has an <code>undefined</code> namespace the input <code>namespace</code> argument is used; if that is undefined<br />the <code>str</code> is returned.</p><p>This utility is used for producing underlying events for subscription; eg : </p><p><code>possumInstance.on(possumInstance.namespaced(&#39;handled&#39;),function(){...})</code></p><h5><code>handle(inputType, args)</code> {Function}</h5>
-<p>Queues the command <em>inputType</em> and processes it with the singular <em>args</em> payload.<br />Note that only <strong>one</strong> argument will be used. Other arguments will be ignored.</p><p>Returns the result of the handler (Promise or not)</p><h5><code>transition(toState)</code> {Function}</h5>
-<p>Convenience method that queues the transition commands <code>exit</code>, <code>_transition</code>, and <code>_onEnter</code> and processes them.<br />Returns a Promise if an <code>_enter</code> or <code>_exit</code> handler does so; otherwise, it returns<br />the possum instance.</p><h5><code>deferUntilTransition(toState)</code> {Function}</h5>
-<p>Queues the current message (input) to be replayed after the possum has transitioned<br />to <code>toState</code>. If <code>toState</code> is not provided, then it will replay after <em>any</em><br />transition has occurred.</p><p>Returns <code>this</code> possum instance.</p><h3>Possum Events</h3>
+<p>The current state of the possum instance.
+This is the same as <code>initialState</code> upon creation</p>
+<h5><code>priorState</code> {String}</h5>
+<p>The priorState state of the possum instance, if any.
+This is <code>undefined</code> until a transition has occurred.</p>
+<h5><code>namespaced([str,namespace])</code> {Function}</h5>
+<p>Receives an optional <code>str</code> argument to produce an namespaced string using underlying delimiter rules.</p>
+<p>If <code>str</code> is not provided, the instance's <code>namespace</code> is returned (from the spec).</p>
+<p>If the instance has an <code>undefined</code> namespace the input <code>namespace</code> argument is used; if that is undefined
+the <code>str</code> is returned.</p>
+<p>This utility is used for producing underlying events for subscription; eg :</p>
+<p><code>possumInstance.on(possumInstance.namespaced('handled'),function(){...})</code></p>
+<h5><code>handle(inputType, args)</code> {Function}</h5>
+<p>Queues the command <em>inputType</em> and processes it with the singular <em>args</em> payload.
+Note that only <strong>one</strong> argument will be used. Other arguments will be ignored.</p>
+<p>Returns the result of the handler (Promise or not)</p>
+<h5><code>transition(toState)</code> {Function}</h5>
+<p>Convenience method that queues the transition commands <code>exit</code>, <code>_transition</code>, and <code>_onEnter</code> and processes them.
+Returns a Promise if an <code>_enter</code> or <code>_exit</code> handler does so; otherwise, it returns
+the possum instance.</p>
+<h5><code>deferUntilTransition(toState)</code> {Function}</h5>
+<p>Queues the current message (input) to be replayed after the possum has transitioned
+to <code>toState</code>. If <code>toState</code> is not provided, then it will replay after <em>any</em>
+transition has occurred.</p>
+<p>Returns <code>this</code> possum instance.</p>
+<h3>Possum Events</h3>
 <h5><code>{namespace}.handling</code></h5>
-<p>Emitted <em>during</em> an input handler.</p><p>Event properties:</p><ul>
-<li>topic: &#39;handling&#39;</li>
+<p>Emitted <em>during</em> an input handler.</p>
+<p>Event properties:</p>
+<ul>
+<li>topic: 'handling'</li>
 <li>inputType: {String} the name of the handler you just called</li>
 <li>payload: {Any} The arguments passed into the <code>handle</code> call</li>
-<li>action: {String} the path of the handler you just called ; eg &#39;myState.myHandler&#39;</li>
+<li>action: {String} the path of the handler you just called ; eg 'myState.myHandler'</li>
 <li>namespace: {String} the namespace of the possum</li>
 </ul>
 <h5><code>{namespace}.invoked</code></h5>
-<p>Emitted <em>just after</em> an input handler has been invoked but possibly before<br />the handler has completed (asynchronously).</p><p>Event properties:</p><ul>
-<li>topic: &#39;invoked&#39;</li>
+<p>Emitted <em>just after</em> an input handler has been invoked but possibly before
+the handler has completed (asynchronously).</p>
+<p>Event properties:</p>
+<ul>
+<li>topic: 'invoked'</li>
 <li>inputType: {String} the name of the handler you just called</li>
 <li>payload: {Any} The arguments passed into the <code>handle</code> call</li>
-<li>action: {String} the path of the handler you just called ; eg &#39;myState.myHandler&#39;</li>
+<li>action: {String} the path of the handler you just called ; eg 'myState.myHandler'</li>
 <li>namespace: {String} the namespace of the possum</li>
 </ul>
 <h5><code>{namespace}.handled</code></h5>
-<p>Emitted <em>after</em> an input handler Promise has resolved (if async).</p><p>Event properties:</p><ul>
-<li>topic: &#39;handled&#39;</li>
+<p>Emitted <em>after</em> an input handler Promise has resolved (if async).</p>
+<p>Event properties:</p>
+<ul>
+<li>topic: 'handled'</li>
 <li>inputType: {String} the name of the handler you just called</li>
 <li>payload: {Any} The arguments passed into the <code>handle</code> call</li>
-<li>action: {String} the path of the handler you just called ; eg &#39;myState.myHandler&#39;</li>
+<li>action: {String} the path of the handler you just called ; eg 'myState.myHandler'</li>
 <li>namespace: {String} the namespace of the possum</li>
 </ul>
 <h5><code>{namespace}.transitioned</code></h5>
-<p>Emitted <em>after</em> a possum has transitioned into a state,<br />and <em>after</em> its entry callback has been invoked (<code>_enter</code>).</p><p>Event properties:</p><ul>
-<li>topic: &#39;transitioned&#39;</li>
+<p>Emitted <em>after</em> a possum has transitioned into a state,
+and <em>after</em> its entry callback has been invoked (<code>_enter</code>).</p>
+<p>Event properties:</p>
+<ul>
+<li>topic: 'transitioned'</li>
 <li>inputType: {String} the name of the handler you just called</li>
-<li>payload: {Object} having these properties<ul>
+<li>payload: {Object} having these properties
+<ul>
 <li><code>toState</code> The state you just transitioned to</li>
 <li><code>fromState</code> The state you just transitioned from</li>
 </ul>
 </li>
-<li>action: {String} the path of the handler you just called ; eg &#39;myState.myHandler&#39;</li>
+<li>action: {String} the path of the handler you just called ; eg 'myState.myHandler'</li>
 <li>namespace: {String} the namespace of the possum</li>
 </ul>
 <h5><code>{namespace}.noHandler</code></h5>
-<p>Emitted when an input has been attempted on a state that does not declare it.</p><h4><code>{namespace}.invalidTransition</code></h4>
-<p>Emitted when an transition is attempted to a state that does not exist.</p><h3>Tests</h3>
+<p>Emitted when an input has been attempted on a state that does not declare it.</p>
+<h4><code>{namespace}.invalidTransition</code></h4>
+<p>Emitted when an transition is attempted to a state that does not exist.</p>
+<h3>Tests</h3>
 <ul>
 <li><code>make test</code> will by default run tests on Node.</li>
 <li><code>make browser</code> will run tape tests on any browser you visit at <code>http://localhost:2222</code></li>
@@ -491,7 +403,8 @@ var p = possum
 <li>Behavior tree generation (ala <a href="https://github.com/maryrosecook/machinejs">machine.js</a>).</li>
 </ul>
 <h4>Acknowledgements</h4>
-<p>API inspiration from <a href="https://github.com/ifandelse/machina.js">machina.js</a>.</p><h3>Credits</h3>
+<p>API inspiration from <a href="https://github.com/ifandelse/machina.js">machina.js</a>.</p>
+<h3>Credits</h3>
 <ul>
 <li><a href="https://github.com/ifandelse/machina.js">machina.js</a></li>
 <li><a href="http://www.network-science.de/ascii/">ascii generation</a></li>
@@ -502,38 +415,19 @@ var p = possum
     </div>
     <footer class="footer">
       <div class="container">
-        <p>Documentation generated with <a href="https://github.com/FGRibreau/doxx">Doxx </a> created by <a href="https://twitter.com/FGRibreau" data-show-count="false" class="twitter-follow-button">Francois-Guillaume Ribreau </a></p>
-        <p>Doxx is sponsored by <a href="http://bringr.net/?btt" title="Outil d'analyse des réseaux sociaux" class="bringr">Bringr </a> and <a href="https://redsmin.com/?btt" title="Full Redis GUI" class="redsmin">Redsmin</a></p>
+        <p>Documentation generated with <a href="https://github.com/mr-doc/mr-doc">Mr. Doc </a> created by <a href="https://twitter.com/FGRibreau" data-show-count="false" class="twitter-follow-button">Francois-Guillaume Ribreau </a></p>
+        <p>Mr. Doc is sponsored by <a href="http://bringr.net/?btt" title="Outil d'analyse des réseaux sociaux" class="bringr">Bringr </a> and <a href="https://redsmin.com/?btt" title="Full Redis GUI" class="redsmin">Redsmin</a></p>
         <p>Theme borrowed from Twitter Bootstrap</p>
       </div>
     </footer>
-    <script src="http://platform.twitter.com/widgets.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
-    <script src="http://leaverou.github.com/prefixfree/prefixfree.js"></script>
-    <script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-transition.js"></script>
-    <script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-scrollspy.js"></script>
-    <script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-dropdown.js"></script>
-    <script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-collapse.js"></script>
-    <script src="http://getbootstrap.com/2.3.2/assets/js/bootstrap-affix.js"></script>
-    <script>
-      /* http://prismjs.com/download.html?themes=prism&languages=markup+css+clike+javascript */
-      var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(){var e=/\blang(?:uage)?-(?!\*)(\w+)\b/i,t=_self.Prism={util:{encode:function(e){return e instanceof n?new n(e.type,t.util.encode(e.content),e.alias):"Array"===t.util.type(e)?e.map(t.util.encode):e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).match(/\[object (\w+)\]/)[1]},clone:function(e){var n=t.util.type(e);switch(n){case"Object":var a={};for(var r in e)e.hasOwnProperty(r)&&(a[r]=t.util.clone(e[r]));return a;case"Array":return e.map&&e.map(function(e){return t.util.clone(e)})}return e}},languages:{extend:function(e,n){var a=t.util.clone(t.languages[e]);for(var r in n)a[r]=n[r];return a},insertBefore:function(e,n,a,r){r=r||t.languages;var i=r[e];if(2==arguments.length){a=arguments[1];for(var l in a)a.hasOwnProperty(l)&&(i[l]=a[l]);return i}var o={};for(var s in i)if(i.hasOwnProperty(s)){if(s==n)for(var l in a)a.hasOwnProperty(l)&&(o[l]=a[l]);o[s]=i[s]}return t.languages.DFS(t.languages,function(t,n){n===r[e]&&t!=e&&(this[t]=o)}),r[e]=o},DFS:function(e,n,a){for(var r in e)e.hasOwnProperty(r)&&(n.call(e,r,e[r],a||r),"Object"===t.util.type(e[r])?t.languages.DFS(e[r],n):"Array"===t.util.type(e[r])&&t.languages.DFS(e[r],n,r))}},highlightAll:function(e,n){for(var a,r=document.querySelectorAll('code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'),i=0;a=r[i++];)t.highlightElement(a,e===!0,n)},highlightElement:function(a,r,i){for(var l,o,s=a;s&&!e.test(s.className);)s=s.parentNode;s&&(l=(s.className.match(e)||[,""])[1],o=t.languages[l]),a.className=a.className.replace(e,"").replace(/\s+/g," ")+" language-"+l,s=a.parentNode,/pre/i.test(s.nodeName)&&(s.className=s.className.replace(e,"").replace(/\s+/g," ")+" language-"+l);var u=a.textContent,g={element:a,language:l,grammar:o,code:u};if(!u||!o)return t.hooks.run("complete",g),void 0;if(t.hooks.run("before-highlight",g),r&&_self.Worker){var c=new Worker(t.filename);c.onmessage=function(e){g.highlightedCode=n.stringify(JSON.parse(e.data),l),t.hooks.run("before-insert",g),g.element.innerHTML=g.highlightedCode,i&&i.call(g.element),t.hooks.run("after-highlight",g),t.hooks.run("complete",g)},c.postMessage(JSON.stringify({language:g.language,code:g.code}))}else g.highlightedCode=t.highlight(g.code,g.grammar,g.language),t.hooks.run("before-insert",g),g.element.innerHTML=g.highlightedCode,i&&i.call(a),t.hooks.run("after-highlight",g),t.hooks.run("complete",g)},highlight:function(e,a,r){var i=t.tokenize(e,a);return n.stringify(t.util.encode(i),r)},tokenize:function(e,n){var a=t.Token,r=[e],i=n.rest;if(i){for(var l in i)n[l]=i[l];delete n.rest}e:for(var l in n)if(n.hasOwnProperty(l)&&n[l]){var o=n[l];o="Array"===t.util.type(o)?o:[o];for(var s=0;s<o.length;++s){var u=o[s],g=u.inside,c=!!u.lookbehind,f=0,h=u.alias;u=u.pattern||u;for(var p=0;p<r.length;p++){var d=r[p];if(r.length>e.length)break e;if(!(d instanceof a)){u.lastIndex=0;var m=u.exec(d);if(m){c&&(f=m[1].length);var y=m.index-1+f,m=m[0].slice(f),v=m.length,k=y+v,b=d.slice(0,y+1),w=d.slice(k+1),N=[p,1];b&&N.push(b);var O=new a(l,g?t.tokenize(m,g):m,h);N.push(O),w&&N.push(w),Array.prototype.splice.apply(r,N)}}}}}return r},hooks:{all:{},add:function(e,n){var a=t.hooks.all;a[e]=a[e]||[],a[e].push(n)},run:function(e,n){var a=t.hooks.all[e];if(a&&a.length)for(var r,i=0;r=a[i++];)r(n)}}},n=t.Token=function(e,t,n){this.type=e,this.content=t,this.alias=n};if(n.stringify=function(e,a,r){if("string"==typeof e)return e;if("Array"===t.util.type(e))return e.map(function(t){return n.stringify(t,a,e)}).join("");var i={type:e.type,content:n.stringify(e.content,a,r),tag:"span",classes:["token",e.type],attributes:{},language:a,parent:r};if("comment"==i.type&&(i.attributes.spellcheck="true"),e.alias){var l="Array"===t.util.type(e.alias)?e.alias:[e.alias];Array.prototype.push.apply(i.classes,l)}t.hooks.run("wrap",i);var o="";for(var s in i.attributes)o+=s+'="'+(i.attributes[s]||"")+'"';return"<"+i.tag+' class="'+i.classes.join(" ")+'" '+o+">"+i.content+"</"+i.tag+">"},!_self.document)return _self.addEventListener?(_self.addEventListener("message",function(e){var n=JSON.parse(e.data),a=n.language,r=n.code;_self.postMessage(JSON.stringify(t.util.encode(t.tokenize(r,t.languages[a])))),_self.close()},!1),_self.Prism):_self.Prism;var a=document.getElementsByTagName("script");return a=a[a.length-1],a&&(t.filename=a.src,document.addEventListener&&!a.hasAttribute("data-manual")&&document.addEventListener("DOMContentLoaded",t.highlightAll)),_self.Prism}();"undefined"!=typeof module&&module.exports&&(module.exports=Prism);;
-      Prism.languages.markup={comment:/<!--[\w\W]*?-->/,prolog:/<\?[\w\W]+?\?>/,doctype:/<!DOCTYPE[\w\W]+?>/,cdata:/<!\[CDATA\[[\w\W]*?]]>/i,tag:{pattern:/<\/?[^\s>\/=]+(?:\s+[^\s>\/=]+(?:=(?:("|')(?:\\\1|\\?(?!\1)[\w\W])*\1|[^\s'">=]+))?)*\s*\/?>/i,inside:{tag:{pattern:/^<\/?[^\s>\/]+/i,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"attr-value":{pattern:/=(?:('|")[\w\W]*?(\1)|[^\s>]+)/i,inside:{punctuation:/[=>"']/}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:/&#?[\da-z]{1,8};/i},Prism.hooks.add("wrap",function(t){"entity"===t.type&&(t.attributes.title=t.content.replace(/&amp;/,"&"))});;
-      Prism.languages.css={comment:/\/\*[\w\W]*?\*\//,atrule:{pattern:/@[\w-]+?.*?(;|(?=\s*\{))/i,inside:{rule:/@[\w-]+/}},url:/url\((?:(["'])(\\(?:\r\n|[\w\W])|(?!\1)[^\\\r\n])*\1|.*?)\)/i,selector:/[^\{\}\s][^\{\};]*?(?=\s*\{)/,string:/("|')(\\(?:\r\n|[\w\W])|(?!\1)[^\\\r\n])*\1/,property:/(\b|\B)[\w-]+(?=\s*:)/i,important:/\B!important\b/i,"function":/[-a-z0-9]+(?=\()/i,punctuation:/[(){};:]/},Prism.languages.css.atrule.inside.rest=Prism.util.clone(Prism.languages.css),Prism.languages.markup&&(Prism.languages.insertBefore("markup","tag",{style:{pattern:/<style[\w\W]*?>[\w\W]*?<\/style>/i,inside:{tag:{pattern:/<style[\w\W]*?>|<\/style>/i,inside:Prism.languages.markup.tag.inside},rest:Prism.languages.css},alias:"language-css"}}),Prism.languages.insertBefore("inside","attr-value",{"style-attr":{pattern:/\s*style=("|').*?\1/i,inside:{"attr-name":{pattern:/^\s*style/i,inside:Prism.languages.markup.tag.inside},punctuation:/^\s*=\s*['"]|['"]\s*$/,"attr-value":{pattern:/.+/i,inside:Prism.languages.css}},alias:"language-css"}},Prism.languages.markup.tag));;
-      Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\w\W]*?\*\//,lookbehind:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0}],string:/("|')(\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,"class-name":{pattern:/((?:\b(?:class|interface|extends|implements|trait|instanceof|new)\s+)|(?:catch\s+\())[a-z0-9_\.\\]+/i,lookbehind:!0,inside:{punctuation:/(\.|\\)/}},keyword:/\b(if|else|while|do|for|return|in|instanceof|function|new|try|throw|catch|finally|null|break|continue)\b/,"boolean":/\b(true|false)\b/,"function":/[a-z0-9_]+(?=\()/i,number:/\b-?(0x[\dA-Fa-f]+|\d*\.?\d+([Ee]-?\d+)?)\b/,operator:/--?|\+\+?|!=?=?|<=?|>=?|==?=?|&&?|\|\|?|\?|\*|\/|~|\^|%/,punctuation:/[{}[\];(),.:]/};;
-      Prism.languages.javascript=Prism.languages.extend("clike",{keyword:/\b(as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|false|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|true|try|typeof|var|void|while|with|yield)\b/,number:/\b-?(0x[\dA-Fa-f]+|0b[01]+|0o[0-7]+|\d*\.?\d+([Ee][+-]?\d+)?|NaN|Infinity)\b/,"function":/(?!\d)[a-z0-9_$]+(?=\()/i}),Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:/(^|[^/])\/(?!\/)(\[.+?]|\\.|[^/\\\r\n])+\/[gimyu]{0,5}(?=\s*($|[\r\n,.;})]))/,lookbehind:!0}}),Prism.languages.insertBefore("javascript","class-name",{"template-string":{pattern:/`(?:\\`|\\?[^`])*`/,inside:{interpolation:{pattern:/\$\{[^}]+\}/,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}}}),Prism.languages.markup&&Prism.languages.insertBefore("markup","tag",{script:{pattern:/<script[\w\W]*?>[\w\W]*?<\/script>/i,inside:{tag:{pattern:/<script[\w\W]*?>|<\/script>/i,inside:Prism.languages.markup.tag.inside},rest:Prism.languages.javascript},alias:"language-javascript"}});;
-    </script>
-    <!-- App js-->
-    <script>
-      $(function(){
-        var $window = $(window);
-        $('.scrollspy .nav').affix({
-          offset: {
-            top: function () { return $window.width() <= 980 ? 480 : 400 }
-          , bottom: 50
-          }
-        });
-      })
-    </script>
+    <script src="js/twitter-widget.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap-transition.min.js"></script>
+    <script src="js/bootstrap-scrollspy.min.js"></script>
+    <script src="js/bootstrap-dropdown.min.js"></script>
+    <script src="js/bootstrap-collapse.min.js"></script>
+    <script src="js/bootstrap-affix.min.js"></script>
+    <script src="js/prism.min.js"></script>
+    <script src="js/index.min.js"></script>
   </body>
 </html>

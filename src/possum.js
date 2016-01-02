@@ -1,7 +1,6 @@
 'use strict';
 
 import stampit from 'stampit'
-import Promise from 'bluebird'
 import {EventEmitter2 as EventEmitter} from 'eventemitter2'
 import cuid from 'cuid'
 
@@ -335,7 +334,6 @@ let api = stampit()
 
             if(result && result.then) {
                 return result
-                    .bind(this)
                     .then(done.bind(this, len, handled))
             }
             return done(len, handled, result)
@@ -409,8 +407,7 @@ let api = stampit()
             let doTransitionBound = doTransition.bind(this, toState, target )
             if(result && result.then) {
                 return result
-                    .bind(this)
-                    .then(enter)
+                    .then(enter.bind(this))
                     .then(doTransitionBound)
             }
             result = enter.call(this, target )

@@ -460,7 +460,6 @@ const done = (len, completed, result) =&gt; {
 
     if(result &amp;&amp; result.then) {
         return result
-            .bind(this)
             .then(done.bind(this, len, handled))
     }
     return done(len, handled, result)
@@ -578,8 +577,7 @@ const doTransition = (toState, target) =&gt; {
     let doTransitionBound = doTransition.bind(this, toState, target )
     if(result &amp;&amp; result.then) {
         return result
-            .bind(this)
-            .then(enter)
+            .then(enter.bind(this))
             .then(doTransitionBound)
     }
     result = enter.call(this, target )

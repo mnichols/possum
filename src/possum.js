@@ -298,7 +298,7 @@ let api = stampit()
          * myPossum.handle('initialize',{ id: '123'})
          * @return {Any} the result of the handler configured by `states`
          * */
-        this.handle = function(inputType, args) {
+        this.handle = (inputType, args) => {
             let len = invocations.push({ inputType, args})
             let handler = handlers.get(this.currentState, inputType)
             if(!handler) {
@@ -390,7 +390,7 @@ let api = stampit()
          * @param {String} toState - the target transition
          * @return {Any} the result of any deferred handlers, if any
          * */
-        this.transition = function(toState) {
+        this.transition = (toState) => {
             if(!handlers.has( toState )) {
                 this.emitEvent(this.createEvent({
                     topic: EVENTS.INVALID_TRANSITION

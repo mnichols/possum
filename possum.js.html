@@ -49,11 +49,11 @@
               </li>
               <li><a href="#priorState"><i class="alert alert-success"></i><span>priorState</span></a>
               </li>
-              <li><a href="#handle"><i class="alert alert-info"></i><span>handle</span></a>
+              <li><a href="#handle"><i class="alert alert-success"></i><span>handle</span></a>
               </li>
               <li><a href="#deferUntilTransition"><i class="alert alert-success"></i><span>deferUntilTransition</span></a>
               </li>
-              <li><a href="#transition"><i class="alert alert-info"></i><span>transition</span></a>
+              <li><a href="#transition"><i class="alert alert-success"></i><span>transition</span></a>
               </li>
               <li><a href="#target"><i class="alert alert-success"></i><span>target</span></a>
               </li>
@@ -394,7 +394,7 @@ const done = (len, completed, result) =&gt; {
             <h1>handle</h1>
             <h5 class="subheader"></h5>
             <p>
-              <div class="label label-info radius ctx-type">method</div><span>&nbsp;</span><span>this.handle()</span><span>&nbsp;</span>
+              <div class="label label-success radius ctx-type">property</div><span>&nbsp;</span><span>this.handle</span><span>&nbsp;</span>
             </p>
           </section>
           <table class="table table-bordered table-striped">
@@ -424,7 +424,7 @@ const done = (len, completed, result) =&gt; {
             </tbody>
           </table>
           <div class="description"><p>Handle an <code>inputType</code> with the configure states handlers</p></div>
-          <pre><code class="language-javascript">this.handle = function(inputType, args) {
+          <pre><code class="language-javascript">this.handle = (inputType, args) =&gt; {
     let len = invocations.push({ inputType, args})
     let handler = handlers.get(this.currentState, inputType)
     if(!handler) {
@@ -532,7 +532,7 @@ const doTransition = (toState, target) =&gt; {
             <h1>transition</h1>
             <h5 class="subheader"></h5>
             <p>
-              <div class="label label-info radius ctx-type">method</div><span>&nbsp;</span><span>this.transition()</span><span>&nbsp;</span>
+              <div class="label label-success radius ctx-type">property</div><span>&nbsp;</span><span>this.transition</span><span>&nbsp;</span>
             </p>
           </section>
           <table class="table table-bordered table-striped">
@@ -560,7 +560,7 @@ const doTransition = (toState, target) =&gt; {
             </tbody>
           </table>
           <div class="description"><p>Transition to another state.<br />Prefer calling this internally; eg inside a handler.</p></div>
-          <pre><code class="language-javascript">this.transition = function(toState) {
+          <pre><code class="language-javascript">this.transition = (toState) =&gt; {
     if(!handlers.has( toState )) {
         this.emitEvent(this.createEvent({
             topic: EVENTS.INVALID_TRANSITION

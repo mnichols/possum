@@ -1,11 +1,11 @@
 {
   "name": "possum",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "I am able. A State Machine.",
   "main": "./dist/possum.js",
   "babel": {
     "presets": [
-      "node5"
+      "es2015"
     ]
   },
   "directories": {
@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "babel-cli": "^6.3.17",
-    "babel-preset-node5": "^10.1.2",
+    "babel-preset-es2015": "^6.3.13",
     "babel-tape-runner": "^1.3.0",
     "babelify": "^6.2.0",
     "blue-tape": "^0.1.10",

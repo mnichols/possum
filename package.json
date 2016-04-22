@@ -1,6 +1,6 @@
 {
   "name": "possum",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "I am able. A State Machine.",
   "main": "./dist/possum.js",
   "babel": {
@@ -51,7 +51,6 @@
     "babelify": "^7.2.0",
     "blue-tape": "^0.2.0",
     "bluebird": "^3.3.5",
-    "browser-run": "^3.1.0",
     "browserify": "^13.0.0",
     "documentation": "^4.0.0-beta2",
     "gh-pages": "^0.11.0",
@@ -63,7 +62,6 @@
     "smokestack": "^3.4.1",
     "tap-closer": "^1.0.0",
     "tap-spec": "^4.1.1",
-    "uglifyify": "^3.0.1",
     "zuul": "^3.3.1"
   },
   "dependencies": {

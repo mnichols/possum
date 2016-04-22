@@ -30,8 +30,8 @@
       <div class="row">
         <div class="span3 bs-docs-sidebar">
           <ul class="nav nav-list bs-docs-sidenav affix-top">
-            <li><a>Main</a></li>
-            <li class="active"><a>possum.js</a></li>
+            <li><a href="index.html">Main</a></li>
+            <li class="active"><a href="possum.js.html">possum.js</a></li>
           </ul>
           <div class="scrollspy">
             <ul class="nav nav-list bs-docs-sidenav affix-top">
@@ -281,6 +281,13 @@
         states: cfg
     })
 }</code></pre>
+          <h3 class="muted">Example</h3>
+          <pre><code class="language-javascript">p.states({
+ 'uninitialized': {
+     'initialized': function(inputType, args) { ...}
+     'another': function(inputType, args) { ...}
+ }
+})</code></pre>
           <table class="table table-bordered table-striped">
             <thead>
               <tr>
@@ -464,6 +471,9 @@ const done = (len, completed, result) =&gt; {
     }
     return done(len, handled, result)
 }</code></pre>
+          <h3 class="muted">Example</h3>
+          <pre><code class="language-javascript">
+myPossum.handle('initialize',{ id: '123'})</code></pre>
           <section id="deferUntilTransition">
             <h1>deferUntilTransition</h1>
             <h5 class="subheader"></h5>

@@ -127,9 +127,9 @@ test('[async] transition deferral', ( assert ) => {
 
     let machine = buildMachine({initialState: 'locked'})
     let events = []
-    machine.onAny(function(e) {
+    machine.onAny(function(e, data) {
         if(e) {
-            events.push(e)
+            events.push(data)
         }
     })
     //use bad code

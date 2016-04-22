@@ -1,4 +1,4 @@
-var possum = require('possum')
+var possum = require('possum')['default']
 var log = console.log.bind(console)
 
 //DOM elements

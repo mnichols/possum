@@ -1,6 +1,6 @@
 {
   "name": "possum",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "I am able. A State Machine.",
   "main": "./dist/possum.js",
   "babel": {
@@ -12,10 +12,16 @@
     "test": "test"
   },
   "scripts": {
-    "clean": "make clean",
-    "test": "make test",
-    "build": "make build",
-    "prepublish": "make build && make test && make publish"
+    "clean": "rimraf dist/* && mkdir -p dist || true && rimraf ./example/possum.js",
+    "example": "npm run clean && npm run build && browserify --debug --outfile ./examples/possum.js --require ./dist/possum.js:possum && serve examples",
+    "test": "babel-tape-runner ./test/**/*-test.js | tap-spec",
+    "build": "npm run clean && babel src --out-dir dist",
+    "docs": "mr-doc --source src --output docs --name possum",
+    "gh-pages": "npm run docs && gh-pages -d docs",
+    "prepublish": "npm run build && npm test && npm run gh-pages",
+    "serve": "serve",
+    "ci": "npm run build && npm test",
+    "browser": "browserify --debug ./test/*.js | tap-closer | smokestack | tap-spec"
   },
   "keywords": [
     "hierarchical",
@@ -34,13 +40,7 @@
   "browserify": {
     "transform": [
       [
-        "babelify",
-        {
-          "blacklist": "regenerator",
-          "optional": [
-            "runtime"
-          ]
-        }
+        "babelify"
       ]
     ]
   },
@@ -54,11 +54,15 @@
     "browser-run": "^3.1.0",
     "browserify": "^13.0.0",
     "documentation": "^4.0.0-beta2",
-    "doxx": "^2.0.0",
-    "faucet": "0.0.1",
     "gh-pages": "^0.11.0",
     "glob": "^7.0.3",
     "mkdirp": "^0.5.0",
+    "mr-doc": "^3.2.1",
+    "rimraf": "^2.5.2",
+    "serve": "^1.4.0",
+    "smokestack": "^3.4.1",
+    "tap-closer": "^1.0.0",
+    "tap-spec": "^4.1.1",
     "uglifyify": "^3.0.1",
     "zuul": "^3.3.1"
   },

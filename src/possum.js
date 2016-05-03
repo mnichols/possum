@@ -103,7 +103,7 @@ let stateModel = stampit()
         }
         let enter
         let exit
-        let handlers = new Map()
+        let handlers = {}
 
         function noop(){}
 
@@ -114,7 +114,7 @@ let stateModel = stampit()
             return (exit || noop)
         }
         this.get = (inputType) => {
-            return handlers.get(inputType)
+            return handlers[inputType]
         }
         this.set = (handlers = {}) => {
             for(let inputType in handlers) {
@@ -130,7 +130,8 @@ let stateModel = stampit()
                     exit = fn
                     break;
                 default:
-                    handlers.set(inputType,fn)
+                    handlers[inputType] = fn;
+                    break;
             }
             return this
         }
@@ -143,18 +144,18 @@ let stateModel = stampit()
  * */
 let statesCollection = stampit()
     .init(function(){
-        let map = new Map()
+        let map = {}
 
         this.set = (states) => {
             for(let stateName in states) {
                 let state = stateModel({ name: stateName})
                 state.set(states[stateName])
-                map.set(stateName, state)
+                map[stateName] = state
             }
             return this
         }
         this.get = ( stateName, inputType ) => {
-            let cfg = map.get(stateName)
+            let cfg = map[stateName]
             if(!cfg) {
                 return undefined
             }
@@ -165,15 +166,15 @@ let statesCollection = stampit()
             return handler
         }
         this.getEntry = ( stateName ) => {
-            let cfg = map.get(stateName)
+            let cfg = map[stateName]
             return cfg.entry()
         }
         this.getExit = ( stateName ) => {
-            let cfg = map.get(stateName)
+            let cfg = map[stateName]
             return cfg.exit()
         }
         this.has = ( stateName ) => {
-            return map.has(stateName)
+            return Object.hasOwnProperty.call(map, stateName)
         }
     })
 
@@ -248,7 +249,7 @@ let api = stampit()
 
         let invocations = []
 
-        let deferrals = new Map()
+        let deferrals = {}
 
         const replay = (deferred, lastResult) =>  {
             if(!deferred.length) {
@@ -348,7 +349,7 @@ let api = stampit()
          * @return {Possum} the possum instance
          * */
         this.deferUntilTransition = (toState = ANY_TRANSITION) => {
-            let coll = (deferrals.get(toState) || [])
+            let coll = (deferrals[toState] || [])
             let invocation = invocations.pop()
             let deferred = this.createEvent({
                 topic: 'deferred'
@@ -357,7 +358,7 @@ let api = stampit()
                 , namespace: this.namespace
             })
             coll.push(invocation)
-            deferrals.set(toState, coll)
+            deferrals[toState] = coll
 
             this.emitEvent(deferred)
             return this
@@ -376,10 +377,10 @@ let api = stampit()
                 , namespace: this.namespace
             })
             this.emit(this.namespaced(e.topic),e)
-            let deferred = (deferrals.get(toState) || [])
-                .concat(deferrals.get(ANY_TRANSITION) || [])
-            deferrals.delete(toState)
-            deferrals.delete(ANY_TRANSITION)
+            let deferred = (deferrals[toState] || [])
+                            .concat(deferrals[ANY_TRANSITION] || []);
+            (delete deferrals[toState]);
+            (delete deferrals[ANY_TRANSITION]);
             return replay(deferred)
         }
         /**

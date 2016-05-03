@@ -154,7 +154,7 @@
         }
         let enter
         let exit
-        let handlers = new Map()
+        let handlers = {}
 
         function noop(){}
 
@@ -165,7 +165,7 @@
             return (exit || noop)
         }
         this.get = (inputType) =&gt; {
-            return handlers.get(inputType)
+            return handlers[inputType]
         }
         this.set = (handlers = {}) =&gt; {
             for(let inputType in handlers) {
@@ -181,7 +181,8 @@
                     exit = fn
                     break;
                 default:
-                    handlers.set(inputType,fn)
+                    handlers[inputType] = fn;
+                    break;
             }
             return this
         }
@@ -196,18 +197,18 @@
           <div class="description"><p>maps state names to their config and exposes<br />api for retrieving and setting them</p></div>
           <pre><code class="language-javascript">let statesCollection = stampit()
     .init(function(){
-        let map = new Map()
+        let map = {}
 
         this.set = (states) =&gt; {
             for(let stateName in states) {
                 let state = stateModel({ name: stateName})
                 state.set(states[stateName])
-                map.set(stateName, state)
+                map[stateName] = state
             }
             return this
         }
         this.get = ( stateName, inputType ) =&gt; {
-            let cfg = map.get(stateName)
+            let cfg = map[stateName]
             if(!cfg) {
                 return undefined
             }
@@ -218,15 +219,15 @@
             return handler
         }
         this.getEntry = ( stateName ) =&gt; {
-            let cfg = map.get(stateName)
+            let cfg = map[stateName]
             return cfg.entry()
         }
         this.getExit = ( stateName ) =&gt; {
-            let cfg = map.get(stateName)
+            let cfg = map[stateName]
             return cfg.exit()
         }
         this.has = ( stateName ) =&gt; {
-            return map.has(stateName)
+            return Object.hasOwnProperty.call(map, stateName)
         }
     })</code></pre>
           <section id="api">
@@ -354,7 +355,7 @@ let target = (this.target || this)
 
 let invocations = []
 
-let deferrals = new Map()
+let deferrals = {}
 
 const replay = (deferred, lastResult) =&gt;  {
     if(!deferred.length) {
@@ -504,7 +505,7 @@ myPossum.handle('initialize',{ id: '123'})</code></pre>
           </table>
           <div class="description"><p>Defers the invocation for replay after transition</p></div>
           <pre><code class="language-javascript">this.deferUntilTransition = (toState = ANY_TRANSITION) =&gt; {
-    let coll = (deferrals.get(toState) || [])
+    let coll = (deferrals[toState] || [])
     let invocation = invocations.pop()
     let deferred = this.createEvent({
         topic: 'deferred'
@@ -513,7 +514,7 @@ myPossum.handle('initialize',{ id: '123'})</code></pre>
         , namespace: this.namespace
     })
     coll.push(invocation)
-    deferrals.set(toState, coll)
+    deferrals[toState] = coll
 
     this.emitEvent(deferred)
     return this
@@ -532,10 +533,10 @@ const doTransition = (toState, target) =&gt; {
         , namespace: this.namespace
     })
     this.emit(this.namespaced(e.topic),e)
-    let deferred = (deferrals.get(toState) || [])
-        .concat(deferrals.get(ANY_TRANSITION) || [])
-    deferrals.delete(toState)
-    deferrals.delete(ANY_TRANSITION)
+    let deferred = (deferrals[toState] || [])
+                    .concat(deferrals[ANY_TRANSITION] || []);
+    (delete deferrals[toState]);
+    (delete deferrals[ANY_TRANSITION]);
     return replay(deferred)
 }</code></pre>
           <section id="transition">

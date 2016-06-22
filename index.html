@@ -56,11 +56,18 @@
 <p><a href="https://raw.githubusercontent.com/mnichols/possum/master/LICENSE">MIT</a></p>
 <h3>Install</h3>
 <p><code>npm install --save possum</code></p>
+<h3>Size</h3>
+<ul>
+<li><strong>unminified</strong> 3.05kb</li>
+<li><strong>minified</strong> 1.68kb</li>
+</ul>
 <h3>Building</h3>
 <p><code>make build</code> =&gt; <code>./build/possum.js</code></p>
 <p>minified builds are broken atm</p>
 <h3>Documentation</h3>
 <p>Found <a href="https://mnichols.github.io/possum">here</a></p>
+<p><strong>IMPORTANT BREAKING CHANGE FOR v1+...
+EventEmitter api is no longer mixed in by default...that is up to you!!!</strong></p>
 <h3>Example</h3>
 <p><code>make example</code></p>
 <h3>Module Support</h3>
@@ -311,6 +318,15 @@ invoke the handlers this way:</p>
 <pre><code class="language-js">model.handle('doIt','myArgument')
 </code></pre>
 <p><strong>Additional arguments will be ignored</strong>.</p>
+<h5><code>emit</code> {Function} required</h5>
+<p>The implementation of event emitter is left up to you, the implementer. <strong>That means that
+<code>possum</code> doesn't come bundled with a eventing API out-of-the-box.</strong>
+To use possum with <code>eventemitter2</code> you can do something like this:</p>
+<pre><code class="language-js">
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
+var emittable = stampit.convertConstructor(EventEmitter2);
+var machine = possum.compose(emittable).states(...)
+</code></pre>
 <h3>Possum Instance API</h3>
 <h5><code>currentState</code> {String}</h5>
 <p>The current state of the possum instance.

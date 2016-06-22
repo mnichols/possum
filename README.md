@@ -21,6 +21,11 @@
 
 `npm install --save possum`
 
+### Size
+
+- **unminified** 3.05kb
+- **minified** 1.68kb
+
 ### Building
 
 `make build` => `./build/possum.js`

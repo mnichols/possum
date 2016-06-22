@@ -1,4 +1,22 @@
 var possum = require('possum')['default']
+var simplemitter = stampit()
+.init(function(){
+    var handlers = {}
+    this.emit = (e) => {
+        var arr= handlers[e]
+        if(!arr) {
+            return;
+        }
+        arr.forEach(function(h) {
+            h.call(this, e)
+        })
+    }
+    this.on = (e, fn) => {
+        var arr
+        handlers[e] = arr = (handlers[e] || [])
+        arr.push(fn)
+    }
+})
 var log = console.log.bind(console)
 
 //DOM elements
@@ -52,6 +70,7 @@ var recordPlayer = {
 
 //define our state machine spec
 var model = possum
+    .compose(simplemitter)
     .config({
         namespace: 'kiss'
         ,initialState: 'uninitialized'
@@ -179,7 +198,7 @@ var model = possum
     })
 
 
-model.on('transitioned',function(e){
+model.on('kiss.transitioned',function(e){
     document.querySelector('.state')
         .innerHTML = model.state
 })

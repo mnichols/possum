@@ -4,6 +4,7 @@ import test from 'blue-tape'
 import possum from '../src/possum'
 import stampit from 'stampit'
 import Promise from 'bluebird'
+import {EventEmitter2 as EventEmitter} from 'eventemitter2'
 
 
 test('composing with possum builder stamp is sensible', (assert) => {
@@ -14,6 +15,7 @@ test('composing with possum builder stamp is sensible', (assert) => {
     })
 
     let machine = possum
+        .compose(stampit.convertConstructor(EventEmitter))
         .config({
             initialState: 'a'
         })
@@ -93,6 +95,7 @@ test('composition into possum factory is sensible', (assert) => {
         })
 
     let p = possum
+        .compose(stampit.convertConstructor(EventEmitter))
         .compose(cloneable) //compose our behaviors in for all instances!
         .compose(reliesOnPossum)
         .refs({
@@ -163,4 +166,26 @@ test('compositions are discrete', (assert) => {
     assert.notOk(model.boo)
     assert.notOk(model2.foo)
 
+})
+test('eventing strategy may be mixed in', (assert) => {
+    assert.plan(5);
+    let emitted = []
+    let customEmitter = stampit()
+    .init(function(){
+        this.emitEvent = function(e) {
+            emitted.push(e)
+        }
+    })
+
+    let model = possum.compose(customEmitter)
+    .config({ initialState: 'foo', namespace: 'boo' })
+    .states({ foo: { bar() {  } } })
+    .create()
+
+    model.handle('bar')
+    assert.notOk(model.on, 'emitter is mixed in');
+    assert.equal(emitted.length, 3, 'events are emitted to custom method');
+    assert.equal(emitted[0].namespace, 'boo', 'namespaced event');
+    assert.equal(emitted[1].namespace, 'boo', 'namespaced event');
+    assert.equal(emitted[2].namespace, 'boo', 'namespaced event');
 })

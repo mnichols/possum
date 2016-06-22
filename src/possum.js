@@ -1,7 +1,6 @@
 'use strict';
 
 import stampit from 'stampit'
-import {EventEmitter2 as EventEmitter} from 'eventemitter2'
 import cuid from 'cuid'
 
 //constants
@@ -17,29 +16,8 @@ const EVENTS = {
     ,TRANSITIONED: 'transitioned'
 }
 
-/**
-* possums are event emitters
-*
-* */
-const emittable =  stampit()
-.methods({
-    emitEvent: function(e) {
-        this.emit(this.namespaced(e.topic), e)
-        return this
-    }
-    ,namespaced: function(value, namespace) {
-        namespace = (namespace || this.namespace)
-        let pre = ''
-        if(namespace) {
-            pre = `${namespace}${this.emitterOpts.delimiter}`
-        }
-        return `${pre}${value}`
-    }
-})
+const evented = stampit()
 .init(function(){
-    //expose emitter
-    this.emitter = (this.emitter || new EventEmitter(this.emitterOpts))
-
     const eventModel = stampit()
         .refs({
             topic: undefined
@@ -65,28 +43,33 @@ const emittable =  stampit()
             , id: cuid()
         })
     }
-
-    const forwardFn = (fn) => {
-        this[fn] = this.emitter[fn].bind(this.emitter)
+    this.namespaced = (value, namespace) => {
+        namespace = (namespace || this.namespace)
+        let delimiter = ((this.emitterOpts.delimiter) || '.')
+        let pre = ''
+        if(namespace) {
+            pre = `${namespace}${delimiter}`
+        }
+        return `${pre}${value}`
     }
+})
 
-    let eventApi = [
-        'addListener'
-        ,'on'
-        , 'onAny'
-        , 'offAny'
-        , 'once'
-        , 'many'
-        , 'removeListener'
-        , 'off'
-        , 'listeners'
-        , 'listenersAny'
-        , 'emit'
-        , 'removeAllListeners'
-        , 'listeners'
-        , 'listenersAny'
-    ]
-    eventApi.forEach(forwardFn)
+/**
+* possums are event emitters
+* Provide either a `emitEvent` function for total control of the method of publication;
+* or, provide a `emit` event (supported by any nodejs EventEmitter clone)
+* */
+const emitter = stampit()
+.init(function(){
+    //default impl
+    this.emitEvent = (e) => {
+        if(!this.emit) {
+             throw new Error('please provide an `emit` or an `emitEvent` implementation')
+        }
+        e.event = this.namespaced(e.topic)
+        this.emit(e.event, e)
+        return this
+    }
 })
 
 /**
@@ -236,7 +219,7 @@ let api = stampit()
             return this.props(...args)
         }
     })
-    .compose(emittable)
+    .compose(evented, emitter)
     .init(function(){
         if(!this.initialState) {
             throw new Error('an `initialState` config is required')
@@ -367,7 +350,7 @@ let api = stampit()
         const doTransition = (toState, target) => {
             this.priorState = this.currentState
             this.currentState = toState
-            let e = this.createEvent({
+            let transitioned = this.createEvent({
                 topic: 'transitioned'
                 , payload: {
                     toState: this.currentState
@@ -376,7 +359,7 @@ let api = stampit()
                 , state: this.currentState
                 , namespace: this.namespace
             })
-            this.emit(this.namespaced(e.topic),e)
+            this.emitEvent(transitioned)
             let deferred = (deferrals[toState] || [])
                             .concat(deferrals[ANY_TRANSITION] || []);
             (delete deferrals[toState]);

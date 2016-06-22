@@ -4,13 +4,16 @@ import test from 'blue-tape'
 import possum from '../src/possum'
 import stampit from 'stampit'
 import Promise from 'bluebird'
+import {EventEmitter2 as EventEmitter} from 'eventemitter2'
+import EventEmitter3 from 'eventemitter3'
 
-const buildMachine = (cfg) => {
+const buildMachineProto = (cfg) => {
     cfg  = (cfg || {
         initialState: 'unlocked'
         ,namespace: 'door'
     })
     return possum
+        .compose(stampit.convertConstructor(EventEmitter))
         .config(cfg)
         .states({
             'locked': {
@@ -48,8 +51,10 @@ const buildMachine = (cfg) => {
                 }
             }
         })
-        .create()
 
+}
+const buildMachine = (cfg) => {
+    return buildMachineProto(cfg).create();
 }
 
 test('[async] state lifecycle', (assert) => {
@@ -92,11 +97,15 @@ test('[async] events are emitted', (assert) => {
         .refs({ name: 'deadbolt', code: '123'})
         .create()
 
-    let machine = buildMachine()
+    let machine = buildMachineProto()
+    .create()
+
     machine.target(model)
     let events = {}
-    machine.on('door.handled',function(e) { events[this.event] = e })
-    machine.on('door.transitioned',function(e) { events[this.event] = e })
+    machine.on('door.handled',function(e) {
+        events[e.event] = e
+    })
+    machine.on('door.transitioned',function(e) { events[e.event] = e })
     return machine.handle('lock')
         .tap(function(){
             let e = events['door.handled']
@@ -124,8 +133,13 @@ test('[async] events are emitted', (assert) => {
 test('[async] transition deferral', ( assert ) => {
     let model = stampit()
         .refs({ name: 'deadbolt', code: '123'})
+        .create()
 
-    let machine = buildMachine({initialState: 'locked'})
+
+
+    let machine = buildMachineProto({ initialState: 'locked' })
+    .create()
+
     let events = []
     machine.onAny(function(e, data) {
         if(e) {
@@ -183,6 +197,7 @@ test('[async] transition deferral', ( assert ) => {
 
 test('[async] multiple deferrals', (assert) => {
     let machine = possum
+        .compose(stampit.convertConstructor(EventEmitter))
         .config({
             initialState: 'a'
             , namespace: 'foo'

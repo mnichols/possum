@@ -1,6 +1,6 @@
 {
   "name": "possum",
-  "version": "0.3.6",
+  "version": "1.0.0",
   "description": "I am able. A State Machine.",
   "main": "./dist/possum.js",
   "babel": {
@@ -53,6 +53,8 @@
     "bluebird": "^3.3.5",
     "browserify": "^13.0.0",
     "documentation": "^4.0.0-beta2",
+    "eventemitter2": "^1.0.1",
+    "eventemitter3": "^1.2.0",
     "gh-pages": "^0.11.0",
     "glob": "^7.0.3",
     "mkdirp": "^0.5.0",
@@ -66,7 +68,6 @@
   },
   "dependencies": {
     "cuid": "^1.2.4",
-    "eventemitter2": "^1.0.1",
     "stampit": "^2.1.0"
   }
 }

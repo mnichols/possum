@@ -4,13 +4,15 @@ import test from 'blue-tape'
 import possum from '../src/possum'
 import stampit from 'stampit'
 import Promise from 'bluebird'
+import {EventEmitter2 as EventEmitter} from 'eventemitter2'
 
-const buildMachine = (cfg) => {
+const buildMachineProto = (cfg) => {
     cfg = (cfg || {
         initialState: 'unlocked'
         , namespace: 'door'
     })
     return possum
+        .compose(stampit.convertConstructor(EventEmitter))
         .config(cfg)
         .states({
             'locked': {
@@ -45,6 +47,10 @@ const buildMachine = (cfg) => {
                 }
             }
         })
+
+}
+const buildMachine = (cfg) => {
+    return buildMachineProto(cfg)
         //.target(model)
         .create()
 
@@ -91,7 +97,9 @@ test('[sync] deferred transitions', ( assert ) => {
         .refs({ name: 'deadbolt', code: '123'})
         .create()
 
-    let machine = buildMachine({initialState: 'locked'})
+    let machine = buildMachineProto({ initialState: 'locked' })
+    .create()
+
     let events = []
     machine.onAny(function(e,data) {
         if(e) {
@@ -151,7 +159,8 @@ test('[sync] deferred transitions', ( assert ) => {
 
 test('[sync] no handler emits', (assert) => {
     assert.plan(4)
-    let machine = buildMachine({ initialState: 'locked' , namespace: 'door'})
+    let machine = buildMachineProto({ initialState: 'locked' , namespace: 'door'})
+    .create()
 
     let noHandler
     machine.on('door.noHandler',function(e) {
@@ -166,7 +175,8 @@ test('[sync] no handler emits', (assert) => {
 })
 test('[sync] invalid transition', (assert) => {
     assert.plan(5)
-    let machine = buildMachine({ initialState: 'locked', namespace: 'door'})
+    let machine = buildMachineProto({ initialState: 'locked', namespace: 'door'})
+    .create()
     let events = []
     machine.on('door.invalidTransition', events.push.bind(events))
     machine.transition('bad')
@@ -181,6 +191,7 @@ test('[sync] invalid transition', (assert) => {
 test('[sync] multiple deferrals', (assert) => {
     assert.plan(5)
     let machine = possum
+        .compose(stampit.convertConstructor(EventEmitter))
         .config({
             initialState: 'a'
             , namespace: 'foo'

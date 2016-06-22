@@ -36,6 +36,9 @@ minified builds are broken atm
 
 Found [here](https://mnichols.github.io/possum)
 
+**IMPORTANT BREAKING CHANGE FOR v1+...
+EventEmitter api is no longer mixed in by default...that is up to you!!!**
+
 ### Example
 
 `make example`
@@ -320,7 +323,6 @@ var states = {
 }
 
 ```
-
 Note that each state's input handler, will receive _one_ `arguments` parameter. That means you must
 invoke the handlers this way:
 
@@ -329,6 +331,21 @@ model.handle('doIt','myArgument')
 ```
 
 **Additional arguments will be ignored**.
+
+
+##### `emit` {Function} required
+The implementation of event emitter is left up to you, the implementer. **That means that
+`possum` doesn't come bundled with a eventing API out-of-the-box.** 
+To use possum with `eventemitter2` you can do something like this:
+
+```js
+
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
+var emittable = stampit.convertConstructor(EventEmitter2);
+var machine = possum.compose(emittable).states(...)
+```
+
+
 
 
 ### Possum Instance API

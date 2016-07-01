@@ -464,17 +464,19 @@ myPossum.handle('initialize',{ id: '123'})</code></pre>
     this.emitEvent(deferred)
     return this
 }
-
-const doTransition = (toState, target) =&gt; {
-    this.priorState = this.currentState
+const updateStates = (toState, fromState) =&gt; {
+    this.priorState = fromState
     this.currentState = toState
+}
+
+const doTransition = (toState, fromState, target) =&gt; {
     let transitioned = this.createEvent({
         topic: 'transitioned'
         , payload: {
-            toState: this.currentState
-            , fromState: this.priorState
+            toState: toState
+            , fromState: fromState
         }
-        , state: this.currentState
+        , state: fromState
         , namespace: this.namespace
     })
     this.emitEvent(transitioned)
@@ -530,12 +532,15 @@ const doTransition = (toState, target) =&gt; {
     let exit = handlers.getExit(this.currentState)
     let enter = handlers.getEntry(toState)
     let result = exit.call(this, target )
-    let doTransitionBound = doTransition.bind(this, toState, target )
+    let updateStateBound = updateStates.bind(this, toState, this.currentState)
+    let doTransitionBound = doTransition.bind(this, toState, this.currentState, target )
     if(result &amp;&amp; result.then) {
         return result
+            .tap(updateStateBound)
             .then(enter.bind(this))
             .then(doTransitionBound)
     }
+    updateStateBound();
     result = enter.call(this, target )
     if( result &amp;&amp; result.then ) {
         return result.then(doTransitionBound)

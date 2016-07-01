@@ -92,7 +92,7 @@ test('[async] handler transitions',(assert) => {
         assert.equal(machine.currentState, 'locked')
     })
 })
-test.only('[async] events are emitted', (assert) => {
+test('[async] events are emitted', (assert) => {
     let model = stampit()
         .refs({ name: 'deadbolt', code: '123'})
         .create()

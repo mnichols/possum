@@ -346,10 +346,12 @@ let api = stampit()
             this.emitEvent(deferred)
             return this
         }
+        const updateStates = (toState, fromState) => {
+            this.priorState = fromState
+            this.currentState = toState
+        }
 
         const doTransition = (toState, fromState, target) => {
-            //this.priorState = fromState
-            //this.currentState = toState
             let transitioned = this.createEvent({
                 topic: 'transitioned'
                 , payload: {
@@ -388,18 +390,15 @@ let api = stampit()
             let exit = handlers.getExit(this.currentState)
             let enter = handlers.getEntry(toState)
             let result = exit.call(this, target )
+            let updateStateBound = updateStates.bind(this, toState, this.currentState)
             let doTransitionBound = doTransition.bind(this, toState, this.currentState, target )
             if(result && result.then) {
                 return result
-                    .tap(() => {
-                        this.priorState = this.currentState;
-                        this.currentState = this.toState;
-                    })
+                    .tap(updateStateBound)
                     .then(enter.bind(this))
                     .then(doTransitionBound)
             }
-            this.priorState = this.currentState;
-            this.currentState = toState;
+            updateStateBound();
             result = enter.call(this, target )
             if( result && result.then ) {
                 return result.then(doTransitionBound)

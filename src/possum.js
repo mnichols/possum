@@ -347,16 +347,16 @@ let api = stampit()
             return this
         }
 
-        const doTransition = (toState, target) => {
-            this.priorState = this.currentState
-            this.currentState = toState
+        const doTransition = (toState, fromState, target) => {
+            //this.priorState = fromState
+            //this.currentState = toState
             let transitioned = this.createEvent({
                 topic: 'transitioned'
                 , payload: {
-                    toState: this.currentState
-                    , fromState: this.priorState
+                    toState: toState
+                    , fromState: fromState
                 }
-                , state: this.currentState
+                , state: fromState
                 , namespace: this.namespace
             })
             this.emitEvent(transitioned)
@@ -388,12 +388,18 @@ let api = stampit()
             let exit = handlers.getExit(this.currentState)
             let enter = handlers.getEntry(toState)
             let result = exit.call(this, target )
-            let doTransitionBound = doTransition.bind(this, toState, target )
+            let doTransitionBound = doTransition.bind(this, toState, this.currentState, target )
             if(result && result.then) {
                 return result
+                    .tap(() => {
+                        this.priorState = this.currentState;
+                        this.currentState = this.toState;
+                    })
                     .then(enter.bind(this))
                     .then(doTransitionBound)
             }
+            this.priorState = this.currentState;
+            this.currentState = toState;
             result = enter.call(this, target )
             if( result && result.then ) {
                 return result.then(doTransitionBound)

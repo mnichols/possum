@@ -76,7 +76,6 @@ test('[sync] state lifecycle', (assert) => {
         assert.equal(model.denials,1)
         assert.equal(model.restarts,1)
     }, 100)
-
 })
 test('[sync] handler transitions [buildMachine]',(assert) => {
     assert.plan(1)

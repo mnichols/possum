@@ -92,7 +92,7 @@ test('[async] handler transitions',(assert) => {
         assert.equal(machine.currentState, 'locked')
     })
 })
-test('[async] events are emitted', (assert) => {
+test.only('[async] events are emitted', (assert) => {
     let model = stampit()
         .refs({ name: 'deadbolt', code: '123'})
         .create()
@@ -111,19 +111,19 @@ test('[async] events are emitted', (assert) => {
             let e = events['door.handled']
             assert.ok(e, 'event not raised')
             assert.equal(e.topic,'handled')
-            assert.equal(e.state,'unlocked')
+            assert.equal(e.state,'unlocked', 'state during handled is preserved')
             assert.equal(e.payload.inputType, 'lock')
-            assert.ok(e.id)
-            assert.ok(e.timestamp)
+            assert.ok(e.id, 'id is on handled event')
+            assert.ok(e.timestamp, 'handled event is timestamped')
         })
         .tap(function(){
             let e = events['door.transitioned']
             assert.ok(e, 'event not raised')
             assert.equal(e.topic,'transitioned')
-            assert.equal(e.payload.fromState,'unlocked')
-            assert.equal(e.payload.toState,'locked')
-            assert.ok(e.id)
-            assert.ok(e.timestamp)
+            assert.equal(e.payload.fromState,'unlocked','fromState is preserved')
+            assert.equal(e.payload.toState,'locked', 'currentState is represented')
+            assert.ok(e.id, 'id is on the event')
+            assert.ok(e.timestamp, 'timestamped event')
 
         })
 

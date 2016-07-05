@@ -15,7 +15,8 @@
     "clean": "rimraf dist/* && mkdir -p dist || true && rimraf ./example/possum.js",
     "example": "npm run clean && npm run build && browserify --debug --outfile ./examples/possum.js --require ./dist/possum.js:possum && serve examples",
     "test": "babel-tape-runner ./test/**/*-test.js | tap-spec",
-    "build": "npm run clean && babel src --out-dir dist",
+    "build": "npm run clean && babel src --out-dir dist && npm run uglify",
+    "uglify": "uglifyjs dist/possum.js -m -c warnings=false -o dist/possum.min.js",
     "docs": "mr-doc --source src --output docs --name possum",
     "gh-pages": "npm run docs && gh-pages -d docs",
     "prepublish": "npm run build && npm test && npm run gh-pages",
@@ -64,10 +65,21 @@
     "smokestack": "^3.4.1",
     "tap-closer": "^1.0.0",
     "tap-spec": "^4.1.1",
+    "uglifyjs": "^2.4.10",
     "zuul": "^3.3.1"
   },
   "dependencies": {
     "cuid": "^1.2.4",
     "stampit": "^2.1.0"
-  }
+  },
+  "npmName": "possum",
+  "npmFileMap": [
+    {
+      "basePath": "/dist/",
+      "files": [
+        "possum.js",
+        "possum.min.js"
+      ]
+    }
+  ]
 }

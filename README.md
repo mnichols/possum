@@ -241,6 +241,62 @@ As of `v0.1.0` possum supports both synchronous and Promised handlers.
 It is worth noting that the events which are emitted are ordered differently
 depending on the flow model you choose.
 
+### Behavioral State Machine support
+
+Possum supports splitting the control state from the target model being acted upon using `target()`.
+The value of `target` by default is the machine instance _itself_ but each handler, except for `_enter` and `_exit`,
+will receive the `target` instance as the **second argument in every handler**.
+
+```
+// one approach
+
+let machine = possum.config({initialState:'ready'})
+.states({ 
+    ready: {
+        // target is passed in as secon argument
+        go(args, target) {
+            //1. mutate the target model here. It can consume the target's API, or whatever
+            //2. determine the next state to transition based on the target state
+            //3. do it
+            target.doThatThing(args)
+            if(target.isGoing) {
+                retun this.transition('going')
+            }
+            //nextAction (manually calced)
+            if(target.isWaiting) {
+                return this.handle('wait', args)
+            }
+        },
+        wait(args, target) {
+
+        }
+    } 
+    going: {
+        // special handlers only receive the target as argument
+        _enter: (target) {
+            this.emit('going')
+        },
+        complete(args, target) { }
+    }
+})
+
+let modelApi = {
+    doThatThing(args) { 
+        this.isGoing = args.isGoing; // like from a checkbox 
+        this.isWaiting = !args.isGoing; 
+    },
+}
+
+//create machine instance and set the target
+// you may also set `target` on the machine prototype...
+
+let state = machine().target(modelApi)
+
+// from view
+state.handle('go', { isGoing: true }); //target will always be passed as second arg in input handler!
+state.currentState == 'going' // true
+```
+
 
 ### Possum Builder API (extensions atop stampit)
 

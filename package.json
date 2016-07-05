@@ -1,6 +1,6 @@
 {
   "name": "possum",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "I am able. A State Machine.",
   "main": "./dist/possum.js",
   "babel": {
